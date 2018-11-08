@@ -16,10 +16,10 @@
         </v-list-tile>
         <v-list-tile @click="">
           <v-list-tile-action>
-            <v-icon>contact_mail</v-icon>
+            <v-icon>save</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>Contact</v-list-tile-title>
+            <v-list-tile-title>Cockpit</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -29,14 +29,7 @@
       <v-toolbar-title>Application</v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <v-container fluid fill-height>
-        <v-layout
-          justify-center
-          align-center
-        >
-          <router-view></router-view>
-        </v-layout>
-      </v-container>
+      <router-view></router-view>
     </v-content>
     <v-footer color="indigo" app>
       <span class="white--text">&copy; 2017</span>
