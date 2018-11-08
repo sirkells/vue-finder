@@ -1,46 +1,72 @@
 <template>
   <v-app id="inspire">
     <v-navigation-drawer
+      :clipped="$vuetify.breakpoint.lgAndUp"
       v-model="drawer"
       fixed
       app
+      
     >
-      <v-list dense>
-        <v-list-tile @click="">
-          <v-list-tile-action>
-            <v-icon>home</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Home</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="">
-          <v-list-tile-action>
-            <v-icon>save</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Cockpit</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
+    
+      <filters-cmp ></filters-cmp>
+    
     </v-navigation-drawer>
-    <v-toolbar color="indigo" dark fixed app>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
+    <v-toolbar
+      :clipped-left="$vuetify.breakpoint.lgAndUp"
+      color="blue darken-3"
+      dark
+      app
+      fixed
+    >
+      <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <span class="hidden-sm-and-down">Projectfinder</span>
+      </v-toolbar-title>
+      <v-btn icon>
+        <v-icon>apps</v-icon>
+      </v-btn>
+      <v-btn icon>
+        <v-icon>notifications</v-icon>
+      </v-btn>
+      <v-btn icon large>
+        <v-avatar size="32px" tile>
+          <img
+            src="https://cdn.vuetifyjs.com/images/logos/logo.svg"
+            alt="Vuetify"
+          >
+        </v-avatar>
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-text-field
+          :append-icon-cb="() => {}"
+          placeholder="Search..."
+          single-line
+          append-icon="search"
+          color="white"
+          hide-details
+        ></v-text-field>
+      
     </v-toolbar>
-    <v-content>
-      <router-view></router-view>
-    </v-content>
-    <v-footer color="indigo" app>
-      <span class="white--text">&copy; 2017</span>
-    </v-footer>
+      <v-content >
+        <home-cmp></home-cmp>
+      </v-content>
+    
+    
   </v-app>
 </template>
 
 <script>
+import Filter from "@/components/SideFilter";
+import Home from "@/components/Home";
   export default {
+    components: {
+    'filters-cmp': Filter,
+    'home-cmp': Home
+    },
     data: () => ({
-      drawer: null
+      dialog: false,
+      drawer: null,
+      
     }),
     props: {
       source: String

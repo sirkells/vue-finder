@@ -1,24 +1,18 @@
 <template>
-  <v-container grid-list-md text-xs-center>
+  <v-container grid-list-md  fluid container>
     <v-layout row wrap>
-      
-      <v-flex xs3>
-        <filters-fill></filters-fill>
-      </v-flex>
-
-      
-      <v-flex xs9 v-for="(posts,i) in info" :key="i" >
+      <v-flex xs12 v-for="(posts,i) in info" :key="i" >
         <v-card v-for="(post, index) in posts.project_lists" :key="index" >
-          <v-card-title primary-title>
+          <v-card-title primary>
             <div>
-              <div class="headline">Top western road trips</div>
-              <span class="grey--text">1,000 miles of wonder</span>
+              <div class=""><a :href="post.url" target="_blank"><b>{{ post.title }}</b></a></div>
+              {{post.description.slice(0,350)}}
             </div>
           </v-card-title>
 
           <v-card-actions>
-            <v-btn flat>Share</v-btn>
-            <v-btn flat color="purple">Explore</v-btn>
+            <v-btn flat>{{ post.region.bundesland}}</v-btn>
+            <v-btn flat color="purple">{{ post.bereich.group}}</v-btn>
             <v-spacer></v-spacer>
             <v-card-actions>
                     <v-spacer></v-spacer>
@@ -32,16 +26,9 @@
                       <v-icon>share</v-icon>
                     </v-btn>
           </v-card-actions>
-            <v-btn expand icon @click="show = !show">
-              <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
-            </v-btn>
+            
           </v-card-actions>
 
-          <v-slide-y-transition>
-            <v-card-text v-show="show">
-              I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-            </v-card-text>
-          </v-slide-y-transition>
         </v-card>
         <div class="d-flex justify-between align-center mb-3">
           <v-btn @click="all">all</v-btn>
@@ -53,7 +40,6 @@
               <v-card>
                 <v-card-text>{{post.description}}</v-card-text>
               </v-card>
-  
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-flex>
@@ -63,7 +49,7 @@
 
 <script>
 import axios from "axios/dist/axios.min.js";
-import Filter from "@/components/Filter";
+import Filter from "./SideFilter";
 export default {
     components: {
     'filters-fill': Filter
@@ -140,5 +126,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+      
+         .container{
+             max-width: 3000px;
+         }
+         .main {
+      margin-top: 60px; /* Add a top margin to avoid content overlay */
+     }
 </style>
+
