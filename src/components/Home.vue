@@ -1,46 +1,13 @@
 <template>
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
-      <v-flex xs2>
-        <v-card>
       
-
-        <v-card-title primary-title>
-          <div>
-            <div class="headline">Top western road trips</div>
-            <span class="grey--text">1,000 miles of wonder</span>
-          </div>
-        </v-card-title>
-
-        <v-card-actions>
-          <v-btn flat>Share</v-btn>
-          <v-btn flat color="purple">Explore</v-btn>
-          <v-spacer></v-spacer>
-          <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn icon>
-                    <v-icon>favorite</v-icon>
-                  </v-btn>
-                  <v-btn icon>
-                    <v-icon>bookmark</v-icon>
-                  </v-btn>
-                  <v-btn icon>
-                    <v-icon>share</v-icon>
-                  </v-btn>
-          </v-card-actions>
-          <v-btn icon @click="show = !show">
-            <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
-          </v-btn>
-        </v-card-actions>
-
-        <v-slide-y-transition>
-          <v-card-text v-show="show">
-            I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-          </v-card-text>
-        </v-slide-y-transition>
-      </v-card>
+      <v-flex xs3>
+        <filters-fill></filters-fill>
       </v-flex>
-      <v-flex xs10 v-for="(posts,i) in info" :key="i" >
+
+      
+      <v-flex xs9 v-for="(posts,i) in info" :key="i" >
         <v-card v-for="(post, index) in posts.project_lists" :key="index" >
           <v-card-title primary-title>
             <div>
@@ -96,7 +63,11 @@
 
 <script>
 import axios from "axios/dist/axios.min.js";
+import Filter from "@/components/Filter";
 export default {
+    components: {
+    'filters-fill': Filter
+  },
     data () {
       return {
         show: false,
