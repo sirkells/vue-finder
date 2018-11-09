@@ -22,11 +22,23 @@
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <span class="hidden-sm-and-down">Projectfinder</span>
       </v-toolbar-title>
+      
+      
+      <v-text-field
+          :append-icon-cb="() => {}"
+          placeholder="Search..."
+          single-line
+          append-icon="search"
+          color="white"
+          hide-details
+        >
+      </v-text-field>
+      <v-spacer></v-spacer>
       <v-btn icon>
-        <v-icon>apps</v-icon>
+        <v-icon>bookmark</v-icon>
       </v-btn>
       <v-btn icon>
-        <v-icon>notifications</v-icon>
+        <v-icon>mdi-logout</v-icon>
       </v-btn>
       <v-btn icon large>
         <v-avatar size="32px">
@@ -36,22 +48,11 @@
           >
         </v-avatar>
       </v-btn>
-      <v-spacer></v-spacer>
-      <v-text-field
-          :append-icon-cb="() => {}"
-          placeholder="Search..."
-          single-line
-          append-icon="search"
-          color="white"
-          hide-details
-        ></v-text-field>
       
     </v-toolbar>
       <v-content >
         <home-cmp></home-cmp>
       </v-content>
-    
-    
   </v-app>
 </template>
 
