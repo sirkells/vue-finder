@@ -20,7 +20,8 @@
     >
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <span class="hidden-sm-and-down">Projectfinder</span>
+        
+        <span class=""><router-link to="/"><v-icon>bookmark</v-icon></router-link></span>
       </v-toolbar-title>
       
       

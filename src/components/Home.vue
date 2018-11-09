@@ -12,20 +12,23 @@
           </v-card-title>
 
           <v-card-actions>
-            <v-btn flat>{{ posts.region.bundesland}}</v-btn>
+            <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
             <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
+            <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
+            <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>
             <v-spacer></v-spacer>
             <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn icon>
                       <v-icon>favorite</v-icon>
                     </v-btn>
-                    <v-btn icon>
+                    <v-btn icon >
                       <v-icon>bookmark</v-icon>
                     </v-btn>
                     <v-btn 
                     icon
                     @click="dialog = !dialog"
+
                     >
                       <v-icon>share</v-icon>
                     </v-btn>
@@ -36,41 +39,57 @@
       </v-flex>
     </v-layout>
     <v-dialog v-model="dialog" width="800px">
-        <v-card>
-          <v-card-title
-            class="grey lighten-4 py-4 title"
-          >
-            To
-          </v-card-title>
-          <v-container grid-list-sm class="pa-4">
-            <v-layout row wrap>
-              <v-flex xs12 align-center justify-space-between>
-                <v-layout align-center>
-                </v-layout>
-              </v-flex>
-              
-              <v-flex xs12>
-                <v-text-field
-                  prepend-icon="mail"
-                  placeholder="Email"
-                ></v-text-field>
-              </v-flex>
-              
-              <v-flex xs12>
-                <v-text-field
-                  prepend-icon="notes"
-                  placeholder="Notes"
-                ></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
-          <v-card-actions>
-            
-            <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="dialog = false">Cancel</v-btn>
-            <v-btn flat @click="dialog = false">Send</v-btn>
-          </v-card-actions>
-        </v-card>
+      <v-card>
+        <v-toolbar
+          card
+          color="blue"
+          dark
+        >
+          
+          <v-btn flat  @click="dialog = false">
+            <v-icon>arrow_back</v-icon>
+          </v-btn>
+          
+          <v-spacer></v-spacer>
+          <v-btn flat  @click="dialog = false">
+            <v-icon>send</v-icon>
+          </v-btn>
+          
+        </v-toolbar>
+        <v-form>
+          <v-autocomplete
+            v-model="selected"
+            :items="['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher']"
+            chips
+            label="To"
+            full-width
+            hide-details
+            hide-no-data
+            hide-selected
+            multiple
+            single-line
+          ></v-autocomplete>
+          <v-divider></v-divider>
+          <v-text-field
+            v-model="subject"
+            label="Subject"
+            value="subject"
+            single-line
+            full-width
+            hide-details
+          ></v-text-field>
+          <v-divider></v-divider>
+          <v-textarea
+            v-model="title"
+            label="Message"
+            counter
+            maxlength="120"
+            full-width
+            single-line
+          ></v-textarea>
+        </v-form>
+      </v-card>
+      
     </v-dialog>
 
     
@@ -94,6 +113,10 @@ export default {
         total_results: [],
         panel: [],
         items: 5,
+        selected: ['Trevor Handsen'],
+        items: ['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher'],
+        title: '',
+        subject: '',
         products:[
       {
         productTitle:"ABCN",
