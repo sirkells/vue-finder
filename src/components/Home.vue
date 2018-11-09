@@ -1,18 +1,19 @@
 <template>
   <v-container grid-list-md  fluid container>
     <v-layout row wrap>
-      <v-flex xs12 v-for="(posts,i) in info" :key="i" >
-        <v-card v-for="(post, index) in posts.project_lists" :key="index" >
+      <v-flex xs12 v-for="(posts,i) in results" :key="i" >
+       
+        <v-card>
           <v-card-title primary>
             <div>
-              <div class=""><a :href="post.url" target="_blank"><b>{{ post.title }}</b></a></div>
-              {{post.description.slice(0,350)}}
+              <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
+              {{posts.description}}
             </div>
           </v-card-title>
 
           <v-card-actions>
-            <v-btn flat>{{ post.region.bundesland}}</v-btn>
-            <v-btn flat color="purple">{{ post.bereich.group}}</v-btn>
+            <v-btn flat>{{ posts.region.bundesland}}</v-btn>
+            <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
             <v-spacer></v-spacer>
             <v-card-actions>
                     <v-spacer></v-spacer>
@@ -30,12 +31,15 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+    
   </v-container>
 </template>
 
 <script>
 import axios from "axios/dist/axios.min.js";
 import Filter from "./SideFilter";
+import scrollMonitor from "scrollmonitor/scrollMonitor.js"
 export default {
     components: {
     'filters-fill': Filter
@@ -43,7 +47,8 @@ export default {
     data () {
       return {
         show: false,
-        info: [],
+        results: [],
+        total_results: [],
         panel: [],
         items: 5,
         products:[
@@ -68,13 +73,30 @@ export default {
       // Reset the panel
       none () {
         this.panel = []
-      }
-    },
+      },
+      appendItems () {
+              if (this.results.length < this.total_results.length) {
+                  var next_data = this.total_results.slice(this.results.length, this.results.length + 10);
+                  this.results = this.results.concat(next_data);
+              }
+          },
+      },
     mounted() {
     axios
       .get("http://127.0.0.1:5000/home")
-      .then(response => (this.info = response));
-  }
+      .then(response => {
+        this.total_results = response.data.project_lists
+        this.results = response.data.project_lists.slice(0, 10)
+        });
+    var vueInstance = this;
+    var elem = document.getElementById('product-list-bottom');
+    var watcher = scrollMonitor.create(elem);
+    watcher.enterViewport(function() {
+        console.log('hello')
+        vueInstance.appendItems()
+    })
+  },
+  
 }
 </script>
 
