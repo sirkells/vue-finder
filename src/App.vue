@@ -29,9 +29,9 @@
         <v-icon>notifications</v-icon>
       </v-btn>
       <v-btn icon large>
-        <v-avatar size="32px" tile>
+        <v-avatar size="32px">
           <img
-            src="https://cdn.vuetifyjs.com/images/logos/logo.svg"
+            src='https://cdn.vuetifyjs.com/images/lists/1.jpg'
             alt="Vuetify"
           >
         </v-avatar>

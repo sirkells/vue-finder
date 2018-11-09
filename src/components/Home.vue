@@ -25,23 +25,9 @@
                     <v-btn icon>
                       <v-icon>share</v-icon>
                     </v-btn>
+            </v-card-actions>
           </v-card-actions>
-            
-          </v-card-actions>
-
         </v-card>
-        <div class="d-flex justify-between align-center mb-3">
-          <v-btn @click="all">all</v-btn>
-          <v-btn @click="none">none</v-btn>
-        </div>
-        <v-expansion-panel v-model="panel" expand popout focusable v-for="(posts,i) in info" :key="i" >
-          <v-expansion-panel-content v-for="(post, index) in posts.project_lists" :key="index">
-              <div slot="header"><a :href="post.url" target="_blank"><b>{{ post.title }}</b></a></div>
-              <v-card>
-                <v-card-text>{{post.description}}</v-card-text>
-              </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
       </v-flex>
     </v-layout>
   </v-container>
@@ -69,39 +55,7 @@ export default {
 
 
       },
-      {
-        productTitle:"KARMA",
-        image       : require('../assets/images/product2.jpeg'),
-        productId:2,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-
-      },
-      {
-        productTitle:"Tino",
-        image       : require('../assets/images/product3.jpeg'),
-        productId:3,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      },
-      {
-        productTitle:"EFG",
-        image       : require('../assets/images/product4.jpeg'),
-        productId:4,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-
-      },
-      {
-        productTitle:"MLI",
-        image       : require('../assets/images/product5.jpeg'),
-        productId:5,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      },
-      {
-        productTitle:"Banans",
-        image       : require('../assets/images/product6.jpeg'),
-        productId:6,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-
-      }
+      
       ]
       }
     },
