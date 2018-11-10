@@ -2,6 +2,7 @@
   <div>
     <router-link :to="{ name: 'Home' }">Home</router-link>
     <router-link to="/login">Login</router-link>
+    <router-link to="/cockpit">Cockpit</router-link>
     <router-view></router-view>
   </div>
   
