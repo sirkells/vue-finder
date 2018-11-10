@@ -1,112 +1,168 @@
 <template>
-  <v-container grid-list-md  fluid container>
-    <v-layout row wrap>
-      <v-flex xs12 v-for="(posts,i) in results" :key="i" >
-       
-        <v-card>
-          <v-card-title primary>
-            <div>
-              <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
-              {{posts.description}}
-            </div>
-          </v-card-title>
-
-          <v-card-actions>
-            <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
-            <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
-            <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
-            <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>
-            <v-spacer></v-spacer>
-            <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn icon>
-                      <v-icon>favorite</v-icon>
-                    </v-btn>
-                    <v-btn icon >
-                      <v-icon>bookmark</v-icon>
-                    </v-btn>
-                    <v-btn 
-                    icon
-                    @click="dialog = !dialog"
-
-                    >
-                      <v-icon>share</v-icon>
-                    </v-btn>
-
-            </v-card-actions>
-          </v-card-actions>
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <v-dialog v-model="dialog" width="800px">
-      <v-card>
-        <v-toolbar
-          card
-          color="blue"
-          dark
-        >
-          
-          <v-btn flat  @click="dialog = false">
-            <v-icon>arrow_back</v-icon>
-          </v-btn>
-          
-          <v-spacer></v-spacer>
-          <v-btn flat  @click="dialog = false">
-            <v-icon>send</v-icon>
-          </v-btn>
-          
-        </v-toolbar>
-        <v-form>
-          <v-autocomplete
-            v-model="selected"
-            :items="['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher']"
-            chips
-            label="To"
-            full-width
-            hide-details
-            hide-no-data
-            hide-selected
-            multiple
-            single-line
-          ></v-autocomplete>
-          <v-divider></v-divider>
-          <v-text-field
-            v-model="subject"
-            label="Subject"
-            value="subject"
-            single-line
-            full-width
-            hide-details
-          ></v-text-field>
-          <v-divider></v-divider>
-          <v-textarea
-            v-model="title"
-            label="Message"
-            counter
-            maxlength="120"
-            full-width
-            single-line
-          ></v-textarea>
-        </v-form>
-      </v-card>
+  <v-app id="inspire">
+    <v-navigation-drawer
+      :clipped="$vuetify.breakpoint.lgAndUp"
+      v-model="drawer"
+      fixed
+      app
       
-    </v-dialog>
-
+    >
     
-  </v-container>
+      <filters-cmp ></filters-cmp>
+    
+    </v-navigation-drawer>
+    <v-toolbar
+      :clipped-left="$vuetify.breakpoint.lgAndUp"
+      color="blue darken-3"
+      dark
+      app
+      fixed
+    >
+      <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        
+        <span class=""><router-link to="/"><v-icon>bookmark</v-icon></router-link></span>
+      </v-toolbar-title>
+      
+      
+      <v-text-field
+          :append-icon-cb="() => {}"
+          placeholder="Search..."
+          single-line
+          append-icon="search"
+          color="white"
+          hide-details
+        >
+      </v-text-field>
+      <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon>bookmark</v-icon>
+      </v-btn>
+      <router-link to="/login">
+        <v-btn icon>
+          <v-icon>mdi-logout</v-icon>
+        </v-btn>
+      </router-link>
+      
+      <v-btn icon large>
+        <v-avatar size="32px">
+          <img
+            src='@/assets/david.jpg'
+            alt="Vuetify"
+          >
+        </v-avatar>
+      </v-btn>
+      
+    </v-toolbar>
+      <v-content >
+        <v-container grid-list-md  fluid container>
+          <v-layout row wrap>
+            <v-flex xs12 v-for="(posts,i) in results" :key="i" >
+              <v-card>
+                <v-card-title primary>
+                  <div>
+                    <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
+                    {{posts.description}}
+                  </div>
+                </v-card-title>
+                <v-card-actions>
+                  <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
+                  <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
+                  <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
+                  <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn icon>
+                            <v-icon>favorite</v-icon>
+                          </v-btn>
+                          <v-btn icon >
+                            <v-icon>bookmark</v-icon>
+                          </v-btn>
+                          <v-btn 
+                          icon
+                          @click="dialog = !dialog"
+
+                          >
+                            <v-icon>share</v-icon>
+                          </v-btn>
+                  </v-card-actions>
+                </v-card-actions>
+              </v-card>
+            </v-flex>
+          </v-layout>
+          <v-dialog v-model="dialog" width="800px">
+            <v-card>
+              <v-toolbar
+                card
+                color="blue"
+                dark
+              >
+
+                <v-btn flat  @click="dialog = false">
+                  <v-icon>arrow_back</v-icon>
+                </v-btn>
+
+                <v-spacer></v-spacer>
+                <v-btn flat  @click="dialog = false">
+                  <v-icon>send</v-icon>
+                </v-btn>
+
+              </v-toolbar>
+              <v-form>
+                <v-autocomplete
+                  v-model="selected"
+                  :items="['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher']"
+                  chips
+                  label="To"
+                  full-width
+                  hide-details
+                  hide-no-data
+                  hide-selected
+                  multiple
+                  single-line
+                ></v-autocomplete>
+                <v-divider></v-divider>
+                <v-text-field
+                  v-model="subject"
+                  label="Subject"
+                  value="subject"
+                  single-line
+                  full-width
+                  hide-details
+                ></v-text-field>
+                <v-divider></v-divider>
+                <v-textarea
+                  v-model="title"
+                  label="Message"
+                  counter
+                  maxlength="120"
+                  full-width
+                  single-line
+                ></v-textarea>
+              </v-form>
+            </v-card>
+          </v-dialog>
+        </v-container>
+      </v-content>
+  </v-app>
+
   
 </template>
 
 <script>
 import axios from "axios/dist/axios.min.js";
-import Filter from "./SideFilter";
+//import Filter from "./SideFilter";
 import scrollMonitor from "scrollmonitor/scrollMonitor.js"
+import Filter from "@/components/SideFilter";
 export default {
     components: {
-    'filters-fill': Filter
+    'filters-cmp': Filter,
   },
     data () {
       return {
+        dialog: false,
+        drawer: null,
         dialog: false,
         show: false,
         results: [],
