@@ -30,7 +30,7 @@
                         <v-icon>favorite</v-icon>
                       </v-btn>
                       <v-btn icon >
-                        <v-icon>bookmark</v-icon>
+                        <v-icon @click="saved">bookmark</v-icon>
                       </v-btn>
                       <v-btn 
                       icon
@@ -154,6 +154,9 @@ export default {
       // Reset the panel
       none () {
         this.panel = []
+      },
+      saved () {
+        alert('Project has been bookmarked')
       },
       appendItems () {
               if (this.results.length < this.total_results.length) {
