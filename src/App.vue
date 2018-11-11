@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import Filter from "@/components/SideFilter";
-import Home from "@/components/Home";
+// import Filter from "@/components/SideFilter";
+// import Home from "@/components/Home";
   export default {
     // components: {
     // 'filters-cmp': Filter,

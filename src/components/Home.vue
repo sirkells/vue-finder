@@ -176,6 +176,7 @@ export default {
         items: ['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher'],
         title: '',
         subject: '',
+        section: 'home',
         products:[
       {
         productTitle:"ABCN",
@@ -188,6 +189,9 @@ export default {
       
       ]
       }
+    },
+    created() {
+      this.fetchData()
     },
     methods: {
       // Create an array the length of our items
@@ -205,14 +209,26 @@ export default {
                   this.results = this.results.concat(next_data);
               }
           },
+      fetchData() {
+          axios.get('http://127.0.0.1:5000/'+this.section)
+          .then((resp) => {
+            this.total_results = resp.data.project_lists
+            this.results = resp.data.project_lists.slice(0, 10)
+            console.log(resp)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        },
       },
+      
     mounted() {
-    axios
-      .get("http://127.0.0.1:5000/home")
-      .then(response => {
-        this.total_results = response.data.project_lists
-        this.results = response.data.project_lists.slice(0, 10)
-        });
+    // axios
+    //   .get("http://127.0.0.1:5000/home")
+    //   .then(response => {
+    //     this.total_results = response.data.project_lists
+    //     this.results = response.data.project_lists.slice(0, 10)
+    //     });
     var vueInstance = this;
     var elem = document.getElementById('product-list-bottom');
     var watcher = scrollMonitor.create(elem);
