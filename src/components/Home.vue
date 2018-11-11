@@ -11,10 +11,18 @@
               </div>
             </v-card-title>
             <v-card-actions>
-              <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
+              
+                <div class="text-xs-center">
+                  <v-chip v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
+                  <v-chip v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
+                  <v-chip v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
+                  <v-chip v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                </div>
+              
+              <!-- <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
               <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
               <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
-              <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>
+              <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>-->
               <v-spacer></v-spacer>
               <v-card-actions>
                       <v-spacer></v-spacer>
