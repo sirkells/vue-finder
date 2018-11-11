@@ -7,6 +7,7 @@ import Cockpit from '@/components/Cockpit';
 Vue.use(Router);
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
