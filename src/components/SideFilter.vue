@@ -7,7 +7,7 @@
       >
         <v-icon>mdi-folder-network</v-icon>
         
-        <v-toolbar-title>Categories</v-toolbar-title>
+        <v-toolbar-title>{{category}}</v-toolbar-title>
       </v-toolbar>
       
       <v-layout>
@@ -96,6 +96,7 @@
 
 <script>
   export default {
+    props: ['category'],
     data: () => ({
       breweries: [],
       isLoading: false,
