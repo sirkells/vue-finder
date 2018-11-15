@@ -1,92 +1,4 @@
 <template>
-  <v-app id="inspire" >
-    <div v-show="$route.path==='/login' || $route.path==='/logout' ? false : true">
-      <v-navigation-drawer
-        :clipped="$vuetify.breakpoint.lgAndUp"
-        v-model="drawer"
-        fixed
-        app
-        v-show="$route.path==='/login' || $route.path==='/logout' ? false : true"
-
-      >
-
-        <filters-cmp :category="name" ></filters-cmp>
-
-      </v-navigation-drawer>
-      <v-toolbar
-        :clipped-left="$vuetify.breakpoint.lgAndUp"
-        color="blue darken-3"
-        dark
-        app
-        fixed
-      >
-        <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-          <v-icon @click.stop="drawer = !drawer">mdi-file-tree</v-icon>
-          <span>
-            <router-link to="/">
-            <v-btn 
-            icon 
-            large
-            @click="fetchData('home'), reset()">
-              <v-avatar size="50px">
-                <img
-                  src='@/assets/act1.svg'
-                  alt="Vuetify"
-                >
-              </v-avatar>
-            </v-btn>
-            </router-link>
-
-          </span>
-
-        </v-toolbar-title>
-
-
-        <v-text-field
-            :append-icon-cb="() => {}"
-            placeholder="Search..."
-            single-line
-            append-icon="search"
-            color="white"
-            hide-details
-          >
-        </v-text-field>
-        <v-spacer></v-spacer>
-
-        <router-link to="/cockpit">
-          <v-btn icon>
-            <v-icon>bookmark</v-icon>
-          </v-btn>
-        </router-link>
-        <router-link to="/tree">
-          <v-btn icon>
-            <v-icon>mdi-beer</v-icon>
-          </v-btn>
-        </router-link>
-        <router-link to="/newtree">
-          <v-btn icon>
-            <v-icon>mdi-home</v-icon>
-          </v-btn>
-        </router-link>
-
-        <router-link to="/login">
-          <v-btn icon>
-            <v-icon>mdi-logout</v-icon>
-          </v-btn>
-        </router-link>
-
-        <v-btn icon large>
-          <v-avatar size="32px">
-            <img
-              src='@/assets/david.jpg'
-              alt="Vuetify"
-            >
-          </v-avatar>
-        </v-btn>
-
-      </v-toolbar>
-    </div>
-    <v-content>
       <v-container grid-list-md  fluid container>
         <cock-cmp :category="cockpit"></cock-cmp>
         <v-layout row wrap>
@@ -132,10 +44,10 @@
                           <v-spacer></v-spacer>
                           <v-btn 
                           icon 
-                          class=" " 
+                          :class="results[index].color" 
                           @click="myFilter(index)"
                           >
-                            <v-icon>favorite</v-icon> 
+                            <v-icon >favorite</v-icon> 
                           </v-btn>
                           <v-btn icon >
                             <v-icon @click="addToCockpit(index)">bookmark</v-icon>
@@ -206,8 +118,6 @@
           </v-card>
         </v-dialog>
       </v-container>
-    </v-content>
-  </v-app>
 </template>
 
 <script>
@@ -220,7 +130,7 @@ import Cockpit from "@/components/Cockpit";
 
 export default {
     name: 'Home',
-    //props: ['cockpit'],
+    props: ['refreshHome'],
     components: {
     'filters-cmp': Filter,
     'cock-cmp': Cockpit
@@ -228,13 +138,16 @@ export default {
     data () {
       return {
         tab: null,
+        name: 'Filter',
         items: ['web', 'shopping', 'videos', 'images', 'news'],
         text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         dialog: false,
+        color: null,
         search_term: '',
         drawer: null,
         dark: false,
         show: false,
+        isActive: false,
         lActive: false,
         gActive: false,
         gtActive: false,
@@ -252,6 +165,7 @@ export default {
         title: '',
         subject: '',
         section: 'home',
+        country: [{name: 'Germany'}, {name: 'England'}],
         products:[
       {
         productTitle:"ABCN",
@@ -306,14 +220,10 @@ export default {
         
       },
       myFilter: function(index){
-            console.log(index)
+            console.log(this.results[index])
+            
+            
 
-            if(this.isActive){
-              this.isActive = false;
-            }
-            else{
-              this.isActive = true;
-            }
           // some code to filter users
         },
         addToCockpit: function(index) {
@@ -368,6 +278,22 @@ export default {
           .finally(() => this.loading = false)
         },
       },
+    watch: {
+      refreshHome: function() {
+        console.log(this.refreshHome)
+        this.fetchData('home')
+        this.reset()
+
+      },
+      selected_inf: function() {
+        console.log(this.selected_inf)
+        this.getPosts(this.selected_inf)
+      },
+      selected_ds: function() {
+        console.log(this.selected_ds)
+        this.getPosts(this.selected_ds)
+      }
+    },
       
     mounted() {
     // axios

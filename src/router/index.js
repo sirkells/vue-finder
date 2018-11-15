@@ -5,6 +5,7 @@ import Login from '@/components/Login';
 import Cockpit from '@/components/Cockpit';
 import Tree from '@/components/Tree';
 import Newtree from '@/components/Newtree';
+import Tab from '@/components/Tab';
 
 Vue.use(Router);
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/newtree',
       name: 'Newtree',
       component: Newtree,
+    },
+    {
+      path: '/tab',
+      name: 'Tab',
+      component: Tab,
     },
   ],
 });
