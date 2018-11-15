@@ -27,7 +27,7 @@
             <v-btn 
             icon 
             large
-            @click="fetchData('home')">
+            @click="fetchData('home'), reset()">
               <v-avatar size="50px">
                 <img
                   src='@/assets/act1.svg'
@@ -118,8 +118,9 @@
                       <v-chip :class="{warning: gtsActive}" @click="fetchData(posts.bereich.group + '/' + posts.bereich.group_type + '/' + posts.bereich.group_type_stack), toggle('gtsActive')" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
                       <v-chip :class="{warning: skActive}" @click="fetchData( 'skill/' + posts.bereich.skill), toggle('skActive')" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
                     </div>
-                     <!--  <v-chip v-if="posts._id.$oid">{{ posts._id.$oid }}</v-chip>
-                      <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
+                     
+                       <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
+                          <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
 
 
                   <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
@@ -266,6 +267,10 @@ export default {
     },
     created() {
       this.fetchData(this.section)
+      this.gtActive = false
+      this.gtsActive = false
+      this.gActive = false
+      this.skActive = false
       
     },
 
@@ -318,6 +323,12 @@ export default {
           alert('Project has been added')
 
         },
+      reset() {
+        this.gtActive = false
+        this.gtsActive = false
+        this.gActive = false
+        this.skActive = false
+      },
       all () {
         this.panel = [...Array(this.items).keys()].map(_ => true)
       },
