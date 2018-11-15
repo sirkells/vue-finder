@@ -28,7 +28,8 @@
                       <v-chip :class="{warning: gActive}" @click="fetchData(posts.bereich.group), toggle('gActive')" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
                       <v-chip :class="{warning: gtActive}" @click="fetchData(posts.bereich.group + '/' + posts.bereich.group_type), toggle('gtActive')" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
                       <v-chip :class="{warning: gtsActive}" @click="fetchData(posts.bereich.group + '/' + posts.bereich.group_type + '/' + posts.bereich.group_type_stack), toggle('gtsActive')" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
-                      <v-chip :class="{warning: skActive}" @click="fetchData( 'skill/' + posts.bereich.skill), toggle('skActive')" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
+                      <!--encodeURIComponent used to encode c# due to error caused by # -->
+                      <v-chip :class="{warning: skActive}" @click="fetchData( 'skill/' +  encodeURIComponent(posts.bereich.skill)), toggle('skActive')" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
                     </div>
                      
                        <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
@@ -268,6 +269,7 @@ export default {
             this.total_results = resp.data.project_lists
             this.results = resp.data.project_lists.slice(0, 10)
             console.log(resp)
+            console.log(section)
             
             
           })
