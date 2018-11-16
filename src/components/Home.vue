@@ -1,4 +1,5 @@
 <template>
+      
       <v-container grid-list-md  fluid container>
         <cock-cmp :category="cockpit"></cock-cmp>
         <v-layout row wrap>
@@ -24,12 +25,12 @@
                 <v-card-actions>
 
                     <div class="text-xs-center">
-                      <v-chip :class="{warning: lActive}" @click="fetchData('location/' + posts.region.bundesland), toggle('lActive')" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
-                      <v-chip :class="{warning: gActive}" @click="fetchData(posts.bereich.group), toggle('gActive')" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
-                      <v-chip :class="{warning: gtActive}" @click="fetchData(posts.bereich.group + '/' + posts.bereich.group_type), toggle('gtActive')" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                      <v-chip :class="{warning: gtsActive}" @click="fetchData(posts.bereich.group + '/' + posts.bereich.group_type + '/' + posts.bereich.group_type_stack), toggle('gtsActive')" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                      <v-chip :class="{warning: lActive}" @click="toggle('lActive'),fetchData('location/' + posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
+                      <v-chip :class="{warning: gActive}"  @click="toggle('gActive'), fetchData(posts.bereich.group)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
+                      <v-chip :class="{warning: gtActive}" @click="toggle('gtActive'), fetchData(posts.bereich.group + '/' + posts.bereich.group_type)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
+                      <v-chip :class="{warning: gtsActive}" @click="toggle('gtsActive'), fetchData(posts.bereich.group + '/' + posts.bereich.group_type + '/' + posts.bereich.group_type_stack)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
                       <!--encodeURIComponent used to encode c# due to error caused by # -->
-                      <v-chip :class="{warning: skActive}" @click="fetchData( 'skill/' +  encodeURIComponent(posts.bereich.skill)), toggle('skActive')" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
+                      <v-chip :class="{warning: skActive}" @click="toggle('skActive'), fetchData( 'skill/' +  encodeURIComponent(posts.bereich.skill))" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
                     </div>
                      
                        <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
@@ -45,10 +46,9 @@
                           <v-spacer></v-spacer>
                           <v-btn 
                           icon 
-                          :class="results[index].color" 
                           @click="myFilter(index)"
                           >
-                            <v-icon >favorite</v-icon> 
+                            <v-icon :class="{success: myActive}">favorite</v-icon> 
                           </v-btn>
                           <v-btn icon >
                             <v-icon @click="addToCockpit(index)">bookmark</v-icon>
@@ -131,7 +131,8 @@ import Cockpit from "@/components/Cockpit";
 
 export default {
     name: 'Home',
-    props: ['refreshHome'],
+    //props passed from APP.vue refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered
+    props: ['refreshHome', 'search_term', 'searchCalled'],
     components: {
     'filters-cmp': Filter,
     'cock-cmp': Cockpit
@@ -139,16 +140,16 @@ export default {
     data () {
       return {
         tab: null,
+        url: 'http://127.0.0.1:5000/',
         name: 'Filter',
-        items: ['web', 'shopping', 'videos', 'images', 'news'],
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        dialog: false,
         color: null,
-        search_term: '',
+        myActive: false,
+        dialog: null,
         drawer: null,
         dark: false,
         show: false,
         isActive: false,
+        //lActive=location, gActive=group, gtActive=group_type, gtsActive=group_type_stack, sActive=skill
         lActive: false,
         gActive: false,
         gtActive: false,
@@ -191,9 +192,10 @@ export default {
 
     
     methods: {
-      // Create an array the length of our items
-      // with all values as true
+     //toggles color of tags clicked
       toggle(card) {
+        //this is added to change the url back to default when a chip is clicked after a search result
+         this.url = 'http://127.0.0.1:5000/'
         if (card === 'skActive') {
           this.skActive = !this.skActive
           this.gtActive = false
@@ -220,8 +222,9 @@ export default {
         }
         
       },
-      myFilter: function(index){
+      myFilter: function(index, e){
             console.log(this.results[index])
+            this.myActive = !this.myActive
             
             
 
@@ -240,6 +243,8 @@ export default {
         this.gActive = false
         this.skActive = false
       },
+       // Create an array the length of our items
+      // with all values as true
       all () {
         this.panel = [...Array(this.items).keys()].map(_ => true)
       },
@@ -247,6 +252,7 @@ export default {
       none () {
         this.panel = []
       },
+      //allert when project has been bookmarked
       saved () {
 
         alert('Project has been bookmarked')
@@ -263,10 +269,13 @@ export default {
                   this.results = this.results.concat(next_data);
               }
           },
+      //fetchs data from API
       fetchData(section) {
-          axios.get('http://127.0.0.1:5000/'+section)
+          axios.get(this.url +section)
           .then((resp) => {
+            //total results gets all the data from the api
             this.total_results = resp.data.project_lists
+            //results takes only 10 data and returns 10 everytime scrllbar ends
             this.results = resp.data.project_lists.slice(0, 10)
             console.log(resp)
             console.log(section)
@@ -281,20 +290,52 @@ export default {
         },
       },
     watch: {
+      //refreshes the homepage
       refreshHome: function() {
         console.log(this.refreshHome)
+        this.url = 'http://127.0.0.1:5000/'
         this.fetchData('home')
         this.reset()
 
       },
-      selected_inf: function() {
-        console.log(this.selected_inf)
-        this.getPosts(this.selected_inf)
+      //watches the searchterm is been trigered by the keyboard event
+      searchCalled: function() {
+        //checks if theres any letter is enterd in search bar. 
+        if (this.search_term.length <=1) {
+          //if none, it changes the url to home 
+          this.url = 'http://127.0.0.1:5000/'
+          //and it returns all projects
+          this.fetchData(this.section)
+        }
+        // if theres a searchterm
+        else {
+          console.log(this.search_term + '1')
+          //changes url to query url
+          this.url = 'http://127.0.0.1:5000/query/'
+          //fetches data based on search term. search as you type feature enabled due to keyboardup.prevent event in the App.vue search textfield event
+          this.fetchData(this.search_term)
+        }
+        
+        // axios.get('http://127.0.0.1:5000/query/'+this.search_term)
+        //   .then((resp) => {
+        //     this.total_results = resp.data.project_lists
+        //     this.results = resp.data.project_lists.slice(0, 10)
+        //     console.log(resp)
+        //     console.log(section)
+            
+            
+        //   })
+        //   .catch((err) => {
+        //     console.log(err)
+        //     this.errored = true
+        //   })
+        //   .finally(() => this.loading = false)
+        
       },
-      selected_ds: function() {
-        console.log(this.selected_ds)
-        this.getPosts(this.selected_ds)
-      }
+      // selected_ds: function() {
+      //   console.log(this.selected_ds)
+      //   this.getPosts(this.selected_ds)
+      // }
     },
       
     mounted() {

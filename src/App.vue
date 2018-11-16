@@ -41,15 +41,19 @@
 
         </v-toolbar-title>
 
-
+        <!--keyup.prevent is an event that allows ssearch as you type. it sends each text entered to the home componet to search-->
         <v-text-field
             :append-icon-cb="() => {}"
             placeholder="Search..."
             single-line
             append-icon="search"
             color="white"
+            clearable
             hide-details
+            v-model="search_term"
+            @keyup.prevent="search"
           >
+          
         </v-text-field>
         <v-spacer></v-spacer>
 
@@ -86,8 +90,9 @@
 
       </v-toolbar>
     </div>
+    <!--props passed to Home.vue refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered -->
     <v-content>
-      <router-view :refreshHome="refreshme"></router-view>
+      <router-view :refreshHome="refreshme" :search_term="search_term"  :searchCalled="searchCalled"></router-view>
     </v-content>
   </v-app>
 </template>
@@ -111,7 +116,9 @@
       drawer: false,
       section: '',
       name: 'Filter',
-      refreshme: false
+      refreshme: false,
+      search_term: '',
+      searchCalled: false
       
     }),
     methods: {
@@ -120,6 +127,10 @@
       },
       fetchme() {
         this.refreshme = !this.refreshme
+      },
+      search() {
+        console.log(this.search_term)
+        this.searchCalled = !this.searchCalled
       }
     },
     props: {
