@@ -45,10 +45,9 @@
                   <v-card-actions>
                           <v-spacer></v-spacer>
                           <v-btn 
-                          icon 
-                          @click="myFilter(index)"
+                          icon
                           >
-                            <v-icon :class="{success: myActive}">favorite</v-icon> 
+                            <v-icon @click="myToggleFunction($event)" >favorite</v-icon> 
                           </v-btn>
                           <v-btn icon >
                             <v-icon @click="addToCockpit(index)">bookmark</v-icon>
@@ -140,6 +139,7 @@ export default {
     data () {
       return {
         tab: null,
+        
         url: 'http://127.0.0.1:5000/',
         name: 'Filter',
         color: null,
@@ -222,6 +222,14 @@ export default {
         }
         
       },
+      //to toggle the style class in any element
+      //this toggles the error--text class when button is clicked
+      myToggleFunction: function(event){
+          let button = event.target;
+          console.log(button.classList)
+          //error--text is a stlyin class for v-icon
+          button.classList.toggle("error--text");
+        },
       myFilter: function(index, e){
             console.log(this.results[index])
             this.myActive = !this.myActive
@@ -230,7 +238,7 @@ export default {
 
           // some code to filter users
         },
-        addToCockpit: function(index) {
+      addToCockpit: function(index) {
           this.cockpit.push(this.results[index])
           
           console.log(this.cockpit.length)
