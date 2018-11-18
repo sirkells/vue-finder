@@ -7,7 +7,7 @@
                         My Filter
                     </v-card-title>
                     <v-card-text>
-                        <v-treeview :items="items" :open="open">
+                        <v-treeview :items="items" :open="open" checkbox>
                             <template slot="prepend" slot-scope="{item, open}">
                                 <v-icon v-if="item.type === 'folder'">
                                     {{ open ? 'mdi-folder-open' : 'mdi-folder' }}

@@ -64,7 +64,7 @@
         </router-link>
         <router-link to="/tree">
           <v-btn icon>
-            <v-icon>mdi-beer</v-icon>
+            <v-icon>favoriter</v-icon>
           </v-btn>
         </router-link>
         <router-link to="/tab">

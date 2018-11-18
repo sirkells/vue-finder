@@ -140,7 +140,7 @@ export default {
       return {
         tab: null,
         
-        url: 'http://127.0.0.1:5000/',
+        url: 'http://127.0.0.1:5000/api/filters',
         name: 'Filter',
         color: null,
         myActive: false,
@@ -225,10 +225,11 @@ export default {
       //to toggle the style class in any element
       //this toggles the error--text class when button is clicked
       myToggleFunction: function(event){
-          let button = event.target;
-          console.log(button.classList)
-          //error--text is a stlyin class for v-icon
-          button.classList.toggle("error--text");
+        //error--text is a stlyin class for v-icon
+          event.target.classList.toggle("error--text");
+          //let button = event.target;
+          //console.log(button.classList)
+          
         },
       myFilter: function(index, e){
             console.log(this.results[index])
