@@ -11,6 +11,7 @@
       >
 
         <filters-cmp :category="name" ></filters-cmp>
+        <tree-cmp></tree-cmp>
 
       </v-navigation-drawer>
       <v-toolbar
@@ -67,9 +68,9 @@
             <v-icon>favoriter</v-icon>
           </v-btn>
         </router-link>
-        <router-link to="/tab">
+        <router-link to="/search">
           <v-btn icon>
-            <v-icon>mdi-home</v-icon>
+            <v-icon>search</v-icon>
           </v-btn>
         </router-link>
 
@@ -101,7 +102,8 @@
   import Filter from "@/components/SideFilter";
   import Home from "@/components/Home";
   import Cockpit from "@/components/Cockpit";
-  import Tab from "@/components/Tab";
+  import Search from "@/components/Search";
+  import Tree from "@/components/Tree";
   
   export default {
     
@@ -109,7 +111,8 @@
       'filters-cmp': Filter,
       'home-cmp': Home,
       'cock-cmp': Cockpit,
-      'tab-cmp': Tab
+      'search-cmp': Search,
+      'tree-cmp': Tree
     },
     
     data: () => ({
