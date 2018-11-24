@@ -9,6 +9,7 @@
 
           <section v-else>
             <div v-if="loading">Loading...</div>
+           
 
             <v-flex 
               v-else
@@ -25,18 +26,16 @@
                 <v-card-actions>
 
                     <div class="text-xs-center">
-                      <v-chip :class="{warning: lActive}" @click="toggle('lActive'),fetchData('location/' + posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
-                      <v-chip :class="{warning: gActive}"  @click="toggle('gActive'), fetchData(posts.bereich.group)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
-                      <v-chip :class="{warning: gtActive}" @click="toggle('gtActive'), fetchData(posts.bereich.group + '/' + posts.bereich.group_type)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                      <v-chip :class="{warning: gtsActive}" @click="toggle('gtsActive'), fetchData(posts.bereich.group + '/' + posts.bereich.group_type + '/' + posts.bereich.group_type_stack)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                      <v-chip :class="{success: lActive}" @click="lActive = !lActive, get('bundesland='+posts.region.bundesland, posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
+                      <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, get('group=' + posts.bereich.group, posts.region.bundesland)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
+                      <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, get('groupType=' + posts.bereich.group_type, posts.region.bundesland)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
+                      <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive,get('groupStack=' + posts.bereich.group_type_stack, posts.region.bundesland)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
                       <!--encodeURIComponent used to encode c# due to error caused by # -->
-                      <v-chip :class="{warning: skActive}" @click="toggle('skActive'), fetchData( 'skill/' +  encodeURIComponent(posts.bereich.skill))" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
+                      <v-chip :class="{purple: skActive}" @click="skActive = !skActive, get('skill=' +  encodeURIComponent(posts.bereich.skill), posts.region.bundesland)" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
                     </div>
                      
                        <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
                           <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
-
-
                   <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
                   <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
                   <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
@@ -126,8 +125,6 @@ import axios from "axios/dist/axios.min.js";
 import scrollMonitor from "scrollmonitor/scrollMonitor.js"
 import Filter from "@/components/SideFilter";
 import Cockpit from "@/components/Cockpit";
-
-
 export default {
     name: 'Home',
     //props passed from APP.vue refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered
@@ -140,7 +137,7 @@ export default {
       return {
         tab: null,
         
-        url: 'http://127.0.0.1:5000/api/filters',
+        url: 'http://127.0.0.1:5000/api/?',
         name: 'Filter',
         color: null,
         myActive: false,
@@ -166,7 +163,9 @@ export default {
         items: ['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher'],
         title: '',
         subject: '',
-        section: 'home',
+        section: '',
+        link: '',
+        group: false,
         country: [{name: 'Germany'}, {name: 'England'}],
         products:[
       {
@@ -174,54 +173,91 @@ export default {
         image       : require('../assets/images/product1.jpeg'),
         productId:1,
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-
-
       },
       
       ]
       }
     },
     created() {
-      this.fetchData(this.section)
-      this.gtActive = false
-      this.gtsActive = false
-      this.gActive = false
-      this.skActive = false
-      
+      this.reset()
     },
-
     
     methods: {
      //toggles color of tags clicked
-      toggle(card) {
+      get(param, loc) {
         //this is added to change the url back to default when a chip is clicked after a search result
-         this.url = 'http://127.0.0.1:5000/'
-        if (card === 'skActive') {
-          this.skActive = !this.skActive
-          this.gtActive = false
-          this.gtsActive = false
-          this.gActive = false
+        //this.url = 'http://127.0.0.1:5000/api/'
+        if (this.lActive) {
+          this.fetchData(param)
+        } 
+        else if (this.gActive) {
+            this.fetchData(param)
+          }
+        else if (this.gtActive) {
+            this.fetchData(param)
+          }
+        else if (this.gtsActive) {
+            this.fetchData(param)
+          }
+        else if (this.skActive) {
+            this.fetchData(param)
+          }
+        else {
+          this.fetchData('')
         }
-        else if (card === 'gActive') {
-          this.gActive = !this.gActive
-          this.skActive = false
-          this.gtActive = false
-          this.gtsActive = false
-        }
-        else if (card === 'gtActive') {
-          this.gtActive = !this.gtActive
-          this.skActive = false
-          this.gtsActive = false
-          this.gActive = false
-        }
-        else if (card === 'gtsActive') {
-          this.gtsActive = !this.gtsActive
-          this.skActive = false
-          this.gtActive = false
-          this.gActive = false
-        }
-        
       },
+          // this.skActive = !this.skActive
+          // if (this.skActive) {
+          //   this.fetchData(param)
+          // }
+          // else {
+          //   this.fetchData('')
+          // }
+        //}
+        // else if (card === 'gActive') {
+        //   this.gActive = !this.gActive
+        //   if (this.gActive) {
+        //     this.fetchData(param)
+        //   }
+        //   else {
+        //     this.fetchData('')
+        //   }
+        // }
+        // else if (card === 'gtActive') {
+        //   this.gtActive = !this.gtActive
+        //   if (this.gtActive) {
+        //     this.fetchData(param)
+        //   }
+        //   else {
+        //     this.fetchData('')
+        //   }
+        // }
+        // else if (card === 'gtsActive') {
+        //   this.gtsActive = !this.gtsActive
+        //   if (this.gtsActive) {
+        //     this.fetchData(param)
+        //   }
+        //   else {
+        //     this.fetchData('')
+        //   }
+        // }
+        // else if (card === 'lActive') {
+        //   this.lActive = !this.lActive
+        //   if (this.lActive) {
+        //     this.fetchData(param)
+        //   }
+        //   else {
+        //     this.fetchData('')
+        //   }
+        //   // else if (this.gActive || this.gtActive || this.gtsActive || this.skActive) {
+        //   //   this.fetchData()
+        //   // }
+          
+        //   //this.url = 'http://127.0.0.1:5000/api/?bundesland='
+           
+        // }
+        
+     
       //to toggle the style class in any element
       //this toggles the error--text class when button is clicked
       myToggleFunction: function(event){
@@ -236,7 +272,6 @@ export default {
             this.myActive = !this.myActive
             
             
-
           // some code to filter users
         },
       addToCockpit: function(index) {
@@ -244,13 +279,16 @@ export default {
           
           console.log(this.cockpit.length)
           alert('Project has been added')
-
         },
       reset() {
         this.gtActive = false
         this.gtsActive = false
         this.gActive = false
         this.skActive = false
+        this.lActive = false
+        this.link = ''
+        this.section = ''
+        this.fetchData(this.section)
       },
        // Create an array the length of our items
       // with all values as true
@@ -263,15 +301,17 @@ export default {
       },
       //allert when project has been bookmarked
       saved () {
-
         alert('Project has been bookmarked')
       },
       addToCockpit: function(index) {
           this.cockpit.push(this.results[index])
           console.log(this.cockpit.length)
           alert('Project has been added')
-
         },
+      bundesland_val (land) {
+        this.link =   'bundesland=' + land
+        console.log(this.link)
+      },
       appendItems () {
               if (this.results.length < this.total_results.length) {
                   var next_data = this.total_results.slice(this.results.length, this.results.length + 10);
@@ -280,39 +320,48 @@ export default {
           },
       //fetchs data from API
       fetchData(section) {
-          axios.get(this.url +section)
-          .then((resp) => {
-            //total results gets all the data from the api
-            this.total_results = resp.data.project_lists
-            //results takes only 10 data and returns 10 everytime scrllbar ends
-            this.results = resp.data.project_lists.slice(0, 10)
-            console.log(resp)
-            console.log(section)
-            
-            
-          })
-          .catch((err) => {
-            console.log(err)
-            this.errored = true
-          })
-          .finally(() => this.loading = false)
-        },
+        let a 
+        a = this.url + section
+        // if (this.lActive && this.gActive) {
+        //   a = this.url +section + '&' + this.link
+        // }
+        // else if (this.lActive) {
+        //   a = this.url + '&' +section
+        // }
+        // else {
+        //   a = this.url +section
+        // }
+        
+        axios.get(a)
+        .then((resp) => {
+          //total results gets all the data from the api
+          this.total_results = resp.data.project_lists
+          //results takes only 10 data and returns 10 everytime scrllbar ends
+          this.results = resp.data.project_lists.slice(0, 10)
+          console.log(resp)
+          console.log(a)
+          
+          
+        })
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => this.loading = false)
       },
+    },
     watch: {
       //refreshes the homepage
       refreshHome: function() {
         console.log(this.refreshHome)
-        this.url = 'http://127.0.0.1:5000/'
-        this.fetchData('home')
         this.reset()
-
       },
       //watches the searchterm is been trigered by the keyboard event
       searchCalled: function() {
         //checks if theres any letter is enterd in search bar. 
         if (this.search_term.length <=1) {
           //if none, it changes the url to home 
-          this.url = 'http://127.0.0.1:5000/'
+          this.url = 'http://127.0.0.1:5000/api/?'
           //and it returns all projects
           this.fetchData(this.section)
         }
@@ -320,9 +369,12 @@ export default {
         else {
           console.log(this.search_term + '1')
           //changes url to query url
-          this.url = 'http://127.0.0.1:5000/query/'
+          this.url = 'http://127.0.0.1:5000/api/search/?'
           //fetches data based on search term. search as you type feature enabled due to keyboardup.prevent event in the App.vue search textfield event
-          this.fetchData(this.search_term)
+          let term
+          term = "search_term=" + this.search_term
+          console.log(term)
+          this.fetchData(term)
         }
         
         // axios.get('http://127.0.0.1:5000/query/'+this.search_term)
@@ -376,4 +428,3 @@ export default {
       margin-top: 60px; /* Add a top margin to avoid content overlay */
      }
 </style>
-
