@@ -30,6 +30,8 @@
                       <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, get('group=' + posts.bereich.group, posts.region.bundesland)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
                       <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, get('groupType=' + posts.bereich.group_type, posts.region.bundesland)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
                       <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive,get('groupStack=' + posts.bereich.group_type_stack, posts.region.bundesland)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                      <v-chip :class="{info: pActive}" @click="pActive = !pActive,get('platform=' + posts.bereich.platform, posts.region.bundesland)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
+                      <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive,get('platform_name=' + posts.bereich.platform_name, posts.region.bundesland)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
                       <!--encodeURIComponent used to encode c# due to error caused by # -->
                       <v-chip :class="{purple: skActive}" @click="skActive = !skActive, get('skill=' +  encodeURIComponent(posts.bereich.skill), posts.region.bundesland)" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
                     </div>
