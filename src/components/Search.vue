@@ -139,7 +139,12 @@ export default {
       return {
         tab: null,
         
-        url: 'http://127.0.0.1:5000/es',
+        url: 'http://127.0.0.1:5000/api/?',
+        bundesland: '',
+        group_val: '',
+        groupTypeval: '',
+        groupStackval: '',
+        skill_val: '',
         name: 'Filter',
         color: null,
         myActive: false,
@@ -189,23 +194,65 @@ export default {
       get(param, loc) {
         //this is added to change the url back to default when a chip is clicked after a search result
         //this.url = 'http://127.0.0.1:5000/api/'
-        if (this.lActive) {
-          this.fetchData(param)
-        } 
+
+        if (!this.lActive) {
+          if (this.gActive || this.gtActive || this.gtsActive || this.skActive) {
+            let a
+            a =  this.group_val + this.groupTypeval + this.groupStackval + ''
+            this.fetchData(a)
+          }
+          else {
+            this.fetchData('')
+          }
+          }
         else if (this.gActive) {
-            this.fetchData(param)
+            this.group_val = param
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
-        else if (this.gtActive) {
-            this.fetchData(param)
+        
+        else if (this.gtActive ) {
+            this.groupTypeval = param
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
-        else if (this.gtsActive) {
-            this.fetchData(param)
+       
+        else if (this.gtsActive ) {
+            this.groupStackval
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
-        else if (this.skActive) {
-            this.fetchData(param)
+        
+        else if (this.skActive ) {
+            this.skill_val = param
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
+        
+        else if (this.lActive) {
+            this.bundesland = loc
+            let a
+            a = 'bundesland=' + loc
+            this.fetchData(a)
+          }
+        
+        // else if (this.gtActive) {
+        //     this.fetchData(param)
+        //   }
+        // else if (this.gtsActive) {
+        //     this.fetchData(param)
+        //   }
+        // else if (this.skActive) {
+        //     this.fetchData(param)
+        //   }
         else {
-          this.fetchData('')
+          let a
+          a = 'bundesland=' + loc
+          this.fetchData(a)
         }
       },
           // this.skActive = !this.skActive
@@ -283,6 +330,8 @@ export default {
           alert('Project has been added')
         },
       reset() {
+        this.url = 'http://127.0.0.1:5000/api/?'
+        this.fetchData(this.section)
         this.gtActive = false
         this.gtsActive = false
         this.gActive = false
@@ -290,8 +339,7 @@ export default {
         this.lActive = false
         this.link = ''
         this.section = ''
-        this.url = 'http://127.0.0.1:5000/es'
-        this.fetchData(this.section)
+        
       },
        // Create an array the length of our items
       // with all values as true
@@ -365,7 +413,7 @@ export default {
         //checks if theres any letter is enterd in search bar. 
         if (this.search_term.length <=1) {
           //if none, it changes the url to home 
-          this.url = 'http://127.0.0.1:5000/es'
+          this.url = 'http://127.0.0.1:5000/api/?'
           //and it returns all projects
           this.fetchData(this.section)
         }
@@ -373,7 +421,7 @@ export default {
         else {
           console.log(this.search_term + '1')
           //changes url to query url
-          this.url = 'http://127.0.0.1:5000/es/search/?'
+          this.url = 'http://127.0.0.1:5000/api/search/?'
           //fetches data based on search term. search as you type feature enabled due to keyboardup.prevent event in the App.vue search textfield event
           let term
           term = "search_term=" + this.search_term

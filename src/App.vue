@@ -125,10 +125,6 @@
       refreshme: false,
       search_term: '',
       searchCalled: false,
-      treeData: this.getData(),
-      treeOptions: {
-      }
-      
     }),
     methods: {
       refresh() {
