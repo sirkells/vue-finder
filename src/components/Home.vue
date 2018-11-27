@@ -331,7 +331,7 @@ export default {
         },
       reset() {
         this.url = 'http://127.0.0.1:5000/api/?'
-        this.fetchData(this.section)
+        this.fetchData('')
         this.gtActive = false
         this.gtsActive = false
         this.gActive = false
