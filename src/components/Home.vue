@@ -283,6 +283,8 @@ export default {
           alert('Project has been added')
         },
       reset() {
+        this.url = 'http://127.0.0.1:5000/api/?'
+        this.fetchData(this.section)
         this.gtActive = false
         this.gtsActive = false
         this.gActive = false
@@ -290,7 +292,7 @@ export default {
         this.lActive = false
         this.link = ''
         this.section = ''
-        this.fetchData(this.section)
+        
       },
        // Create an array the length of our items
       // with all values as true
@@ -355,8 +357,9 @@ export default {
     watch: {
       //refreshes the homepage
       refreshHome: function() {
-        console.log(this.refreshHome)
         this.reset()
+        console.log(this.refreshHome)
+        
       },
       //watches the searchterm is been trigered by the keyboard event
       searchCalled: function() {
