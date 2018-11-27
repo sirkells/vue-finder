@@ -12,6 +12,7 @@
 
         <filters-cmp :category="name" ></filters-cmp>
         <tree-cmp></tree-cmp>
+        <liq-tree></liq-tree>
 
       </v-navigation-drawer>
       <v-toolbar
@@ -104,6 +105,7 @@
   import Cockpit from "@/components/Cockpit";
   import Search from "@/components/Search";
   import Tree from "@/components/Tree";
+  import Liquor from "@/components/Liquor";
   
   export default {
     
@@ -112,7 +114,8 @@
       'home-cmp': Home,
       'cock-cmp': Cockpit,
       'search-cmp': Search,
-      'tree-cmp': Tree
+      'tree-cmp': Tree,
+      'liq-tree': Liquor
     },
     
     data: () => ({
@@ -121,7 +124,10 @@
       name: 'Filter',
       refreshme: false,
       search_term: '',
-      searchCalled: false
+      searchCalled: false,
+      treeData: this.getData(),
+      treeOptions: {
+      }
       
     }),
     methods: {
@@ -134,7 +140,8 @@
       search() {
         console.log(this.search_term)
         this.searchCalled = !this.searchCalled
-      }
+      },
+      
     },
     props: {
       source: String

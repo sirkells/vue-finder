@@ -3,6 +3,9 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VueTreeNavigation from 'vue-tree-navigation';
+import LiquorTree from 'liquor-tree'
+
+// global registration
 
 
 import 'vuetify/dist/vuetify.min.css';
@@ -16,6 +19,7 @@ Vue.config.productionTip = false;
 
 Vue.use(Vuetify);
 Vue.use(VueTreeNavigation);
+Vue.use(LiquorTree);
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

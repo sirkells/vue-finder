@@ -6,6 +6,7 @@ import Cockpit from '@/components/Cockpit';
 import Tree from '@/components/Tree';
 import Newtree from '@/components/Newtree';
 import Search from '@/components/Search';
+import Liquor from '@/components/Liquor';
 
 Vue.use(Router);
 
@@ -41,6 +42,11 @@ export default new Router({
       path: '/search',
       name: 'Search',
       component: Search,
+    },
+    {
+      path: '/liq',
+      name: 'Liquor',
+      component: Liquor,
     },
   ],
 });
