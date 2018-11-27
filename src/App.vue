@@ -118,18 +118,19 @@
       'liq-tree': Liquor
     },
     
-    data: () => ({
-      drawer: false,
-      section: '',
-      name: 'Filter',
-      refreshme: false,
-      search_term: '',
-      searchCalled: false,
-      treeData: this.getData(),
-      treeOptions: {
+    data () {
+      return {
+        drawer: false,
+        section: '',
+        name: 'Filter',
+        refreshme: false,
+        search_term: '',
+        searchCalled: false,
+        treeData: this.getData(),
+        treeOptions: {
+        }
       }
-      
-    }),
+    },
     methods: {
       refresh() {
         this.section = 'home'

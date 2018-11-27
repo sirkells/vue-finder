@@ -140,6 +140,11 @@ export default {
         tab: null,
         
         url: 'http://127.0.0.1:5000/api/?',
+        bundesland: '',
+        group_val: '',
+        groupTypeval: '',
+        groupStackval: '',
+        skill_val: '',
         name: 'Filter',
         color: null,
         myActive: false,
@@ -189,23 +194,65 @@ export default {
       get(param, loc) {
         //this is added to change the url back to default when a chip is clicked after a search result
         //this.url = 'http://127.0.0.1:5000/api/'
-        if (this.lActive) {
-          this.fetchData(param)
-        } 
+
+        if (!this.lActive) {
+          if (this.gActive || this.gtActive || this.gtsActive || this.skActive) {
+            let a
+            a =  this.group_val + this.groupTypeval + this.groupStackval + ''
+            this.fetchData(a)
+          }
+          else {
+            this.fetchData('')
+          }
+          }
         else if (this.gActive) {
-            this.fetchData(param)
+            this.group_val = param
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
-        else if (this.gtActive) {
-            this.fetchData(param)
+        
+        else if (this.gtActive ) {
+            this.groupTypeval = param
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
-        else if (this.gtsActive) {
-            this.fetchData(param)
+       
+        else if (this.gtsActive ) {
+            this.groupStackval
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
-        else if (this.skActive) {
-            this.fetchData(param)
+        
+        else if (this.skActive ) {
+            this.skill_val = param
+            let a
+            a = param +  '&' + 'bundesland=' + this.bundesland
+            this.fetchData(a)
           }
+        
+        else if (this.lActive) {
+            this.bundesland = loc
+            let a
+            a = 'bundesland=' + loc
+            this.fetchData(a)
+          }
+        
+        // else if (this.gtActive) {
+        //     this.fetchData(param)
+        //   }
+        // else if (this.gtsActive) {
+        //     this.fetchData(param)
+        //   }
+        // else if (this.skActive) {
+        //     this.fetchData(param)
+        //   }
         else {
-          this.fetchData('')
+          let a
+          a = 'bundesland=' + loc
+          this.fetchData(a)
         }
       },
           // this.skActive = !this.skActive
