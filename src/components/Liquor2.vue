@@ -1,8 +1,8 @@
 <template>
     <div>
       <br>
-      <br>
-      <h3 style="padding-left:16px;">Filter By Category</h3>
+      
+      <h3 style="padding-left:16px;">Filter By Location</h3>
       <tree
       :data="facetData"
       :options="treeOptions"

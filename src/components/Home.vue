@@ -130,7 +130,7 @@ import Cockpit from "@/components/Cockpit";
 export default {
     name: 'Home',
     //props passed from APP.vue refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered
-    props: ['refreshHome', 'search_term', 'searchCalled'],
+    props: ['refreshHome', 'search_term', 'searchCalled', 'filter', 'facet'],
     components: {
     'filters-cmp': Filter,
     'cock-cmp': Cockpit
@@ -159,6 +159,8 @@ export default {
         gtActive: false,
         gtsActive: false,
         skActive: false,
+        pActive: false,
+        pnActive: false,
         errored: false,
         loading: true,
         cockpit: [],
@@ -195,42 +197,65 @@ export default {
         //this is added to change the url back to default when a chip is clicked after a search result
         //this.url = 'http://127.0.0.1:5000/api/'
 
-        if (!this.lActive) {
-          if (this.gActive || this.gtActive || this.gtsActive || this.skActive) {
+        // if (!this.lActive) {
+        //   if (this.gActive || this.gtActive || this.gtsActive || this.skActive) {
+        //     let a
+        //     a =  this.group_val + this.groupTypeval + this.groupStackval + ''
+        //     this.fetchData(a)
+        //   }
+        //   else {
+        //     this.fetchData('')
+        //   }
+        //   }
+        if (this.gActive) {
+          if (this.lActive) {
+            this.group_val = param
             let a
-            a =  this.group_val + this.groupTypeval + this.groupStackval + ''
+            a = param +  '&' + 'bundesland=' + loc
             this.fetchData(a)
           }
           else {
-            this.fetchData('')
+            this.url = 'http://127.0.0.1:5000/api/?'
+            this.fetchData(param)
           }
-          }
-        else if (this.gActive) {
-            this.group_val = param
-            let a
-            a = param +  '&' + 'bundesland=' + this.bundesland
-            this.fetchData(a)
+            
           }
         
         else if (this.gtActive ) {
+          if (this.lActive) {
             this.groupTypeval = param
             let a
-            a = param +  '&' + 'bundesland=' + this.bundesland
+            a = param +  '&' + 'bundesland=' + loc
             this.fetchData(a)
+          }
+          else {
+            this.url = 'http://127.0.0.1:5000/api/?'
+            this.fetchData(param)
+          }
           }
        
         else if (this.gtsActive ) {
-            this.groupStackval
+          if (this.lActive) {
+            this.groupStackval = param
             let a
-            a = param +  '&' + 'bundesland=' + this.bundesland
+            a = param +  '&' + 'bundesland=' + loc
             this.fetchData(a)
+          }
+          else {
+            this.fetchData(param)
+          }
           }
         
         else if (this.skActive ) {
+          if (this.lActive) {
             this.skill_val = param
             let a
-            a = param +  '&' + 'bundesland=' + this.bundesland
+            a = param +  '&' + 'bundesland=' + loc
             this.fetchData(a)
+          }
+          else {
+            this.fetchData(param)
+          }
           }
         
         else if (this.lActive) {
@@ -249,10 +274,9 @@ export default {
         // else if (this.skActive) {
         //     this.fetchData(param)
         //   }
-        else {
-          let a
-          a = 'bundesland=' + loc
-          this.fetchData(a)
+        else if (!this.lActive) {
+          
+          this.fetchData('')
         }
       },
           // this.skActive = !this.skActive
@@ -396,7 +420,7 @@ export default {
         })
         .catch((err) => {
           console.log(err)
-          this.errored = true
+          this.errored = false
         })
         .finally(() => this.loading = false)
       },
@@ -415,11 +439,11 @@ export default {
           //if none, it changes the url to home 
           this.url = 'http://127.0.0.1:5000/api/?'
           //and it returns all projects
-          this.fetchData(this.section)
+          this.fetchData('')
         }
         // if theres a searchterm
         else {
-          console.log(this.search_term + '1')
+          console.log(this.search_term)
           //changes url to query url
           this.url = 'http://127.0.0.1:5000/api/search/?'
           //fetches data based on search term. search as you type feature enabled due to keyboardup.prevent event in the App.vue search textfield event

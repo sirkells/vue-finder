@@ -17,15 +17,22 @@
                     
                 </template>
             </v-treeview>
+            <filters-cmp :category="name" ></filters-cmp>
         </v-card-text>
+        
     </v-card>
             
 </template>
 
 <script>
+import Filter from "@/components/SideFilter";
 export default {
+    components: {
+      'filters-cmp': Filter,
+    },
     data() {
         return {
+            name: 'Filter',
             items: [
                     {
                         id: 1,

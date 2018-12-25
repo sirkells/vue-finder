@@ -9,10 +9,11 @@
         v-show="$route.path==='/login' || $route.path==='/logout' ? false : true"
 
       >
+        <v-spacer></v-spacer>
+        
+        <liq-tree :facetData="categoryData"></liq-tree>
+        <liq-tree2 :facetData="locationData"></liq-tree2>
 
-        <filters-cmp :category="name" ></filters-cmp>
-        <tree-cmp></tree-cmp>
-        <liq-tree></liq-tree>
 
       </v-navigation-drawer>
       <v-toolbar
@@ -106,6 +107,7 @@
   import Search from "@/components/Search";
   import Tree from "@/components/Tree";
   import Liquor from "@/components/Liquor";
+  import Liquor2 from "@/components/Liquor2";
   
   export default {
     
@@ -115,7 +117,8 @@
       'cock-cmp': Cockpit,
       'search-cmp': Search,
       'tree-cmp': Tree,
-      'liq-tree': Liquor
+      'liq-tree': Liquor,
+      'liq-tree2': Liquor2
     },
     
     data: () => ({
@@ -125,6 +128,8 @@
       refreshme: false,
       search_term: '',
       searchCalled: false,
+      categoryData: getCategoryData(),
+      locationData: getLocationData()
     }),
     methods: {
       refresh() {
@@ -143,4 +148,97 @@
       source: String
     }
   }
+function getCategoryData() {
+    return [
+        {
+          text: 'All Projects',
+
+          // it makes node expanded
+          state: { expanded: false },
+          children: [
+            { text: 'Development', children: [
+              { text: 'Web', state: { expanded: false }, children: [
+                { text: 'Frontend' , state: { checked: false }},
+                { text: 'Backend', state: { checked: false }},
+                { text: 'Fullstack', state: { checked: false }},
+                { text: 'Others', state: { checked: false }}
+              ]},
+              { text: 'Mobile', children: [
+                { text: 'Native', state: { checked: false } },
+                { text: 'Cross-Platform', state: { checked: false } }
+              ]}
+            ]},
+            { text: 'Infrastructure', children: [
+                { text: 'ERP', state: { checked: false } },
+                { text: 'Admin', state: { checked: false } },
+                { text: 'Others', state: { checked: false }}
+            ]},
+            { text: 'Data Science', children: [
+              { text: 'Business Intelligence', state: { checked: false } },
+              { text: 'Big Data', state: { checked: false } },
+              { text: 'Machine Learning', state: { checked: false } },
+              { text: 'Others', state: { checked: false }}
+            ]}
+          ]
+        },
+        // {
+        //   text: 'Filter By Location',
+        //   state: { expanded: false},
+        //   children: [
+        //       { text: 'Bayern', state: { checked: false } },
+        //       { text: 'Bremen', state: { checked: false } },
+        //       { text: 'NRW', state: { checked: false } },
+        //       { text: 'Hessen', state: { checked: false }}
+            
+        //   ]
+        // }
+        // {
+        //   text: 'JS: The Wrong Way',
+
+        //   // it makes node expanded
+        //   state: { expanded: false },
+        //   children: [
+        //     { text: 'Getting Started', state: { checked: false } },
+        //     { text: 'JavaScript Code Style', state: { selected: true } },
+        //     { text: 'The Good Parts', children: [
+        //       { text: 'OBJECT ORIENTED', state: { checked: false }  },
+        //       { text: 'ANONYMOUS FUNCTIONS', state: { checked: false }  },
+        //       { text: 'FUNCTIONS AS FIRST-CLASS OBJECTS', state: { checked: false }  },
+        //       { text: 'LOOSE TYPING', state: { checked: false }  }
+        //     ]},
+        //     { text: 'Patterns', children: [
+        //       { text: 'DESIGN PATTERNS', state: { expanded: true }, children: [
+        //         { text: 'Creational Design Patterns', children: [
+        //           { text: 'Factory' },
+        //           { text: 'Prototype' },
+        //           { text: 'Mixin' },
+        //           { text: 'Singleton' }
+        //         ]},
+        //         { text: 'Structural Design Patterns'}
+        //       ]},
+        //       { text: 'MV* PATTERNS', cildren: [
+        //         { text: 'MVC Pattern' },
+        //         { text: 'MVP Pattern' },
+        //         { text: 'MVVM Pattern' }
+        //       ]}
+        //     ]}
+        //   ]
+        // }
+      ]
+}
+function getLocationData() {
+    return [
+        {
+          text: 'All Location',
+          state: { expanded: false},
+          children: [
+              { text: 'Bayern', state: { checked: false } },
+              { text: 'Bremen', state: { checked: false } },
+              { text: 'NRW', state: { checked: false } },
+              { text: 'Hessen', state: { checked: false }}
+            
+          ]
+        }
+      ]
+}
 </script>
