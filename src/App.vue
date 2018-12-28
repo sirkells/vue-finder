@@ -145,9 +145,6 @@
         console.log(this.search_term)
         this.searchCalled = !this.searchCalled
       },
-      
-      
-      
     },
     props: {
       source: String

@@ -7,14 +7,45 @@
       <section v-else>
         <v-layout row wrap>
               <v-flex xs12 sm6 md3>
-                <v-card  light>
-                  <v-card-title primary class="title" >Region</v-card-title>
-                  <v-card-text
-                    v-for="(post, index) in aggs"
-                    :key="index"
-                    xs12>
-                    {{post.key}} ({{post.count}})
-                    </v-card-text>
+                <v-card>
+                  <v-toolbar color="blue darken-3" dark>
+                    
+          
+                    <v-toolbar-title>Filter</v-toolbar-title>
+          
+                    <v-spacer></v-spacer>
+        
+                  </v-toolbar>
+          
+                  <v-list>
+                    <v-list-group
+                      v-for="(item, index) in allAggs"
+                     
+                      :key="index"
+                      
+                      no-action
+                    >
+                      <v-list-tile slot="activator">
+                        <v-list-tile-content>
+                          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+          
+                      <v-list-tile
+                        v-for="(subItem, index) in item.items"
+                        :key="index"
+                        @click="print(subItem.key)"
+                      >
+                        <v-list-tile-content>
+                          <v-list-tile-title>{{ subItem.key }} ({{ subItem.count }})</v-list-tile-title>
+                        </v-list-tile-content>
+          
+                        <v-list-tile-action>
+                          <v-icon></v-icon>
+                        </v-list-tile-action>
+                      </v-list-tile>
+                    </v-list-group>
+                  </v-list>
                 </v-card>
               </v-flex>
               <v-flex  xs12 sm6 md9>
@@ -152,7 +183,67 @@ export default {
   },
     data () {
       return {
-        aggs: [],
+        itemsy: [
+        {
+          action: 'local_activity',
+          title: 'Region',
+          items: [
+            { title: 'List Item' }
+          ],
+          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
+        },
+        {
+          action: 'restaurant',
+          title: 'Dining',
+          active: true,
+          items: [
+            { title: 'Breakfast & brunch' },
+            { title: 'New American' },
+            { title: 'Sushi' }
+          ],
+          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
+        },
+        {
+          action: 'school',
+          title: 'Education',
+          items: [
+            { title: 'List Item' }
+          ],
+          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
+        },
+        {
+          action: 'directions_run',
+          title: 'Family',
+          items: [
+            { title: 'List Item' }
+          ],
+          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
+        },
+        {
+          action: 'healing',
+          title: 'Health',
+          items: [
+            { title: 'List Item' }
+          ],
+          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
+        },
+        {
+          action: 'content_cut',
+          title: 'Office',
+          items: [
+            { title: 'List Item' }
+          ]
+        },
+        {
+          action: 'local_offer',
+          title: 'Promotions',
+          items: [
+            { title: 'List Item' }
+          ]
+        }
+      ],
+        aggRegion: [],
+        allAggs: [],
         tab: null,
         lorem: `Lorem ipsum dolor sit amet, mel at clita quando. Te sit oratio vituperatoribus, nam ad ipsum posidonium mediocritatem, explicari dissentiunt cu mea. Repudiare disputationi vim in, mollis iriure nec cu, alienum argumentum ius ad. Pri eu justo aeque torquatos.`,
         url: 'http://127.0.0.1:5000/api/?',
@@ -386,6 +477,9 @@ export default {
       all () {
         this.panel = [...Array(this.items).keys()].map(_ => true)
       },
+      print (key) {
+        alert(key)
+      },
       // Reset the panel
       none () {
         this.panel = []
@@ -429,7 +523,8 @@ export default {
           this.total_results = resp.data.project_lists
           //results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10)
-          this.aggs = resp.data.aggs
+          this.aggRegion = resp.data.aggRegion
+          this.allAggs = resp.data.AllAggs
           console.log(this.aggs)
           console.log(resp)
           console.log(a)
