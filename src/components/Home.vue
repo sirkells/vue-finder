@@ -1,72 +1,85 @@
 <template>
-      
-      <v-container grid-list-md  fluid container>
-        <cock-cmp :category="cockpit"></cock-cmp>
-        <v-layout row wrap>
-        <section v-if="errored">
+      <v-container fluid grid-list-md>
+      <section v-if="errored">
           <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
-          </section>
+      </section>
+      <section v-else-if="loading">Loading.......</section>
+      <section v-else>
+        <v-layout row wrap>
+              <v-flex xs12 sm6 md3>
+                <v-card  light>
+                  <v-card-title primary class="title" >Region</v-card-title>
+                  <v-card-text
+                    v-for="(post, index) in aggs"
+                    :key="index"
+                    xs12>
+                    {{post.key}} ({{post.count}})
+                    </v-card-text>
+                </v-card>
+              </v-flex>
+              <v-flex  xs12 sm6 md9>
+                <v-layout row wrap>
+                  <v-flex >
+                    <v-layout row wrap>
+                      <v-flex
+                        v-for="(posts, index) in results"
+                        :key="index"
+                        xs12
+                      >
+                        <v-card>
+                          <v-card-title primary>
+                            <div>
+                              <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
+                              {{posts.description}}
+                            </div>
+                          </v-card-title>
+                          <v-card-actions>
 
-          <section v-else>
-            <div v-if="loading">Loading...</div>
-           
+                          <div class="text-xs-center">
+                            <v-chip :class="{success: lActive}" @click="lActive = !lActive, get('bundesland='+posts.region.bundesland, posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
+                            <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, get('group=' + posts.bereich.group, posts.region.bundesland)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
+                            <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, get('groupType=' + posts.bereich.group_type, posts.region.bundesland)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
+                            <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive,get('groupStack=' + posts.bereich.group_type_stack, posts.region.bundesland)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                            <v-chip :class="{info: pActive}" @click="pActive = !pActive,get('platform=' + posts.bereich.platform, posts.region.bundesland)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
+                            <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive,get('platform_name=' + posts.bereich.platform_name, posts.region.bundesland)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
+                            <!--encodeURIComponent used to encode c# due to error caused by # -->
+                            <v-chip :class="{purple: skActive}" @click="skActive = !skActive, get('skill=' +  encodeURIComponent(posts.bereich.skill), posts.region.bundesland)" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
+                              </div>
+                              
+                                <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
+                                    <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
+                            <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
+                            <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
+                            <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
+                            <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>-->
+                            <v-spacer></v-spacer>
+                            <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn 
+                                    icon
+                                    >
+                                      <v-icon @click="myToggleFunction($event)" >favorite</v-icon> 
+                                    </v-btn>
+                                    <v-btn icon >
+                                      <v-icon @click="addToCockpit(index)">bookmark</v-icon>
+                                    </v-btn>
+                                    <v-btn 
+                                    icon
+                                    @click="dialog = !dialog"
 
-            <v-flex 
-              v-else
-              xs12 
-              v-for="(posts, index) in results" 
-              :key="index" >
-              <v-card>
-                <v-card-title primary>
-                  <div>
-                    <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
-                    {{posts.description}}
-                  </div>
-                </v-card-title>
-                <v-card-actions>
-
-                    <div class="text-xs-center">
-                      <v-chip :class="{success: lActive}" @click="lActive = !lActive, get('bundesland='+posts.region.bundesland, posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
-                      <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, get('group=' + posts.bereich.group, posts.region.bundesland)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
-                      <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, get('groupType=' + posts.bereich.group_type, posts.region.bundesland)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                      <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive,get('groupStack=' + posts.bereich.group_type_stack, posts.region.bundesland)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
-                      <v-chip :class="{info: pActive}" @click="pActive = !pActive,get('platform=' + posts.bereich.platform, posts.region.bundesland)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
-                      <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive,get('platform_name=' + posts.bereich.platform_name, posts.region.bundesland)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
-                      <!--encodeURIComponent used to encode c# due to error caused by # -->
-                      <v-chip :class="{purple: skActive}" @click="skActive = !skActive, get('skill=' +  encodeURIComponent(posts.bereich.skill), posts.region.bundesland)" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
-                    </div>
-                     
-                       <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
-                          <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
-                  <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
-                  <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
-                  <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
-                  <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>-->
-                  <v-spacer></v-spacer>
-                  <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn 
-                          icon
-                          >
-                            <v-icon @click="myToggleFunction($event)" >favorite</v-icon> 
-                          </v-btn>
-                          <v-btn icon >
-                            <v-icon @click="addToCockpit(index)">bookmark</v-icon>
-                          </v-btn>
-                          <v-btn 
-                          icon
-                          @click="dialog = !dialog"
-
-                          >
-                            <v-icon>share</v-icon>
-                          </v-btn>
-                  </v-card-actions>
-                </v-card-actions>
-              </v-card>
-            </v-flex>
-        </section>
+                                    >
+                                      <v-icon>share</v-icon>
+                                    </v-btn>
+                            </v-card-actions>
+                          </v-card-actions>
+                        </v-card> 
+                      </v-flex>
+                    </v-layout>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
         </v-layout>
-        <v-dialog v-model="dialog" width="800px">
+      <v-dialog v-model="dialog" width="800px">
           <v-card>
             <v-toolbar
               card
@@ -117,8 +130,10 @@
               ></v-textarea>
             </v-form>
           </v-card>
-        </v-dialog>
-      </v-container>
+      </v-dialog>
+      </section>
+    </v-container>
+      
 </template>
 
 <script>
@@ -137,8 +152,9 @@ export default {
   },
     data () {
       return {
+        aggs: [],
         tab: null,
-        
+        lorem: `Lorem ipsum dolor sit amet, mel at clita quando. Te sit oratio vituperatoribus, nam ad ipsum posidonium mediocritatem, explicari dissentiunt cu mea. Repudiare disputationi vim in, mollis iriure nec cu, alienum argumentum ius ad. Pri eu justo aeque torquatos.`,
         url: 'http://127.0.0.1:5000/api/?',
         bundesland: '',
         group_val: '',
@@ -413,6 +429,8 @@ export default {
           this.total_results = resp.data.project_lists
           //results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10)
+          this.aggs = resp.data.aggs
+          console.log(this.aggs)
           console.log(resp)
           console.log(a)
           
@@ -430,7 +448,7 @@ export default {
       refreshHome: function() {
         this.reset()
         console.log(this.refreshHome)
-        
+      
       },
       //watches the searchterm is been trigered by the keyboard event
       searchCalled: function() {
@@ -473,6 +491,9 @@ export default {
       //   console.log(this.selected_ds)
       //   this.getPosts(this.selected_ds)
       // }
+      facet: function() {
+        console.log(this.facet)
+      }
     },
       
     mounted() {

@@ -15,6 +15,7 @@
         <liq-tree2 :facetData="locationData"></liq-tree2>
 
 
+
       </v-navigation-drawer>
       <v-toolbar
         :clipped-left="$vuetify.breakpoint.lgAndUp"
@@ -95,7 +96,8 @@
     </div>
     <!--props passed to Home.vue refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered -->
     <v-content>
-      <router-view :refreshHome="refreshme" :search_term="search_term"  :searchCalled="searchCalled"></router-view>
+
+      <router-view :refreshHome="refreshme" :search_term="search_term"  :searchCalled="searchCalled" :facet="facet"></router-view>
     </v-content>
   </v-app>
 </template>
@@ -129,7 +131,8 @@
       search_term: '',
       searchCalled: false,
       categoryData: getCategoryData(),
-      locationData: getLocationData()
+      locationData: getLocationData(),
+      facet: ''
     }),
     methods: {
       refresh() {
@@ -142,6 +145,8 @@
         console.log(this.search_term)
         this.searchCalled = !this.searchCalled
       },
+      
+      
       
     },
     props: {
