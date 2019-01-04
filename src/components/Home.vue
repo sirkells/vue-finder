@@ -1,29 +1,58 @@
 <template>
       <v-container fluid grid-list-md>
+        
       <section v-if="errored">
           <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
       </section>
       <section v-else-if="loading">Loading.......</section>
       <section v-else>
+        <v-layout row justify-start class="mb-3">
+        <v-btn small flat color="grey" @click="sortBy('title')">
+          <v-icon small left>folder</v-icon>
+          <span class="caption text-lowercase">By project name</span>
+        </v-btn>
+        <v-btn small flat color="grey" @click="sortBy('region.bundesland')">
+          <v-icon small left>person</v-icon>
+          <span class="caption text-lowercase">By Person</span>
+        </v-btn>
+      </v-layout>
         <v-layout row wrap>
               <v-flex xs12 sm6 md3>
                 <v-card>
                   <v-toolbar color="blue darken-3" dark>
-                    
-          
+
                     <v-toolbar-title>Filter</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      v-show="selectedFilter.length >=1"
+                      color="primary"
+                      
+                      light
+                      @click="reset"
+                    >
+                      Reset
+                    </v-btn>
           
                     <v-spacer></v-spacer>
         
                   </v-toolbar>
-          
+                  
+                  
                   <v-list>
+                    
+                    
+                    <v-chip v-for="select in selectedFilter" :key="select.title" close>{{ select }}</v-chip>
                     <v-list-group
                       v-for="(item, index) in allAggs"
                      
                       :key="index"
                       
-                      no-action
+                    
                     >
                       <v-list-tile slot="activator">
                         <v-list-tile-content>
@@ -34,10 +63,17 @@
                       <v-list-tile
                         v-for="(subItem, index) in item.items"
                         :key="index"
-                        @click="print(subItem.key)"
+                        @click="call(item.title,subItem.key) "
+                        
                       >
-                        <v-list-tile-content>
-                          <v-list-tile-title>{{ subItem.key }} ({{ subItem.count }})</v-list-tile-title>
+                        <v-list-tile-content >
+                          <v-checkbox 
+                          v-model="selectedFilter" 
+                          :label="subItem.key + '(' + subItem.count + ')'" 
+                          :value="subItem.key"
+                          
+                          ></v-checkbox>
+                          
                         </v-list-tile-content>
           
                         <v-list-tile-action>
@@ -183,69 +219,10 @@ export default {
   },
     data () {
       return {
-        itemsy: [
-        {
-          action: 'local_activity',
-          title: 'Region',
-          items: [
-            { title: 'List Item' }
-          ],
-          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
-        },
-        {
-          action: 'restaurant',
-          title: 'Dining',
-          active: true,
-          items: [
-            { title: 'Breakfast & brunch' },
-            { title: 'New American' },
-            { title: 'Sushi' }
-          ],
-          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
-        },
-        {
-          action: 'school',
-          title: 'Education',
-          items: [
-            { title: 'List Item' }
-          ],
-          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
-        },
-        {
-          action: 'directions_run',
-          title: 'Family',
-          items: [
-            { title: 'List Item' }
-          ],
-          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
-        },
-        {
-          action: 'healing',
-          title: 'Health',
-          items: [
-            { title: 'List Item' }
-          ],
-          aggs:  [ { "count": 38, "key": "Hessen" }, { "count": 25, "key": "Bayern" }, { "count": 13, "key": "Baden-W\u00fcttemburg" }, { "count": 10, "key": "Nordrhein-Westfalen" }, { "count": 6, "key": "Berlin" }, { "count": 5, "key": "Niedersachsen" }, { "count": 4, "key": "Hamburg" }, { "count": 3, "key": "Ausland" }, { "count": 2, "key": "Mecklenburg-Vorpommern" }, { "count": 1, "key": "Brandenburg" } ]
-        },
-        {
-          action: 'content_cut',
-          title: 'Office',
-          items: [
-            { title: 'List Item' }
-          ]
-        },
-        {
-          action: 'local_offer',
-          title: 'Promotions',
-          items: [
-            { title: 'List Item' }
-          ]
-        }
-      ],
+        category: false,
         aggRegion: [],
         allAggs: [],
         tab: null,
-        lorem: `Lorem ipsum dolor sit amet, mel at clita quando. Te sit oratio vituperatoribus, nam ad ipsum posidonium mediocritatem, explicari dissentiunt cu mea. Repudiare disputationi vim in, mollis iriure nec cu, alienum argumentum ius ad. Pri eu justo aeque torquatos.`,
         url: 'http://127.0.0.1:5000/api/?',
         bundesland: '',
         group_val: '',
@@ -275,6 +252,9 @@ export default {
         total_results: [],
         panel: [],
         items: 5,
+        selectedFilter:[],
+        groupSelected: "",
+        locSelected: "",
         selected: ['Trevor Handsen'],
         items: ['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher'],
         title: '',
@@ -283,15 +263,6 @@ export default {
         link: '',
         group: false,
         country: [{name: 'Germany'}, {name: 'England'}],
-        products:[
-      {
-        productTitle:"ABCN",
-        image       : require('../assets/images/product1.jpeg'),
-        productId:1,
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      },
-      
-      ]
       }
     },
     created() {
@@ -299,21 +270,72 @@ export default {
     },
     
     methods: {
+      call(a,b) {
+        let count, proj, item
+        proj = this.allAggs
+        for(count in proj) {
+          for (item in proj[count]['items']) {
+            // console.log(proj[count]['items'][item]['key'])
+          }
+        }
+        if (a === "Category" && !this.lActive) {
+          a = "group="
+          this.url = 'http://127.0.0.1:5000/api/?'
+          let section = a+ b
+          console.log(section)
+          this.fetchData(section)
+          this.gActive = true
+          this.groupSelected = b
+        }
+        else if (a === "Bundesland" && !this.gActive || !this.gtActive || !this.gtsActive || !this.skActive) {
+          a = 'bundesland='
+          let section = a + b 
+          console.log(section)
+          this.fetchData(section)
+          this.lActive = true
+          this.locSelected = b
+        }
+        else if (a === "Bundesland" && this.gActive) {
+          a = 'bundesland='
+          let section = a + b + "group=" + this.groupSelected
+          console.log(section)
+          this.fetchData(section)
+          this.lActive = true
+          this.locSelected = b
+        }
+        else if (a === "Category" && this.lActive) {
+          a = "group="
+          let section = a  + b + '&bundesland=' + this.locSelected
+          console.log(section)
+          this.fetchData(section)
+          this.gActive = true
+          this.lActive = true
+          
+        }
+        else if (a === "Sub-Category") {
+          console.log(a + '=' + b)
+        }
+        else if (a === "Stack") {
+          console.log(a + '=' + b)
+        }
+        else if (a === "Skills") {
+          console.log(a + '=' + b)
+        }
+        
+        
+        
+        
+        // if (this.category) {
+        //   alert(a + ':' + b)
+        // }
+        
+      },
+      sortBy(prop) {
+        this.results.sort((a,b) => a[prop] < b[prop] ? -1 : 1)
+      },
+     
      //toggles color of tags clicked
       get(param, loc) {
-        //this is added to change the url back to default when a chip is clicked after a search result
-        //this.url = 'http://127.0.0.1:5000/api/'
-
-        // if (!this.lActive) {
-        //   if (this.gActive || this.gtActive || this.gtsActive || this.skActive) {
-        //     let a
-        //     a =  this.group_val + this.groupTypeval + this.groupStackval + ''
-        //     this.fetchData(a)
-        //   }
-        //   else {
-        //     this.fetchData('')
-        //   }
-        //   }
         if (this.gActive) {
           if (this.lActive) {
             this.group_val = param
@@ -372,70 +394,12 @@ export default {
             this.fetchData(a)
           }
         
-        // else if (this.gtActive) {
-        //     this.fetchData(param)
-        //   }
-        // else if (this.gtsActive) {
-        //     this.fetchData(param)
-        //   }
-        // else if (this.skActive) {
-        //     this.fetchData(param)
-        //   }
         else if (!this.lActive) {
           
           this.fetchData('')
         }
       },
-          // this.skActive = !this.skActive
-          // if (this.skActive) {
-          //   this.fetchData(param)
-          // }
-          // else {
-          //   this.fetchData('')
-          // }
-        //}
-        // else if (card === 'gActive') {
-        //   this.gActive = !this.gActive
-        //   if (this.gActive) {
-        //     this.fetchData(param)
-        //   }
-        //   else {
-        //     this.fetchData('')
-        //   }
-        // }
-        // else if (card === 'gtActive') {
-        //   this.gtActive = !this.gtActive
-        //   if (this.gtActive) {
-        //     this.fetchData(param)
-        //   }
-        //   else {
-        //     this.fetchData('')
-        //   }
-        // }
-        // else if (card === 'gtsActive') {
-        //   this.gtsActive = !this.gtsActive
-        //   if (this.gtsActive) {
-        //     this.fetchData(param)
-        //   }
-        //   else {
-        //     this.fetchData('')
-        //   }
-        // }
-        // else if (card === 'lActive') {
-        //   this.lActive = !this.lActive
-        //   if (this.lActive) {
-        //     this.fetchData(param)
-        //   }
-        //   else {
-        //     this.fetchData('')
-        //   }
-        //   // else if (this.gActive || this.gtActive || this.gtsActive || this.skActive) {
-        //   //   this.fetchData()
-        //   // }
           
-        //   //this.url = 'http://127.0.0.1:5000/api/?bundesland='
-           
-        // }
         
      
       //to toggle the style class in any element
@@ -470,15 +434,13 @@ export default {
         this.lActive = false
         this.link = ''
         this.section = ''
+        this.selectedFilter = []
         
       },
        // Create an array the length of our items
       // with all values as true
       all () {
         this.panel = [...Array(this.items).keys()].map(_ => true)
-      },
-      print (key) {
-        alert(key)
       },
       // Reset the panel
       none () {
@@ -503,20 +465,22 @@ export default {
                   this.results = this.results.concat(next_data);
               }
           },
+      filterFunc(s) {
+        
+        if (s === "Development" || "Infrastructure" || "Data Science") {
+          this.url = 'http://127.0.0.1:5000/api/?group='
+          this.fetchData(this.selectedFilter[0])
+        }
+        else if (this.selectedFilter.length === 0) {
+          this.url = 'http://127.0.0.1:5000/api/'
+          this.fetchData('')
+        }
+        
+      },
       //fetchs data from API
       fetchData(section) {
         let a 
         a = this.url + section
-        // if (this.lActive && this.gActive) {
-        //   a = this.url +section + '&' + this.link
-        // }
-        // else if (this.lActive) {
-        //   a = this.url + '&' +section
-        // }
-        // else {
-        //   a = this.url +section
-        // }
-        
         axios.get(a)
         .then((resp) => {
           //total results gets all the data from the api
@@ -545,6 +509,16 @@ export default {
         console.log(this.refreshHome)
       
       },
+      selectedFilter: function() {
+        if (this.selectedFilter.includes("Data Science") || this.selectedFilter.includes("Development") || this.selectedFilter.includes("Infrastructure") && this.selectedFilter.length >=1) {
+          
+
+        }
+        else {
+          console.log("no")
+        }
+        
+      },
       //watches the searchterm is been trigered by the keyboard event
       searchCalled: function() {
         //checks if theres any letter is enterd in search bar. 
@@ -565,39 +539,14 @@ export default {
           console.log(term)
           this.fetchData(term)
         }
-        
-        // axios.get('http://127.0.0.1:5000/query/'+this.search_term)
-        //   .then((resp) => {
-        //     this.total_results = resp.data.project_lists
-        //     this.results = resp.data.project_lists.slice(0, 10)
-        //     console.log(resp)
-        //     console.log(section)
-            
-            
-        //   })
-        //   .catch((err) => {
-        //     console.log(err)
-        //     this.errored = true
-        //   })
-        //   .finally(() => this.loading = false)
-        
       },
-      // selected_ds: function() {
-      //   console.log(this.selected_ds)
-      //   this.getPosts(this.selected_ds)
-      // }
       facet: function() {
         console.log(this.facet)
       }
     },
       
     mounted() {
-    // axios
-    //   .get("http://127.0.0.1:5000/home")
-    //   .then(response => {
-    //     this.total_results = response.data.project_lists
-    //     this.results = response.data.project_lists.slice(0, 10)
-    //     });
+    
     var vueInstance = this;
     var elem = document.getElementById('product-list-bottom');
     var watcher = scrollMonitor.create(elem);
@@ -619,4 +568,5 @@ export default {
          .main {
       margin-top: 60px; /* Add a top margin to avoid content overlay */
      }
+     
 </style>

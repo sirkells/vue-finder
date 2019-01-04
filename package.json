@@ -11,6 +11,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@appbaseio/reactivesearch-vue": "^1.0.0-beta.3",
     "@mdi/font": "^3.0.39",
     "axios": "^0.18.0",
     "liquor-tree": "^0.2.45",

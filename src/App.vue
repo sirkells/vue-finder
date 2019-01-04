@@ -1,5 +1,6 @@
 <template>
    <v-app id="inspire" >
+     
     <div v-show="$route.path==='/login' || $route.path==='/logout' ? false : true">
       <v-navigation-drawer
         :clipped="$vuetify.breakpoint.lgAndUp"
@@ -244,3 +245,4 @@ function getLocationData() {
       ]
 }
 </script>
+

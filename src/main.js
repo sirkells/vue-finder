@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VueTreeNavigation from 'vue-tree-navigation';
+import ReactiveSearch from '@appbaseio/reactivesearch-vue';
 import LiquorTree from 'liquor-tree'
 
 // global registration
@@ -20,6 +21,7 @@ Vue.config.productionTip = false;
 Vue.use(Vuetify);
 Vue.use(VueTreeNavigation);
 Vue.use(LiquorTree);
+Vue.use(ReactiveSearch);
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
