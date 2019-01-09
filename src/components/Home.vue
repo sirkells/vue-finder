@@ -6,15 +6,52 @@
       </section>
       <section v-else-if="loading">Loading.......</section>
       <section v-else>
+        <v-flex xs12 sm3 d-flex>
+          <v-toolbar dense>
+            <v-overflow-btn
+              :items="allRegion"
+              item-text='land'
+              editable
+              label="Bundesland"
+              hide-details
+             
+              overflow
+              
+            ></v-overflow-btn>
+            
+          </v-toolbar>
+        </v-flex>
+       <v-layout wrap align-center>
+         <v-flex xs12 sm3 d-flex>
+          <v-select 
+              
+                :items="allRegion"
+                item-text='land'
+                item-value='key'
+                v-model="cc" 
+                attach
+                chips
+                multiple
+                clearable
+                
+              label="Bundesland" data-vv-name="cc" prepend-icon="mdi-flag"
+            required> 
+            </v-select>
+         </v-flex>
+       </v-layout>
+         
+      
+          
         <v-layout row justify-start class="mb-3">
-        <v-btn small flat color="grey" @click="sortBy('title')">
+        <v-btn small flat color="grey" @click="sortBy(title)">
           <v-icon small left>folder</v-icon>
           <span class="caption text-lowercase">By project name</span>
         </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('region.bundesland')">
+        <v-btn small flat color="grey" @click="text">
           <v-icon small left>person</v-icon>
           <span class="caption text-lowercase">By Person</span>
         </v-btn>
+        
       </v-layout>
         <v-layout row wrap>
               <v-flex xs12 sm6 md3>
@@ -29,7 +66,7 @@
                     <v-spacer></v-spacer>
                     <v-spacer></v-spacer>
                     <v-btn
-                      v-show="selectedFilter.length >=1"
+                     
                       color="primary"
                       
                       light
@@ -46,7 +83,8 @@
                   <v-list>
                     
                     
-                    <v-chip v-for="select in selectedFilter" :key="select.title" close>{{ select }}</v-chip>
+                    
+                    <v-chip v-for="select in selectedFilter" :key="select.title" close @click="">{{ select }}</v-chip>
                     <v-list-group
                       v-for="(item, index) in allAggs"
                      
@@ -55,19 +93,21 @@
                     
                     >
                       <v-list-tile slot="activator">
-                        <v-list-tile-content>
+                        <v-list-tile-content >
                           <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                          
                         </v-list-tile-content>
                       </v-list-tile>
           
                       <v-list-tile
                         v-for="(subItem, index) in item.items"
                         :key="index"
-                        @click="call(item.title,subItem.key) "
+                        @click=""
                         
                       >
                         <v-list-tile-content >
                           <v-checkbox 
+                          
                           v-model="selectedFilter" 
                           :label="subItem.key + '(' + subItem.count + ')'" 
                           :value="subItem.key"
@@ -81,9 +121,40 @@
                         </v-list-tile-action>
                       </v-list-tile>
                     </v-list-group>
+                    <v-select 
+              
+                        :items="lol"
+                        item-text=''
+                        item-value='key'
+                        v-model="cc" 
+                        attach
+                        chips
+                        multiple
+                        clearable
+                        @change="printer(input)"
+                        
+                      label="Bundesland" data-vv-name="cc" prepend-icon="mdi-flag"
+                    required>  
+                    </v-select>
+                    <v-select 
+              
+                        :items="allSkill"
+                        item-text='land'
+                        item-value='land'
+                        v-model="cc" 
+                        attach
+                        chips
+                        multiple
+                        clearable
+                        mask=""
+                        
+                      label="Skill" data-vv-name="cc" prepend-icon="mdi-flag"
+                    required> 
+                    </v-select>
                   </v-list>
                 </v-card>
               </v-flex>
+              
               <v-flex  xs12 sm6 md9>
                 <v-layout row wrap>
                   <v-flex >
@@ -103,14 +174,14 @@
                           <v-card-actions>
 
                           <div class="text-xs-center">
-                            <v-chip :class="{success: lActive}" @click="lActive = !lActive, get('bundesland='+posts.region.bundesland, posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
-                            <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, get('group=' + posts.bereich.group, posts.region.bundesland)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
-                            <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, get('groupType=' + posts.bereich.group_type, posts.region.bundesland)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                            <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive,get('groupStack=' + posts.bereich.group_type_stack, posts.region.bundesland)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
-                            <v-chip :class="{info: pActive}" @click="pActive = !pActive,get('platform=' + posts.bereich.platform, posts.region.bundesland)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
-                            <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive,get('platform_name=' + posts.bereich.platform_name, posts.region.bundesland)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
+                            <v-chip :class="{success: lActive}" @click="lActive = !lActive,lData='bundesland='+posts.region.bundesland, getLocation('bundesland='+posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
+                            <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, gData='group=' + posts.bereich.group, getGroup('group=' + posts.bereich.group)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
+                            <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, gtData='groupType=' + posts.bereich.group_type, getGrouptype('groupType=' + posts.bereich.group_type)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
+                            <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive, gtsData= 'groupStack=' + posts.bereich.group_type_stack, getGroupstack('groupStack=' + posts.bereich.group_type_stack)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                            <v-chip :class="{info: pActive}" @click="pActive = !pActive, pData= 'platform=' + posts.bereich.platform, getPlatform('platform=' + posts.bereich.platform)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
+                            <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive, pnData='platform_name=' + posts.bereich.platform_name, getPlatform_name('platform_name=' + posts.bereich.platform_name)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
                             <!--encodeURIComponent used to encode c# due to error caused by # -->
-                            <v-chip :class="{purple: skActive}" @click="skActive = !skActive, get('skill=' +  encodeURIComponent(posts.bereich.skill), posts.region.bundesland)" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
+                            <v-chip :class="{purple: skActive}" @click="skActive = !skActive, skData ='skill=' +  encodeURIComponent(posts.bereich.skill),  getSk('skill=' +  encodeURIComponent(posts.bereich.skill))" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
                               </div>
                               
                                 <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
@@ -209,16 +280,23 @@ import axios from "axios/dist/axios.min.js";
 import scrollMonitor from "scrollmonitor/scrollMonitor.js"
 import Filter from "@/components/SideFilter";
 import Cockpit from "@/components/Cockpit";
+import Liquor from "@/components/Liquor";
+import Liquor2 from "@/components/Liquor2";
 export default {
     name: 'Home',
     //props passed from APP.vue refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered
     props: ['refreshHome', 'search_term', 'searchCalled', 'filter', 'facet'],
     components: {
     'filters-cmp': Filter,
-    'cock-cmp': Cockpit
+    'cock-cmp': Cockpit,
+    'liq-tree': Liquor,
+    'liq-tree2': Liquor2
   },
     data () {
       return {
+        benefits:[1,2,3],
+        benefitType: [],
+        locationData: getLocationData(),
         category: false,
         aggRegion: [],
         allAggs: [],
@@ -239,12 +317,19 @@ export default {
         isActive: false,
         //lActive=location, gActive=group, gtActive=group_type, gtsActive=group_type_stack, sActive=skill
         lActive: false,
+        lData:'',
         gActive: false,
+        gData: '',
         gtActive: false,
+        gtData: '',
         gtsActive: false,
+        gtsData: '',
         skActive: false,
+        skData:'',
         pActive: false,
+        pData:'',
         pnActive: false,
+        pnData:'',
         errored: false,
         loading: true,
         cockpit: [],
@@ -253,6 +338,7 @@ export default {
         panel: [],
         items: 5,
         selectedFilter:[],
+        selectedRegion: [],
         groupSelected: "",
         locSelected: "",
         selected: ['Trevor Handsen'],
@@ -263,13 +349,243 @@ export default {
         link: '',
         group: false,
         country: [{name: 'Germany'}, {name: 'England'}],
+        allRegion : [],
+        allSkill: [],
+        cc: [],
+        lol: [],
+        dropdown_font: [
+          { text: 'Arial' },
+          { text: 'Calibri' },
+          { text: 'Courier' },
+          { text: 'Verdana' }
+        ],
+        dropdown_edit: [
+          { text: '100%' },
+          { text: '75%' },
+          { text: '50%' },
+          { text: '25%' },
+          { text: '0%' }
+        ],
+        toggle_exclusive: 2,
+        toggle_multiple: [1, 2, 3]
       }
     },
     created() {
       this.reset()
+      
+      
     },
     
     methods: {
+      getLocation(a) {
+        if (!this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a)
+        }
+        else if (this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gData)
+        }
+        else if (this.gtActive && !this.gActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtData)
+        }
+        else if (this.gtsActive && !this.gActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtsData)
+        }
+        else if (this.skActive && !this.gActive && !this.gtActive && !this.gtsActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.skData)
+        }
+
+        
+      },
+      getGroup(a) {
+        if (!this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a)
+        }
+        else if (this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.lData)
+        }
+        else if (this.gtActive && !this.lActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtData)
+        }
+        else if (this.gtsActive && !this.lActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtsData)
+        }
+        else if (this.skActive && !this.lActive && !this.gtActive && !this.gtsActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.skData)
+        }
+        
+        
+      },
+      getGrouptype(a) {
+        if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a)
+        }
+        else if (this.lActive && !this.gActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.lData)
+        }
+        else if (this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gData)
+        }
+        else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtsData)
+        }
+        else if (this.skActive && !this.lActive && !this.gActive && !this.gtsActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.skData)
+        }
+        
+        
+      },
+      getGroupstack(a) {
+        if (!this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a)
+        }
+        else if (this.lActive && !this.gActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.lData)
+        }
+        else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gData)
+        }
+        else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtData)
+        }
+        else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.skData)
+        }
+        
+        
+      },
+      getPlatform(a) {
+        if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a)
+        }
+        else if (this.lActive && !this.gActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.lData)
+        }
+        else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gData)
+        }
+        else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtData)
+        }
+        else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtsData)
+        }
+        else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.skData)
+        }
+        
+        
+      },
+      getPlatform_name(a) {
+        if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a)
+        }
+        else if (this.lActive && !this.gActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.lData)
+        }
+        else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gData)
+        }
+        else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtData)
+        }
+        else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtsData)
+        }
+        else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.skData)
+        }
+        
+        
+      },
+      getSk(a) {
+        if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a)
+        }
+        else if (this.lActive && !this.gActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.lData)
+        }
+        else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gData)
+        }
+        else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtData)
+        }
+        else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.gtsData)
+        }
+        else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
+          this.url = "http://127.0.0.1:5000/api/?"
+          this.fetchData(a + '&' + this.skData)
+        }
+        
+        
+      },
+      text() {
+        let count, proj, item
+        proj = this.allRegion
+        for(count in proj) {
+          item = proj[count]['key']
+          this.lol.push(item)
+          
+          
+         
+        } 
+        console.log(this.lol) 
+        return this.lol
+      },
+      printer(a) {
+        alert(a)
+      },
+      updateBenefitItem(n)
+      {
+       //log out the value
+       console.log(this.benefitType)
+      },
+      printy() {
+        this.search_term = this.selectedFilter
+        alert(this.search_term)
+      },
+      new () {
+        this.selectedFilter = this.search_term 
+        console.log(this.search_term)
+      },
       call(a,b) {
         let count, proj, item
         proj = this.allAggs
@@ -479,6 +795,7 @@ export default {
       },
       //fetchs data from API
       fetchData(section) {
+        
         let a 
         a = this.url + section
         axios.get(a)
@@ -487,8 +804,11 @@ export default {
           this.total_results = resp.data.project_lists
           //results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10)
-          this.aggRegion = resp.data.aggRegion
+          this.selectedRegion = resp.data.aggRegion
           this.allAggs = resp.data.AllAggs
+          this.allRegion = resp.data.Allregion
+          this.allSkill = resp.data.Allskill
+          this.text()
           console.log(this.aggs)
           console.log(resp)
           console.log(a)
@@ -503,22 +823,21 @@ export default {
       },
     },
     watch: {
+      selectedFilter: function() {
+        this.url = 'http://127.0.0.1:5000/api/filter/?'
+        //fetches data based on search term. search as you type feature enabled due to keyboardup.prevent event in the App.vue search textfield event
+        let term
+        term = "filter_list=" + this.selectedFilter
+        console.log(term)
+        this.fetchData(term)
+      },
       //refreshes the homepage
       refreshHome: function() {
         this.reset()
         console.log(this.refreshHome)
       
       },
-      selectedFilter: function() {
-        if (this.selectedFilter.includes("Data Science") || this.selectedFilter.includes("Development") || this.selectedFilter.includes("Infrastructure") && this.selectedFilter.length >=1) {
-          
-
-        }
-        else {
-          console.log("no")
-        }
-        
-      },
+      
       //watches the searchterm is been trigered by the keyboard event
       searchCalled: function() {
         //checks if theres any letter is enterd in search bar. 
@@ -556,6 +875,21 @@ export default {
     })
   },
   
+}
+function getLocationData() {
+    return [
+        {
+          text: 'All Location',
+          state: { expanded: false},
+          children: [
+              { text: 'Bayern', state: { checked: false } },
+              { text: 'Bremen', state: { checked: false } },
+              { text: 'NRW', state: { checked: false } },
+              { text: 'Hessen', state: { checked: false }}
+            
+          ]
+        }
+      ]
 }
 </script>
 
