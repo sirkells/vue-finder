@@ -2,16 +2,36 @@
    <v-app id="inspire" >
     <div v-show="$route.path==='/login' || $route.path==='/logout' ? false : true">
       <v-navigation-drawer
-        :clipped="$vuetify.breakpoint.lgAndUp"
-        v-model="drawer"
         fixed
+        :clipped="$vuetify.breakpoint.mdAndUp"
         app
+        light
+        v-model="drawer"
         v-show="$route.path==='/login' || $route.path==='/logout' ? false : true"
-
       >
-        <v-spacer></v-spacer>
+        <v-list dense>
+          <template v-for="item in items">
 
-        <liq-tree :facetData="categoryData"></liq-tree>
+            <v-list-group
+              v-model="item.model"
+              :key="item.text"
+              :prepend-icon="item.model ? item.icon : item['icon-alt']"
+              append-icon=""
+
+            >
+            </v-list-group>
+            <v-list-tile @click="" :key="item.text">
+              <v-list-tile-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>
+                  {{ item.text }}
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
+        </v-list>
       </v-navigation-drawer>
       <v-toolbar
         :clipped-left="$vuetify.breakpoint.lgAndUp"
@@ -107,62 +127,6 @@ import Tree from '@/components/Tree';
 import Liquor from '@/components/Liquor';
 import Liquor2 from '@/components/Liquor2';
 
-// function getLocationData() {
-//   return [
-//     {
-//       text: 'All Location',
-//       state: { expanded: false },
-//       children: [
-//         { text: 'Bayern', state: { checked: false } },
-//         { text: 'Bremen', state: { checked: false } },
-//         { text: 'NRW', state: { checked: false } },
-//         { text: 'Hessen', state: { checked: false } },
-
-//       ],
-//     },
-//   ];
-// }
-function getCategoryData() {
-  return [
-    {
-      text: 'All Projects',
-
-      // it makes node expanded
-      state: { expanded: false },
-      children: [
-        { text: 'Development',
-          children: [
-            { text: 'Web',
-              state: { expanded: false },
-              children: [
-                { text: 'Frontend', state: { checked: false } },
-                { text: 'Backend', state: { checked: false } },
-                { text: 'Fullstack', state: { checked: false } },
-                { text: 'Others', state: { checked: false } },
-              ] },
-            { text: 'Mobile',
-              children: [
-                { text: 'Native', state: { checked: false } },
-                { text: 'Cross-Platform', state: { checked: false } },
-              ] },
-          ] },
-        { text: 'Infrastructure',
-          children: [
-            { text: 'ERP', state: { checked: false } },
-            { text: 'Admin', state: { checked: false } },
-            { text: 'Others', state: { checked: false } },
-          ] },
-        { text: 'Data Science',
-          children: [
-            { text: 'Business Intelligence', state: { checked: false } },
-            { text: 'Big Data', state: { checked: false } },
-            { text: 'Machine Learning', state: { checked: false } },
-            { text: 'Others', state: { checked: false } },
-          ] },
-      ],
-    },
-  ];
-}
 export default {
 
   components: {
@@ -177,12 +141,17 @@ export default {
 
   data: () => ({
     drawer: false,
+    items: [
+      { icon: 'bookmark', text: 'Cockpit' },
+      { icon: 'favoriter', text: 'Favorites' },
+      { icon: 'logout', text: 'Logout' },
+    ],
     section: '',
     name: 'Filter',
     refreshme: false,
     search_term: '',
     searchCalled: false,
-    categoryData: getCategoryData(),
+    // categoryData: getCategoryData(),
     facet: '',
   }),
   methods: {
@@ -204,4 +173,59 @@ export default {
 
 
 </script>
+// function getLocationData() {
+//   return [
+//     {
+//       text: 'All Location',
+//       state: { expanded: false },
+//       children: [
+//         { text: 'Bayern', state: { checked: false } },
+//         { text: 'Bremen', state: { checked: false } },
+//         { text: 'NRW', state: { checked: false } },
+//         { text: 'Hessen', state: { checked: false } },
 
+//       ],
+//     },
+//   ];
+// }
+// function getCategoryData() {
+//   return [
+//     {
+//       text: 'All Projects',
+
+//       // it makes node expanded
+//       state: { expanded: false },
+//       children: [
+//         { text: 'Development',
+//           children: [
+//             { text: 'Web',
+//               state: { expanded: false },
+//               children: [
+//                 { text: 'Frontend', state: { checked: false } },
+//                 { text: 'Backend', state: { checked: false } },
+//                 { text: 'Fullstack', state: { checked: false } },
+//                 { text: 'Others', state: { checked: false } },
+//               ] },
+//             { text: 'Mobile',
+//               children: [
+//                 { text: 'Native', state: { checked: false } },
+//                 { text: 'Cross-Platform', state: { checked: false } },
+//               ] },
+//           ] },
+//         { text: 'Infrastructure',
+//           children: [
+//             { text: 'ERP', state: { checked: false } },
+//             { text: 'Admin', state: { checked: false } },
+//             { text: 'Others', state: { checked: false } },
+//           ] },
+//         { text: 'Data Science',
+//           children: [
+//             { text: 'Business Intelligence', state: { checked: false } },
+//             { text: 'Big Data', state: { checked: false } },
+//             { text: 'Machine Learning', state: { checked: false } },
+//             { text: 'Others', state: { checked: false } },
+//           ] },
+//       ],
+//     },
+//   ];
+// }
