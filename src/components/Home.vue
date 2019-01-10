@@ -131,7 +131,7 @@
                                     </v-btn>
                                     <v-btn
                                     icon
-                                    @click="dialog = !dialog"
+                                    @click="dialog = !dialog, shareProject(index)"
 
                                     >
                                       <v-icon>share</v-icon>
@@ -180,19 +180,22 @@
               <v-text-field
                 v-model="subject"
                 label="Subject"
-                value="subject"
-                single-line
+                counter
+                maxlength="120"
                 full-width
-                hide-details
+                single-line
+                type="text"
+
               ></v-text-field>
               <v-divider></v-divider>
               <v-textarea
-                v-model="title"
+                v-model="message_body"
                 label="Message"
                 counter
                 maxlength="120"
                 full-width
                 single-line
+                type="text"
               ></v-textarea>
             </v-form>
           </v-card>
@@ -271,6 +274,7 @@ export default {
       items: ['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher'],
       title: '',
       subject: '',
+      message_body: '',
       section: '',
       link: '',
       group: false,
@@ -470,7 +474,7 @@ export default {
       }
     },
     sortBy() {
-      this.results.sort((a, b) => parseFloat(a.region.bundesland) - parseFloat(b.region.bundesland));
+      this.results.sort((a, b) => parseFloat(a.date_post) - parseFloat(b.date_post));
       // eslint-disable-next-line no-plusplus
     },
 
@@ -489,12 +493,6 @@ export default {
 
 
       // some code to filter users
-    },
-    addToCockpit(index) {
-      this.cockpit.push(this.results[index]);
-
-      console.log(this.cockpit.length);
-      alert('Project has been added');
     },
     reset() {
       this.url = 'http://127.0.0.1:5000/api/?';
@@ -523,8 +521,15 @@ export default {
     },
     addToCockpit(index) {
       this.cockpit.push(this.results[index]);
+      this.subject = this.results[index];
+      this.title = this.results[index].title;
       console.log(this.cockpit.length);
       alert('Project has been added');
+    },
+    shareProject(index) {
+      this.message_body = `${this.results[index].title}
+      ${this.results[index].url}`;
+      this.subject = this.results[index].title;
     },
     bundesland_val(land) {
       this.link = `bundesland=${land}`;
@@ -532,8 +537,8 @@ export default {
     },
     appendItems() {
       if (this.results.length < this.total_results.length) {
-        const next_data = this.total_results.slice(this.results.length, this.results.length + 10);
-        this.results = this.results.concat(next_data);
+        const nextData = this.total_results.slice(this.results.length, this.results.length + 10);
+        this.results = this.results.concat(nextData);
       }
     },
     filterFunc(s) {
@@ -547,8 +552,7 @@ export default {
     },
     // fetchs data from API
     fetchData(section) {
-      let a;
-      a = this.url + section;
+      const a = this.url + section;
       axios.get(a)
         .then((resp) => {
           // total results gets all the data from the api
