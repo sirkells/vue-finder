@@ -11,7 +11,7 @@
           <v-icon small left>folder</v-icon>
           <span class="caption text-lowercase">By project name</span>
         </v-btn>
-        <v-btn small flat color="grey" @click="sortBy('date_post')">
+        <v-btn small flat color="grey" @click="sortBy()">
           <v-icon small left>person</v-icon>
           <span class="caption text-lowercase">By Person</span>
         </v-btn>
@@ -305,35 +305,30 @@ export default {
     check(a, b) {
       if (a === 'Category') {
         this.url = 'http://127.0.0.1:5000/api/?';
-        let link;
-        link = `group=${b}`;
+        const link = `group=${b}`;
         this.gData = link;
         this.getGroup(link);
         this.gActive = !this.gActive;
       } else if (a === 'Sub-Category') {
         this.url = 'http://127.0.0.1:5000/api/?';
-        let link;
-        link = `groupType=${b}`;
+        const link = `groupType=${b}`;
         this.gtData = link;
         this.getGrouptype(link);
         this.gtActive = !this.gtActive;
       } else if (a === 'Stack') {
         this.url = 'http://127.0.0.1:5000/api/?';
-        let link;
-        link = `groupStack=${b}`;
+        const link = `groupStack=${b}`;
         this.gtsData = link;
         this.getGroupstack(link);
         this.gtsActive = !this.gtsActive;
       } else if (a === 'Skills') {
         this.url = 'http://127.0.0.1:5000/api/?';
-        let link;
-        link = `skill=${b}`;
+        const link = `skill=${b}`;
         this.skData = link;
         this.getSk(link);
         this.skActive = !this.skActive;
       } else if (a === 'Bundesland') {
-        let link;
-        link = `bundesland=${b}`;
+        const link = `bundesland=${b}`;
         this.lData = link;
         this.getLocation(link);
         this.lActive = !this.lActive;
@@ -474,69 +469,12 @@ export default {
         this.fetchData(`${a}&${this.skData}`);
       }
     },
-    printy() {
-      this.search_term = this.selectedFilter;
-      alert(this.search_term);
-    },
-    new() {
-      this.selectedFilter = this.search_term;
-      console.log(this.search_term);
-    },
-    sortBy(prop) {
-      this.results.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
+    sortBy() {
+      this.results.sort((a, b) => parseFloat(a.region.bundesland) - parseFloat(b.region.bundesland));
+      // eslint-disable-next-line no-plusplus
     },
 
     // toggles color of tags clicked
-    get(param, loc) {
-      if (this.gActive) {
-        if (this.lActive) {
-          this.group_val = param;
-          let a;
-          a = `${param}&` + `bundesland=${loc}`;
-          this.fetchData(a);
-        } else {
-          this.url = 'http://127.0.0.1:5000/api/?';
-          this.fetchData(param);
-        }
-      } else if (this.gtActive) {
-        if (this.lActive) {
-          this.groupTypeval = param;
-          let a;
-          a = `${param}&` + `bundesland=${loc}`;
-          this.fetchData(a);
-        } else {
-          this.url = 'http://127.0.0.1:5000/api/?';
-          this.fetchData(param);
-        }
-      } else if (this.gtsActive) {
-        if (this.lActive) {
-          this.groupStackval = param;
-          let a;
-          a = `${param}&` + `bundesland=${loc}`;
-          this.fetchData(a);
-        } else {
-          this.fetchData(param);
-        }
-      } else if (this.skActive) {
-        if (this.lActive) {
-          this.skill_val = param;
-          let a;
-          a = `${param}&` + `bundesland=${loc}`;
-          this.fetchData(a);
-        } else {
-          this.fetchData(param);
-        }
-      } else if (this.lActive) {
-        this.bundesland = loc;
-        let a;
-        a = `bundesland=${loc}`;
-        this.fetchData(a);
-      } else if (!this.lActive) {
-        this.fetchData('');
-      }
-    },
-
-
     // to toggle the style class in any element
     // this toggles the error--text class when button is clicked
     myToggleFunction(event) {

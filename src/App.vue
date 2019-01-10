@@ -12,9 +12,6 @@
         <v-spacer></v-spacer>
 
         <liq-tree :facetData="categoryData"></liq-tree>
-        <liq-tree2 :facetData="locationData"></liq-tree2>
-
-
       </v-navigation-drawer>
       <v-toolbar
         :clipped-left="$vuetify.breakpoint.lgAndUp"
