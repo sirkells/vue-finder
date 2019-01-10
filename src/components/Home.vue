@@ -306,6 +306,19 @@ export default {
   },
 
   methods: {
+    login(payload) {
+      const path = 'http://localhost:5000/login';
+      axios.post(path, payload)
+        .then(() => {
+          // eslint-disable-next-line no-alert
+          alert('login succesful');
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.getBooks();
+        });
+    },
     check(a, b) {
       if (a === 'Category') {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -453,7 +466,7 @@ export default {
       }
     },
     getSk(a) {
-      if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
+      if (!this.gActive && !this.lActive && !this.gtsActive && !this.gtActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       } else if (this.lActive && !this.gActive && !this.gtActive && !this.gtsActive) {
@@ -520,11 +533,20 @@ export default {
       alert('Project has been bookmarked');
     },
     addToCockpit(index) {
+      const payload = this.results[index];
+      const path = 'http://localhost:5000/api/cockpit';
+      axios.post(path, payload)
+        .then(() => {
+          // eslint-disable-next-line no-alert
+          alert('added succesful');
+          console.log(payload);
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
       this.cockpit.push(this.results[index]);
-      this.subject = this.results[index];
-      this.title = this.results[index].title;
       console.log(this.cockpit.length);
-      alert('Project has been added');
     },
     shareProject(index) {
       this.message_body = `${this.results[index].title}

@@ -11,15 +11,6 @@
       >
         <v-list dense>
           <template v-for="item in items">
-
-            <v-list-group
-              v-model="item.model"
-              :key="item.text"
-              :prepend-icon="item.model ? item.icon : item['icon-alt']"
-              append-icon=""
-
-            >
-            </v-list-group>
             <v-list-tile @click="" :key="item.text">
               <v-list-tile-action>
                 <v-icon>{{ item.icon }}</v-icon>
@@ -144,7 +135,7 @@ export default {
     items: [
       { icon: 'bookmark', text: 'Cockpit' },
       { icon: 'favoriter', text: 'Favorites' },
-      { icon: 'logout', text: 'Logout' },
+      { icon: 'mdi-logout', text: 'Logout' },
     ],
     section: '',
     name: 'Filter',

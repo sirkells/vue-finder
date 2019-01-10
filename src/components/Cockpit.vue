@@ -2,8 +2,8 @@
     <v-container grid-list-md  fluid container>
         <v-layout row wrap>
           <v-flex
-            xs12 
-            v-for="(posts, index) in category" 
+            xs12
+            v-for="(posts, index) in results"
             :key="index" >
             <v-card>
               <v-card-title primary>
@@ -37,20 +37,46 @@
 
 
 <script>
-import Home from "@/components/Home";
-    export default {
-      props: ['category'],
-      name: 'Cockpit',
-      components: {
-      'home-cmp': Home
-    },
-    
-      data() {
-        return {
-          msg: 'Welcome to the Login Page',
-          
-          
-        };
-      },
+import Home from '@/components/Home';
+import axios from 'axios/dist/axios.min.js';
+
+export default {
+  name: 'Cockpit',
+  components: {
+    'home-cmp': Home,
+  },
+
+  data() {
+    return {
+      msg: 'Welcome to the Login Page',
+      section: 'http://127.0.0.1:5000/api/cockpit',
+      results: [],
+      total_results: [],
+
+
     };
+  },
+  created() {
+    this.fetchData();
+  },
+  methods: {
+    fetchData() {
+      const a = this.section;
+      axios.get(a)
+        .then((resp) => {
+          // total results gets all the data from the api
+          this.total_results = resp.data.project_lists;
+          // results takes only 10 data and returns 10 everytime scrllbar ends
+          this.results = resp.data.project_lists.slice(0, 10);
+          console.log(resp);
+          console.log(a);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.errored = false;
+        })
+        .finally(() => this.loading = false);
+    },
+  },
+};
 </script>
