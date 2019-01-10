@@ -2,23 +2,22 @@
   <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
-          <v-flex xs12 sm8 md4>
+          <v-flex xs12 sm8 md3>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-toolbar-title>Login</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-tooltip bottom>
-                  <v-btn
-                    icon
-                    large
-                    :href="source"
-                    target="_blank"
-                    slot="activator"
+                <v-btn
+                  icon
+                  large
                   >
-                    <v-icon large>code</v-icon>
-                  </v-btn>
-                  <span>Source</span>
-                </v-tooltip>
+                    <v-avatar size="50px">
+                      <img
+                        src='@/assets/act1.svg'
+                        alt="ACT"
+                      >
+                    </v-avatar>
+                </v-btn>
               </v-toolbar>
               <v-card-text>
                 <v-form>
