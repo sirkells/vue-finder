@@ -38,6 +38,7 @@
 
 <script>
 import Home from '@/components/Home';
+// eslint-disable-next-line import/extensions
 import axios from 'axios/dist/axios.min.js';
 
 export default {
@@ -75,6 +76,7 @@ export default {
           console.log(err);
           this.errored = false;
         })
+        // eslint-disable-next-line no-return-assign
         .finally(() => this.loading = false);
     },
   },

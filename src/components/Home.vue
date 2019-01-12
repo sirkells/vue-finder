@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 <template>
       <v-container fluid grid-list-md>
 
@@ -319,6 +320,7 @@ export default {
           this.getBooks();
         });
     },
+    // checks which filter group was clicked
     check(a, b) {
       if (a === 'Category') {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -340,10 +342,9 @@ export default {
         this.gtsActive = !this.gtsActive;
       } else if (a === 'Skills') {
         this.url = 'http://127.0.0.1:5000/api/?';
-        const link = `skill=${b}`;
+        const link = `skill_summary=${b}`;
         this.skData = link;
-        this.getSk(link);
-        this.skActive = !this.skActive;
+        this.getSkSm(link);
       } else if (a === 'Bundesland') {
         const link = `bundesland=${b}`;
         this.lData = link;
@@ -351,6 +352,7 @@ export default {
         this.lActive = !this.lActive;
       }
     },
+    // location filter
     getLocation(a) {
       if (!this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -369,6 +371,7 @@ export default {
         this.fetchData(`${a}&${this.skData}`);
       }
     },
+    // group filter
     getGroup(a) {
       if (!this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -387,6 +390,7 @@ export default {
         this.fetchData(`${a}&${this.skData}`);
       }
     },
+    // group type filter
     getGrouptype(a) {
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -405,6 +409,7 @@ export default {
         this.fetchData(`${a}&${this.skData}`);
       }
     },
+    // group stack filter
     getGroupstack(a) {
       if (!this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -423,6 +428,7 @@ export default {
         this.fetchData(`${a}&${this.skData}`);
       }
     },
+    // platform filter
     getPlatform(a) {
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -444,6 +450,7 @@ export default {
         this.fetchData(`${a}&${this.skData}`);
       }
     },
+    // platform_name filter
     getPlatform_name(a) {
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -465,6 +472,7 @@ export default {
         this.fetchData(`${a}&${this.skData}`);
       }
     },
+    // bereich.skill fillter
     getSk(a) {
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.gtActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
@@ -484,6 +492,25 @@ export default {
       } else if (this.gtsActive && !this.lActive && !this.gActive && !this.gtActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
+      }
+    },
+    // for skill_summary filter
+    getSkSm(a) {
+      if (!this.gActive && !this.lActive && !this.gtsActive && !this.gtActive && !this.skActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(a);
+      // eslint-disable-next-line max-len
+      } else if (this.lActive && !this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.lData}`);
+      // eslint-disable-next-line max-len
+      } else if (this.gActive && !this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}`);
+      // eslint-disable-next-line max-len
+      } else if (this.gActive && this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.lData}`);
       }
     },
     sortBy() {
