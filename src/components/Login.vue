@@ -21,13 +21,14 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field prepend-icon="person" name="login" label="Login" type="text"></v-text-field>
-                  <v-text-field prepend-icon="lock" name="password" label="Password" id="password" type="password"></v-text-field>
+                  <v-text-field prepend-icon="person" name="login" label="Login" type="text" v-model="username"></v-text-field>
+                  <v-text-field prepend-icon="lock" label="Password" id="password" type="password" v-model="password"></v-text-field>
+                  <p class="error" :message="message">{{ message }}</p>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary">Login</v-btn>
+                <v-btn color="primary" @click="submit">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -37,13 +38,45 @@
 </template>
 
 <script>
+// eslint-disable-next-line import/extensions
+import axios from 'axios/dist/axios.min.js';
+import store from '../store/store';
+
 export default {
   name: 'Login',
   data: () => ({
     drawer: null,
+    username: undefined,
+    password: undefined,
+    message: '',
+    isAuth: false,
+
   }),
   props: {
     source: String,
+  },
+  methods: {
+    submit() {
+      const path = 'http://localhost:5000/api/login';
+      const payload = { username: this.username, password: this.password };
+      axios.post(path, payload)
+        .then((resp) => {
+          this.message = resp.data.message;
+          // eslint-disable-next-line no-alert
+          // eslint-disable-next-line no-console
+          console.log(resp.data.message);
+          // eslint-disable-next-line no-alert
+          if (resp.data.auth) {
+            this.isAuth = true;
+            store.state.isAuth = true;
+            this.$router.push('/');
+          }
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+    },
   },
 };
 </script>

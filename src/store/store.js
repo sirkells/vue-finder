@@ -9,6 +9,7 @@ Vue.use(Vuex);
 const state = {
   count: 0,
   list: [],
+  isAuth: false,
 };
 
 const getters = {

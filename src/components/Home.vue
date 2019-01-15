@@ -535,7 +535,6 @@ export default {
       this.results.sort((a, b) => parseFloat(a.date_post) - parseFloat(b.date_post));
       // eslint-disable-next-line no-plusplus
     },
-
     // toggles color of tags clicked
     // to toggle the style class in any element
     // this toggles the error--text class when button is clicked
