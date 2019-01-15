@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable no-console */
 /* eslint-disable max-len */
 <template>
       <v-container fluid grid-list-md>
@@ -71,8 +73,6 @@
                       >
                         <v-list-tile-content >
                           <v-chip  @click="check(item.title, subItem.key)">{{ subItem.key }} ({{ subItem.count }})</v-chip>
-
-
                         </v-list-tile-content>
 
                         <v-list-tile-action>
@@ -207,28 +207,24 @@
 </template>
 
 <script>
+// eslint-disable-next-line import/extensions
 import axios from 'axios/dist/axios.min.js';
 // import Filter from "./SideFilter";
+// eslint-disable-next-line import/extensions
 import scrollMonitor from 'scrollmonitor/scrollMonitor.js';
-import Filter from '@/components/SideFilter';
 import Cockpit from '@/components/Cockpit';
-import Liquor from '@/components/Liquor';
-import Liquor2 from '@/components/Liquor2';
+
 
 export default {
   name: 'Home',
-  // props passed from APP.vue refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered
-  props: ['refreshHome', 'search_term', 'searchCalled', 'filter', 'facet'],
+  // props passed from APP.vue refreshHome to refreshHompage
+  // searchTerm to get search term and searchCalled to trigger the watcher when search is entered
+  props: ['refreshHome', 'search_term', 'searchCalled', 'filter'],
   components: {
-    'filters-cmp': Filter,
     'cock-cmp': Cockpit,
-    'liq-tree': Liquor,
-    'liq-tree2': Liquor2,
   },
   data() {
     return {
-      benefits: [1, 2, 3],
-      benefitType: [],
       category: false,
       aggRegion: [],
       allAggs: [],
@@ -261,6 +257,8 @@ export default {
       pData: '',
       pnActive: false,
       pnData: '',
+      sksmActive: false,
+      sksmData: '',
       errored: false,
       loading: true,
       cockpit: [],
@@ -283,23 +281,6 @@ export default {
       allRegion: [],
       allSkill: [],
       cc: [],
-      lol: [],
-      dropdown_font: [
-        { text: 'Arial' },
-        { text: 'Calibri' },
-        { text: 'Courier' },
-        { text: 'Verdana' },
-      ],
-      dropdown_edit: [
-        { text: '100%' },
-        { text: '75%' },
-        { text: '50%' },
-        { text: '25%' },
-        { text: '0%' },
-      ],
-      toggle_exclusive: 2,
-      toggle_multiple: [1, 2, 3],
-      active: false,
     };
   },
   created() {
@@ -343,8 +324,9 @@ export default {
       } else if (a === 'Skills') {
         this.url = 'http://127.0.0.1:5000/api/?';
         const link = `skill_summary=${b}`;
-        this.skData = link;
+        this.sksmData = link;
         this.getSkSm(link);
+        this.sksmActive = true;
       } else if (a === 'Bundesland') {
         const link = `bundesland=${b}`;
         this.lData = link;
@@ -354,7 +336,7 @@ export default {
     },
     // location filter
     getLocation(a) {
-      if (!this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+      if (!this.gActive && !this.gtActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       } else if (this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
@@ -369,6 +351,24 @@ export default {
       } else if (this.skActive && !this.gActive && !this.gtActive && !this.gtsActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
+      } else if (this.gActive && this.gtActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}`);
+      } else if (this.gActive && this.gtActive && this.gtsActive && !this.skActive && !this.sksmActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}`);
+      } else if (this.sksmActive && !this.gActive && !this.gtActive && !this.gtsActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.sksmData}`);
+      } else if (this.sksmActive && this.gActive && !this.gtActive && !this.gtsActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.sksmData}&${this.gData}`);
+      } else if (this.sksmActive && this.gActive && this.gtActive && !this.gtsActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.sksmData}&${this.gData}&${this.gtData}`);
+      } else if (this.sksmActive && this.gActive && this.gtActive && this.gtsActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.sksmData}&${this.gData}&${this.gtData}&${this.gtsData}`);
       }
     },
     // group filter
@@ -395,9 +395,9 @@ export default {
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
-      } else if (this.lActive && !this.gActive && !this.gtsActive && !this.skActive) {
+      } else if (this.lActive && this.gActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
-        this.fetchData(`${a}&${this.lData}`);
+        this.fetchData(`${a}&${this.lData}&${this.gData}`);
       } else if (this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}`);
@@ -426,6 +426,12 @@ export default {
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
+      } else if (this.gActive && this.gtActive && !this.lActive && !this.skActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}`);
+      } else if (this.gActive && this.gtActive && this.lActive && !this.skActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.lData}`);
       }
     },
     // platform filter
@@ -511,6 +517,18 @@ export default {
       } else if (this.gActive && this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.lData}`);
+      } else if (this.gActive && this.gtActive && !this.lActive && !this.gtsActive && !this.skActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}`);
+      } else if (this.gActive && this.gtActive && this.gtsActive && !this.skActive && !this.lActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}`);
+      } else if (this.gActive && this.gtActive && !this.gtsActive && this.lActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.lData}`);
+      } else if (this.gActive && this.gtActive && this.gtsActive && this.lActive) {
+        this.url = 'http://127.0.0.1:5000/api/?';
+        this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}&${this.lData}`);
       }
     },
     sortBy() {
@@ -527,16 +545,12 @@ export default {
       // let button = event.target;
       // console.log(button.classList)
     },
-    myFilter(index, e) {
-      console.log(this.results[index]);
-      this.myActive = !this.myActive;
-
-
-      // some code to filter users
-    },
     reset() {
       this.url = 'http://127.0.0.1:5000/api/?';
       this.fetchData('');
+      this.sksmActive = false;
+      this.pActive = false;
+      this.pnActive = false;
       this.gtActive = false;
       this.gtsActive = false;
       this.gActive = false;
@@ -549,6 +563,7 @@ export default {
     // Create an array the length of our items
     // with all values as true
     all() {
+      // eslint-disable-next-line no-unused-vars
       this.panel = [...Array(this.items).keys()].map(_ => true);
     },
     // Reset the panel
@@ -557,6 +572,7 @@ export default {
     },
     // allert when project has been bookmarked
     saved() {
+      // eslint-disable-next-line no-alert
       alert('Project has been bookmarked');
     },
     addToCockpit(index) {
@@ -566,6 +582,7 @@ export default {
         .then(() => {
           // eslint-disable-next-line no-alert
           alert('added succesful');
+          // eslint-disable-next-line no-console
           console.log(payload);
         })
         .catch((error) => {
@@ -573,6 +590,7 @@ export default {
           console.log(error);
         });
       this.cockpit.push(this.results[index]);
+      // eslint-disable-next-line no-console
       console.log(this.cockpit.length);
     },
     shareProject(index) {
@@ -582,21 +600,13 @@ export default {
     },
     bundesland_val(land) {
       this.link = `bundesland=${land}`;
+      // eslint-disable-next-line no-console
       console.log(this.link);
     },
     appendItems() {
       if (this.results.length < this.total_results.length) {
         const nextData = this.total_results.slice(this.results.length, this.results.length + 10);
         this.results = this.results.concat(nextData);
-      }
-    },
-    filterFunc(s) {
-      if (s === 'Development' || 'Infrastructure' || 'Data Science') {
-        this.url = 'http://127.0.0.1:5000/api/?group=';
-        this.fetchData(this.selectedFilter[0]);
-      } else if (this.selectedFilter.length === 0) {
-        this.url = 'http://127.0.0.1:5000/api/';
-        this.fetchData('');
       }
     },
     // fetchs data from API
@@ -612,29 +622,27 @@ export default {
           this.allAggs = resp.data.AllAggs;
           this.allRegion = resp.data.Allregion;
           this.allSkill = resp.data.Allskill;
+          // eslint-disable-next-line no-console
           console.log(this.aggs);
+          // eslint-disable-next-line no-console
           console.log(resp);
+          // eslint-disable-next-line no-console
           console.log(a);
         })
         .catch((err) => {
+          // eslint-disable-next-line no-console
           console.log(err);
           this.errored = false;
         })
+        // eslint-disable-next-line no-return-assign
         .finally(() => this.loading = false);
     },
   },
   watch: {
-    selectedFilter() {
-      this.url = 'http://127.0.0.1:5000/api/filter/?';
-      // fetches data based on search term. search as you type feature enabled due to keyboardup.prevent event in the App.vue search textfield event
-      let term;
-      term = `filter_list=${this.selectedFilter}`;
-      console.log(term);
-      this.fetchData(term);
-    },
     // refreshes the homepage
     refreshHome() {
       this.reset();
+      // eslint-disable-next-line no-console
       console.log(this.refreshHome);
     },
 
@@ -646,21 +654,22 @@ export default {
         this.url = 'http://127.0.0.1:5000/api/?';
         // and it returns all projects
         this.fetchData('');
+      // eslint-disable-next-line brace-style
       }
       // if theres a searchterm
       else {
+        // eslint-disable-next-line no-console
         console.log(this.search_term);
         // changes url to query url
         this.url = 'http://127.0.0.1:5000/api/search/?';
-        // fetches data based on search term. search as you type feature enabled due to keyboardup.prevent event in the App.vue search textfield event
-        let term;
-        term = `search_term=${this.search_term}`;
+        // fetches data based on search term.
+        // search as you type feature enabled
+        // due to keyboardup.prevent event in the App.vue search textfield event
+        const term = `search_term=${this.search_term}`;
+        // eslint-disable-next-line no-console
         console.log(term);
         this.fetchData(term);
       }
-    },
-    facet() {
-      console.log(this.facet);
     },
   },
 
@@ -669,6 +678,7 @@ export default {
     const elem = document.getElementById('product-list-bottom');
     const watcher = scrollMonitor.create(elem);
     watcher.enterViewport(() => {
+      // eslint-disable-next-line no-console
       console.log('hello');
       vueInstance.appendItems();
     });

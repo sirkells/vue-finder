@@ -3,10 +3,7 @@ import Router from 'vue-router';
 import Home from '@/components/Home';
 import Login from '@/components/Login';
 import Cockpit from '@/components/Cockpit';
-import Tree from '@/components/Tree';
-import Newtree from '@/components/Newtree';
-import Search from '@/components/Search';
-import Liquor from '@/components/Liquor';
+
 
 Vue.use(Router);
 
@@ -27,26 +24,6 @@ export default new Router({
       path: '/cockpit',
       name: 'Cockpit',
       component: Cockpit,
-    },
-    {
-      path: '/tree',
-      name: 'Tree',
-      component: Tree,
-    },
-    {
-      path: '/newtree',
-      name: 'Newtree',
-      component: Newtree,
-    },
-    {
-      path: '/search',
-      name: 'Search',
-      component: Search,
-    },
-    {
-      path: '/liq',
-      name: 'Liquor',
-      component: Liquor,
     },
   ],
 });

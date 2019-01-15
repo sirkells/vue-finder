@@ -73,17 +73,6 @@
             <v-icon>bookmark</v-icon>
           </v-btn>
         </router-link>
-        <router-link to="/tree">
-          <v-btn icon>
-            <v-icon>favoriter</v-icon>
-          </v-btn>
-        </router-link>
-        <router-link to="/search">
-          <v-btn icon>
-            <v-icon>search</v-icon>
-          </v-btn>
-        </router-link>
-
         <router-link to="/login">
           <v-btn icon>
             <v-icon>mdi-logout</v-icon>
@@ -103,31 +92,21 @@
     </div>
     <!--props passed to Home refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered -->
     <v-content>
-
-      <router-view :refreshHome="refreshme" :search_term="search_term"  :searchCalled="searchCalled" :facet="facet"></router-view>
+      <router-view :refreshHome="refreshme" :search_term="search_term"  :searchCalled="searchCalled"></router-view>
     </v-content>
   </v-app>
 </template>
 <script>
 
-import Filter from '@/components/SideFilter';
 import Home from '@/components/Home';
 import Cockpit from '@/components/Cockpit';
-import Search from '@/components/Search';
-import Tree from '@/components/Tree';
-import Liquor from '@/components/Liquor';
-import Liquor2 from '@/components/Liquor2';
+
 
 export default {
 
   components: {
-    'filters-cmp': Filter,
     'home-cmp': Home,
     'cock-cmp': Cockpit,
-    'search-cmp': Search,
-    'tree-cmp': Tree,
-    'liq-tree': Liquor,
-    'liq-tree2': Liquor2,
   },
 
   data: () => ({
@@ -153,6 +132,7 @@ export default {
       this.refreshme = !this.refreshme;
     },
     search() {
+      // eslint-disable-next-line no-console
       console.log(this.search_term);
       this.searchCalled = !this.searchCalled;
     },

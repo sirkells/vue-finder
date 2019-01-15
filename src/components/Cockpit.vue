@@ -69,10 +69,13 @@ export default {
           this.total_results = resp.data.project_lists;
           // results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10);
+          // eslint-disable-next-line no-console
           console.log(resp);
+          // eslint-disable-next-line no-console
           console.log(a);
         })
         .catch((err) => {
+          // eslint-disable-next-line no-console
           console.log(err);
           this.errored = false;
         })
