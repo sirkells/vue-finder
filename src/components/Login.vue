@@ -28,7 +28,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="submit">Login</v-btn>
+                <v-btn color="primary" @click="login">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -56,6 +56,15 @@ export default {
     source: String,
   },
   methods: {
+    login() {
+      this.$store.dispatch('getToken', {
+        username: this.username,
+        password: this.password,
+      })
+        .then((resp) => {
+          this.$router.push('/');
+        });
+    },
     submit() {
       const path = 'http://localhost:5000/api/login';
       const payload = { username: this.username, password: this.password };

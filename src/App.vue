@@ -67,18 +67,30 @@
 
         </v-text-field>
         <v-spacer></v-spacer>
-
-        <router-link to="/cockpit">
+        <v-btn icon>
+            <v-icon>bookmark</v-icon>
+          </v-btn>
+        <div>
+          <router-link to="/cockpit">
           <v-btn icon>
             <v-icon>bookmark</v-icon>
           </v-btn>
         </router-link>
-        <router-link to="/login">
-          <v-btn icon>
-            <v-icon>mdi-logout</v-icon>
-          </v-btn>
-        </router-link>
-
+        </div>
+        <div v-if="!loggedIn">
+          <router-link to="/login">
+            <v-btn icon>
+              <v-icon>mdi-login</v-icon>
+            </v-btn>
+          </router-link>
+        </div>
+        <div v-if="loggedIn">
+          <router-link to="/logout">
+            <v-btn icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-btn>
+          </router-link>
+        </div>
         <v-btn icon large>
           <v-avatar size="32px">
             <img
@@ -124,6 +136,11 @@ export default {
     // categoryData: getCategoryData(),
     facet: '',
   }),
+  computed: {
+    loggedIn() {
+      return this.$store.getters.loggedIn;
+    },
+  },
   methods: {
     refresh() {
       this.section = 'home';
