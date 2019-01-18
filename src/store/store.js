@@ -39,6 +39,7 @@ const mutations = {
 const actions = {
   // eslint-disable-next-line consistent-return
   destroyToken(context) {
+    axios.defaults.headers.common.Authorization = `Bearer ${context.state.token}`;
     const path = 'http://localhost:5000/api/logout';
     if (context.getters.loggedIn) {
       return new Promise((resolve, reject) => {

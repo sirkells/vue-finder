@@ -67,9 +67,6 @@
 
         </v-text-field>
         <v-spacer></v-spacer>
-        <v-btn icon>
-            <v-icon>bookmark</v-icon>
-          </v-btn>
         <div>
           <router-link to="/cockpit">
           <v-btn icon>

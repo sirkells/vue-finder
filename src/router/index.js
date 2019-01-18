@@ -39,7 +39,7 @@ export default new Router({
       name: 'Cockpit',
       component: Cockpit,
       beforeEnter(to, from, next) {
-        if (!store.state.isAuth) {
+        if (!store.getters.loggedIn) {
           next('/login');
         } else {
           next();

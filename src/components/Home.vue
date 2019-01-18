@@ -278,16 +278,26 @@ export default {
       link: '',
       group: false,
       country: [{ name: 'Germany' }, { name: 'England' }],
-      allRegion: [],
-      allSkill: [],
       cc: [],
+
     };
   },
   created() {
-    this.reset();
+    if (this.loggedIn) {
+      this.reset();
+    } else {
+      this.$router.push('/logout');
+    }
   },
-
+  computed: {
+    loggedIn() {
+      return this.$store.getters.loggedIn;
+    },
+  },
   methods: {
+    destroy() {
+      this.$store.state.token = null;
+    },
     login(payload) {
       const path = 'http://localhost:5000/login';
       axios.post(path, payload)
@@ -610,17 +620,17 @@ export default {
     },
     // fetchs data from API
     fetchData(section) {
-      const a = this.url + section;
+      axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
+      const a = `${this.url + section}`;
       axios.get(a)
         .then((resp) => {
           // total results gets all the data from the api
+          console.log(resp);
           this.total_results = resp.data.project_lists;
           // results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10);
           this.selectedRegion = resp.data.aggRegion;
           this.allAggs = resp.data.AllAggs;
-          this.allRegion = resp.data.Allregion;
-          this.allSkill = resp.data.Allskill;
           // eslint-disable-next-line no-console
           console.log(this.aggs);
           // eslint-disable-next-line no-console
@@ -628,11 +638,36 @@ export default {
           // eslint-disable-next-line no-console
           console.log(a);
         })
+        // eslint-disable-next-line func-names
         .catch((err) => {
+          // eslint-disable-next-line no-console
+          if (err.response.status === 401) {
+            // eslint-disable-next-line no-alert
+            alert('Expired token. Reauthentication required');
+            this.$router.push('/logout');
+          }
           // eslint-disable-next-line no-console
           console.log(err);
           this.errored = false;
         })
+        // .catch(function (err) {
+        //   if (err.response.status === 401) {
+        //     // eslint-disable-next-line no-console
+        //     console.log(err.response.data);
+        //     // eslint-disable-next-line no-console
+        //     console.log(err.response.status);
+        //     // eslint-disable-next-line no-console
+        //     console.log(err.response.headers);
+
+        //     // localStorage.removeItem('token');
+        //     // this.loggedIn = false;
+        //     // this.$store.dispatch('destroyToken');
+        //     // eslint-disable-next-line no-alert
+        //     alert('Expired token. Reauthentication required');
+        //     this.exp = false;
+        //   }
+        //   this.errored = false;
+        // })
         // eslint-disable-next-line no-return-assign
         .finally(() => this.loading = false);
     },
