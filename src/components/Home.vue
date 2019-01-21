@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable max-len */
 /* eslint-disable no-console */
 /* eslint-disable no-console */
 /* eslint-disable max-len */
@@ -10,7 +12,7 @@
       <section v-else-if="loading">Loading.......</section>
       <section v-else>
         <v-layout row justify-start class="mb-3">
-        <v-btn small flat color="grey" @click="sortBy('title')">
+        <v-btn small flat color="grey" @click="sorty('score')">
           <v-icon small left>folder</v-icon>
           <span class="caption text-lowercase">By project name</span>
         </v-btn>
@@ -72,6 +74,7 @@
 
                       >
                         <v-list-tile-content >
+
                           <v-chip  @click="check(item.title, subItem.key)">{{ subItem.key }} ({{ subItem.count }})</v-chip>
                         </v-list-tile-content>
 
@@ -89,7 +92,7 @@
                   <v-flex >
                     <v-layout row wrap>
                       <v-flex
-                        v-for="(posts, index) in results"
+                        v-for="(posts, index) in resultApi"
                         :key="index"
                         xs12
                       >
@@ -103,6 +106,8 @@
                           <v-card-actions>
 
                           <div class="text-xs-center">
+                            <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
+                            <v-chip v-if="posts.filter_date_post.$date">{{ posts.filter_date_post.$date}}</v-chip>
                             <v-chip :class="{success: lActive}" @click="lActive = !lActive,lData='bundesland='+posts.region.bundesland, getLocation('bundesland='+posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
                             <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, gData='group=' + posts.bereich.group, getGroup('group=' + posts.bereich.group)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
                             <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, gtData='groupType=' + posts.bereich.group_type, getGrouptype('groupType=' + posts.bereich.group_type)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
@@ -266,7 +271,6 @@ export default {
       total_results: [],
       panel: [],
       selectedFilter: [],
-      selectedRegion: [],
       groupSelected: '',
       locSelected: '',
       selected: ['Trevor Handsen'],
@@ -279,6 +283,7 @@ export default {
       group: false,
       country: [{ name: 'Germany' }, { name: 'England' }],
       cc: [],
+      seachTrigger: false,
 
     };
   },
@@ -293,8 +298,33 @@ export default {
     loggedIn() {
       return this.$store.getters.loggedIn;
     },
+    resultApi() {
+      if (this.seachTrigger) {
+        this.resetFilters();
+        console.log('yes');
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        return this.results.sort(this.byProperty('score'));
+      }
+      console.log('no');
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.results;
+    },
+    assignUrl() {
+      if (this.seachTrigger) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        const url = `http://127.0.0.1:5000/api/?search_term=${this.search_term}&`;
+        return url;
+      }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      const url = 'http://127.0.0.1:5000/api/?';
+      return url;
+    },
   },
   methods: {
+    sorty(a) {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      this.results.sort(this.byProperty(a));
+    },
     destroy() {
       this.$store.state.token = null;
     },
@@ -311,28 +341,26 @@ export default {
           this.getBooks();
         });
     },
+
     // checks which filter group was clicked
     check(a, b) {
+      this.url = this.assignUrl;
       if (a === 'Category') {
-        this.url = 'http://127.0.0.1:5000/api/?';
         const link = `group=${b}`;
         this.gData = link;
         this.getGroup(link);
-        this.gActive = !this.gActive;
+        this.gActive = true;
       } else if (a === 'Sub-Category') {
-        this.url = 'http://127.0.0.1:5000/api/?';
         const link = `groupType=${b}`;
         this.gtData = link;
         this.getGrouptype(link);
         this.gtActive = !this.gtActive;
       } else if (a === 'Stack') {
-        this.url = 'http://127.0.0.1:5000/api/?';
         const link = `groupStack=${b}`;
         this.gtsData = link;
         this.getGroupstack(link);
         this.gtsActive = !this.gtsActive;
       } else if (a === 'Skills') {
-        this.url = 'http://127.0.0.1:5000/api/?';
         const link = `skill_summary=${b}`;
         this.sksmData = link;
         this.getSkSm(link);
@@ -346,57 +374,42 @@ export default {
     },
     // location filter
     getLocation(a) {
+      this.url = this.assignUrl;
       if (!this.gActive && !this.gtActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       } else if (this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}`);
       } else if (this.gtActive && !this.gActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtData}`);
       } else if (this.gtsActive && !this.gActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.skActive && !this.gActive && !this.gtActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
       } else if (this.gActive && this.gtActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.gtData}`);
       } else if (this.gActive && this.gtActive && this.gtsActive && !this.skActive && !this.sksmActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}`);
       } else if (this.sksmActive && !this.gActive && !this.gtActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.sksmData}`);
       } else if (this.sksmActive && this.gActive && !this.gtActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.sksmData}&${this.gData}`);
       } else if (this.sksmActive && this.gActive && this.gtActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.sksmData}&${this.gData}&${this.gtData}`);
       } else if (this.sksmActive && this.gActive && this.gtActive && this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.sksmData}&${this.gData}&${this.gtData}&${this.gtsData}`);
       }
     },
     // group filter
     getGroup(a) {
       if (!this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       } else if (this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.lData}`);
       } else if (this.gtActive && !this.lActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtData}`);
       } else if (this.gtsActive && !this.lActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.skActive && !this.lActive && !this.gtActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
       }
     },
@@ -541,8 +554,22 @@ export default {
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}&${this.lData}`);
       }
     },
+    byProperty(prop) {
+      // eslint-disable-next-line func-names
+      return function (a, b) {
+        if (typeof a[prop] === 'number') {
+          return (b[prop] - a[prop]);
+        }
+        // eslint-disable-next-line no-nested-ternary
+        return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
+      };
+    },
+
     sortBy() {
-      this.results.sort((a, b) => parseFloat(a.date_post) - parseFloat(b.date_post));
+      this.results.sort((a, b) =>
+        (a.filter_date_post.$date - b.filter_date_post.$date),
+      );
+      // this.results.sort((a, b) => parseFloat(a.filter_date_post['$date'] - parseFloat(b.date_post));
       // eslint-disable-next-line no-plusplus
     },
     // toggles color of tags clicked
@@ -565,9 +592,22 @@ export default {
       this.gActive = false;
       this.skActive = false;
       this.lActive = false;
+      this.skActive = false;
       this.link = '';
       this.section = '';
       this.selectedFilter = [];
+      this.seachTrigger = false;
+    },
+    resetFilters() {
+      this.sksmActive = false;
+      this.pActive = false;
+      this.pnActive = false;
+      this.gtActive = false;
+      this.gtsActive = false;
+      this.gActive = false;
+      this.skActive = false;
+      this.lActive = false;
+      this.skActive = false;
     },
     // Create an array the length of our items
     // with all values as true
@@ -629,10 +669,9 @@ export default {
           this.total_results = resp.data.project_lists;
           // results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10);
-          this.selectedRegion = resp.data.aggRegion;
           this.allAggs = resp.data.AllAggs;
           // eslint-disable-next-line no-console
-          console.log(this.aggs);
+          console.log(this.results);
           // eslint-disable-next-line no-console
           console.log(resp);
           // eslint-disable-next-line no-console
@@ -650,24 +689,6 @@ export default {
           console.log(err);
           this.errored = false;
         })
-        // .catch(function (err) {
-        //   if (err.response.status === 401) {
-        //     // eslint-disable-next-line no-console
-        //     console.log(err.response.data);
-        //     // eslint-disable-next-line no-console
-        //     console.log(err.response.status);
-        //     // eslint-disable-next-line no-console
-        //     console.log(err.response.headers);
-
-        //     // localStorage.removeItem('token');
-        //     // this.loggedIn = false;
-        //     // this.$store.dispatch('destroyToken');
-        //     // eslint-disable-next-line no-alert
-        //     alert('Expired token. Reauthentication required');
-        //     this.exp = false;
-        //   }
-        //   this.errored = false;
-        // })
         // eslint-disable-next-line no-return-assign
         .finally(() => this.loading = false);
     },
@@ -685,8 +706,9 @@ export default {
       // checks if theres any letter is enterd in search bar.
       if (this.search_term.length <= 1) {
         // if none, it changes the url to home
-        this.url = 'http://127.0.0.1:5000/api/?';
+        // this.url = 'http://127.0.0.1:5000/api/?';
         // and it returns all projects
+        this.seachTrigger = false;
         this.fetchData('');
       // eslint-disable-next-line brace-style
       }
@@ -694,11 +716,13 @@ export default {
       else {
         // eslint-disable-next-line no-console
         console.log(this.search_term);
-        // changes url to query url
-        this.url = 'http://127.0.0.1:5000/api/search/?';
-        // fetches data based on search term.
-        // search as you type feature enabled
-        // due to keyboardup.prevent event in the App.vue search textfield event
+        // // changes url to query url
+        // this.url = 'http://127.0.0.1:5000/api/search/?';
+        // // fetches data based on search term.
+        // // search as you type feature enabled
+        // // due to keyboardup.prevent event in the App.vue search textfield event
+        this.seachTrigger = true;
+        console.log(this.search_term);
         const term = `search_term=${this.search_term}`;
         // eslint-disable-next-line no-console
         console.log(term);
