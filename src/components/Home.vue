@@ -277,8 +277,13 @@ export default {
       country: [{ name: 'Germany' }, { name: 'England' }],
       cc: [],
       seachTrigger: false,
-      lClicked: false,
-      gClicked: false,
+      totalAmount: '',
+      // lClicked: false,
+      // gClicked: false,
+      // gtClicked: false,
+      // gtsClicked: false,
+      // skClicked: false,
+      // sksmClicked: false,
 
     };
   },
@@ -295,7 +300,6 @@ export default {
     },
     resultApi() {
       if (this.seachTrigger) {
-        this.resetFilters();
         console.log('yes');
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         return this.results.sort(this.byProperty('score'));
@@ -318,7 +322,7 @@ export default {
       return this.results.length;
     },
     totalResultsCount() {
-      return this.total_results.length;
+      return this.totalAmount;
     },
   },
   methods: {
@@ -329,25 +333,10 @@ export default {
     destroy() {
       this.$store.state.token = null;
     },
-    login(payload) {
-      const path = 'http://localhost:5000/login';
-      axios.post(path, payload)
-        .then(() => {
-          // eslint-disable-next-line no-alert
-          alert('login succesful');
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.log(error);
-          this.getBooks();
-        });
-    },
-
     // checks which filter group was clicked
     check(a, b) {
       this.url = this.assignUrl;
       if (a === 'Category') {
-        this.gClicked = true;
         const link = `group=${b}`;
         this.gData = link;
         this.getGroup(link);
@@ -368,7 +357,6 @@ export default {
         this.getSkSm(link);
         this.sksmActive = true;
       } else if (a === 'Bundesland') {
-        this.lClicked = true;
         const link = `bundesland=${b}`;
         this.lData = link;
         this.getLocation(link);
@@ -404,158 +392,143 @@ export default {
     },
     // group filter
     getGroup(a) {
-      if (!this.lActive && !this.gtActive && !this.gtsActive && !this.skActive && !this.seachTrigger) {
+      this.url = this.assignUrl;
+      if (!this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.fetchData(a);
       } else if (this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.fetchData(`${a}&${this.lData}`);
-      } else if (this.gtActive && !this.lActive && !this.gtsActive && !this.skActive) {
-        this.fetchData(`${a}&${this.gtData}`);
       } else if (this.gtsActive && !this.lActive && !this.gtActive && !this.skActive) {
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.skActive && !this.lActive && !this.gtActive && !this.gtsActive) {
         this.fetchData(`${a}&${this.skData}`);
-      } else if (this.seachTrigger && this.lClicked && !this.gtActive && !this.gtsActive) {
-        this.fetchData(`${a}&${this.lData}`);
       }
     },
     // group type filter
     getGrouptype(a) {
-      if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
+      this.url = this.assignUrl;
+      if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
         this.fetchData(a);
-      } else if (this.lActive && this.gActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
-        this.fetchData(`${a}&${this.lData}&${this.gData}`);
-      } else if (this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
+      } else if (this.gActive && !this.lActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gData}`);
-      } else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
+      } else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gtsData}`);
+      } else if (this.lActive && !this.gtsActive && !this.gActive && !this.skActive && !this.sksmActive) {
+        this.fetchData(`${a}&${this.lData}`);
+      } else if (this.sksmActive && !this.lActive && !this.gtsActive && !this.skActive && !this.gActive) {
+        this.fetchData(`${a}&${this.sksmData}`);
+      } else if (this.lActive && this.gActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
+        this.fetchData(`${a}&${this.lData}&${this.gData}`);
+      } else if (this.lActive && this.gtsActive && !this.gActive && !this.skActive && !this.sksmActive) {
+        this.fetchData(`${a}&${this.lData}&${this.gtsData}`);
+      } else if (this.lActive && this.sksmActive && !this.gtsActive && !this.skActive && !this.gActive) {
+        this.fetchData(`${a}&${this.lData}&${this.sksmData}`);
+      } else if (this.gActive && this.lActive && this.gtsActive && !this.skActive) {
+        this.fetchData(`${a}&${this.gData}&${this.lData}&${this.gtsData}`);
+      } else if (this.gtsActive && this.lActive && this.gActive && this.sksmActive && !this.skActive) {
+        this.fetchData(`${a}&${this.gtsData}&${this.lData}&${this.sksmData}&${this.gData}`);
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
       }
     },
     // group stack filter
     getGroupstack(a) {
-      if (!this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
+      this.url = this.assignUrl;
+      if (!this.gActive && !this.lActive && !this.gtActive && !this.skActive && !this.sksmActive) {
         this.fetchData(a);
-      } else if (this.lActive && !this.gActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
-        this.fetchData(`${a}&${this.lData}`);
-      } else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
+      } else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gData}`);
-      } else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
+      } else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gtData}`);
+      } else if (this.lActive && !this.gtActive && !this.gActive && !this.skActive && !this.sksmActive) {
+        this.fetchData(`${a}&${this.lData}`);
+      } else if (this.sksmActive && !this.lActive && !this.gtActive && !this.skActive && !this.gActive) {
+        this.fetchData(`${a}&${this.sksmData}`);
+      } else if (this.lActive && this.gActive && !this.gtActive && !this.skActive && !this.sksmActive) {
+        this.fetchData(`${a}&${this.lData}&${this.gData}`);
+      } else if (this.lActive && this.gtActive && !this.gActive && !this.skActive && !this.sksmActive) {
+        this.fetchData(`${a}&${this.lData}&${this.gtData}`);
+      } else if (this.lActive && this.sksmActive && !this.gtActive && !this.skActive && !this.gActive) {
+        this.fetchData(`${a}&${this.lData}&${this.sksmData}`);
+      } else if (this.gActive && this.lActive && this.gtActive && !this.skActive) {
+        this.fetchData(`${a}&${this.gData}&${this.lData}&${this.gtData}`);
+      } else if (this.gtActive && this.lActive && this.gActive && this.sksmActive && !this.skActive) {
+        this.fetchData(`${a}&${this.gtData}&${this.lData}&${this.sksmData}&${this.gData}`);
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
-      } else if (this.gActive && this.gtActive && !this.lActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
-        this.fetchData(`${a}&${this.gData}&${this.gtData}`);
-      } else if (this.gActive && this.gtActive && this.lActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
-        this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.lData}`);
       }
     },
     // platform filter
     getPlatform(a) {
+      this.url = this.assignUrl;
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       } else if (this.lActive && !this.gActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.lData}`);
       } else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}`);
       } else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtData}`);
       } else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
       }
     },
     // platform_name filter
     getPlatform_name(a) {
+      this.url = this.assignUrl;
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       } else if (this.lActive && !this.gActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.lData}`);
       } else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}`);
       } else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtData}`);
       } else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
       }
     },
     // bereich.skill fillter
     getSk(a) {
+      this.url = this.assignUrl;
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.gtActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       } else if (this.lActive && !this.gActive && !this.gtActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.lData}`);
       } else if (this.gActive && !this.lActive && !this.gtActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}`);
       } else if (this.gtActive && !this.lActive && !this.gActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtData}`);
       } else if (this.gtsActive && !this.lActive && !this.gActive && !this.gtsActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.gtsActive && !this.lActive && !this.gActive && !this.gtActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.skData}`);
       }
     },
     // for skill_summary filter
     getSkSm(a) {
+      this.url = this.assignUrl;
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.gtActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(a);
       // eslint-disable-next-line max-len
       } else if (this.lActive && !this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.lData}`);
       // eslint-disable-next-line max-len
       } else if (this.gActive && !this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}`);
       // eslint-disable-next-line max-len
       } else if (this.gActive && this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.lData}`);
       } else if (this.gActive && this.gtActive && !this.lActive && !this.gtsActive && !this.skActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.gtData}`);
       } else if (this.gActive && this.gtActive && this.gtsActive && !this.skActive && !this.lActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}`);
       } else if (this.gActive && this.gtActive && !this.gtsActive && this.lActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.lData}`);
       } else if (this.gActive && this.gtActive && this.gtsActive && this.lActive) {
-        this.url = 'http://127.0.0.1:5000/api/?';
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}&${this.lData}`);
       }
     },
@@ -593,7 +566,6 @@ export default {
       this.skActive = false;
       this.lActive = false;
       this.skActive = false;
-      this.lClicked = false;
     },
     addToCockpit(index) {
       const payload = this.results[index];
@@ -622,7 +594,6 @@ export default {
       if (this.results.length < this.total_results.length) {
         const nextData = this.total_results.slice(this.results.length, this.results.length + 10);
         this.results = this.results.concat(nextData);
-        console.log(`length:${this.results.length}`);
       }
     },
     // fetchs data from API
@@ -632,11 +603,11 @@ export default {
       axios.get(a)
         .then((resp) => {
           // total results gets all the data from the api
-          console.log(resp);
           this.total_results = resp.data.project_lists;
           // results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10);
           this.allAggs = resp.data.AllAggs;
+          this.totalAmount = resp.data.amount;
           // eslint-disable-next-line no-console
           console.log(this.results);
           // eslint-disable-next-line no-console
@@ -670,22 +641,23 @@ export default {
       if (this.search_term.length <= 1) {
         this.seachTrigger = false;
         // eslint-disable-next-line no-unused-expressions
-        this.assignUrl;
+        this.url = this.assignUrl;
         this.fetchData('');
       // eslint-disable-next-line brace-style
       }
       else {
-        // eslint-disable-next-line no-console
-        console.log(this.search_term);
         // fetches data based on search term.
         // search as you type feature enabled due to keyboardup.prevent
         this.seachTrigger = true;
+        // eslint-disable-next-line no-unused-expressions
+
         // eslint-disable-next-line no-console
         console.log(this.search_term);
+        this.url = this.assignUrl;
         const term = `search_term=${this.search_term}`;
         // eslint-disable-next-line no-console
         console.log(term);
-        this.fetchData(term);
+        this.fetchData('');
       }
     },
   },
@@ -696,7 +668,7 @@ export default {
     const watcher = scrollMonitor.create(elem);
     watcher.enterViewport(() => {
       // eslint-disable-next-line no-console
-      console.log('hello');
+      // console.log('hello');
       vueInstance.appendItems();
     });
   },
