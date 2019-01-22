@@ -12,7 +12,9 @@
       <section v-else-if="loading">Loading.......</section>
       <section v-else>
         <v-layout row justify-start class="mb-3">
-        <v-btn small flat color="grey" @click="sorty('score')">
+          <p>Showing {{ resultsCount }} results from {{ totalResultsCount }}</p>
+           <v-spacer></v-spacer>
+        <v-btn small flat color="grey" @click="sortBy('score')">
           <v-icon small left>folder</v-icon>
           <span class="caption text-lowercase">By project name</span>
         </v-btn>
@@ -20,11 +22,10 @@
           <v-icon small left>person</v-icon>
           <span class="caption text-lowercase">By Person</span>
         </v-btn>
-
       </v-layout>
         <v-layout row wrap>
-              <v-flex xs12 sm6 md3>
-                <v-card>
+              <v-flex xs12 sm6 md3 >
+                <v-card >
                   <v-toolbar color="blue darken-3" dark>
 
                     <v-toolbar-title>Filter</v-toolbar-title>
@@ -55,29 +56,21 @@
                     <v-chip v-for="select in selectedFilter" :key="select.title" close @click="">{{ select }}</v-chip>
                     <v-list-group
                       v-for="(item, index) in allAggs"
-
                       :key="index"
-
-
                     >
                       <v-list-tile slot="activator">
                         <v-list-tile-content >
                           <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-
                         </v-list-tile-content>
                       </v-list-tile>
-
                       <v-list-tile
                         v-for="(subItem, index) in item.items"
                         :key="index"
                         @click=""
-
                       >
                         <v-list-tile-content >
-
                           <v-chip  @click="check(item.title, subItem.key)">{{ subItem.key }} ({{ subItem.count }})</v-chip>
                         </v-list-tile-content>
-
                         <v-list-tile-action>
                           <v-icon></v-icon>
                         </v-list-tile-action>
@@ -284,6 +277,8 @@ export default {
       country: [{ name: 'Germany' }, { name: 'England' }],
       cc: [],
       seachTrigger: false,
+      lClicked: false,
+      gClicked: false,
 
     };
   },
@@ -319,9 +314,15 @@ export default {
       const url = 'http://127.0.0.1:5000/api/?';
       return url;
     },
+    resultsCount() {
+      return this.results.length;
+    },
+    totalResultsCount() {
+      return this.total_results.length;
+    },
   },
   methods: {
-    sorty(a) {
+    sortBy(a) {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.results.sort(this.byProperty(a));
     },
@@ -346,10 +347,11 @@ export default {
     check(a, b) {
       this.url = this.assignUrl;
       if (a === 'Category') {
+        this.gClicked = true;
         const link = `group=${b}`;
         this.gData = link;
         this.getGroup(link);
-        this.gActive = true;
+        this.gActive = !this.gActive;
       } else if (a === 'Sub-Category') {
         const link = `groupType=${b}`;
         this.gtData = link;
@@ -366,6 +368,7 @@ export default {
         this.getSkSm(link);
         this.sksmActive = true;
       } else if (a === 'Bundesland') {
+        this.lClicked = true;
         const link = `bundesland=${b}`;
         this.lData = link;
         this.getLocation(link);
@@ -401,7 +404,7 @@ export default {
     },
     // group filter
     getGroup(a) {
-      if (!this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
+      if (!this.lActive && !this.gtActive && !this.gtsActive && !this.skActive && !this.seachTrigger) {
         this.fetchData(a);
       } else if (this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.fetchData(`${a}&${this.lData}`);
@@ -411,6 +414,8 @@ export default {
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.skActive && !this.lActive && !this.gtActive && !this.gtsActive) {
         this.fetchData(`${a}&${this.skData}`);
+      } else if (this.seachTrigger && this.lClicked && !this.gtActive && !this.gtsActive) {
+        this.fetchData(`${a}&${this.lData}`);
       }
     },
     // group type filter
@@ -564,35 +569,15 @@ export default {
         return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
       };
     },
-
-    sortBy() {
-      this.results.sort((a, b) =>
-        (a.filter_date_post.$date - b.filter_date_post.$date),
-      );
-      // this.results.sort((a, b) => parseFloat(a.filter_date_post['$date'] - parseFloat(b.date_post));
-      // eslint-disable-next-line no-plusplus
-    },
-    // toggles color of tags clicked
-    // to toggle the style class in any element
-    // this toggles the error--text class when button is clicked
+    // to toggle the style class of fav button
     myToggleFunction(event) {
       // error--text is a stlyin class for v-icon
       event.target.classList.toggle('error--text');
-      // let button = event.target;
-      // console.log(button.classList)
     },
     reset() {
       this.url = 'http://127.0.0.1:5000/api/?';
+      this.resetFilters();
       this.fetchData('');
-      this.sksmActive = false;
-      this.pActive = false;
-      this.pnActive = false;
-      this.gtActive = false;
-      this.gtsActive = false;
-      this.gActive = false;
-      this.skActive = false;
-      this.lActive = false;
-      this.skActive = false;
       this.link = '';
       this.section = '';
       this.selectedFilter = [];
@@ -608,21 +593,7 @@ export default {
       this.skActive = false;
       this.lActive = false;
       this.skActive = false;
-    },
-    // Create an array the length of our items
-    // with all values as true
-    all() {
-      // eslint-disable-next-line no-unused-vars
-      this.panel = [...Array(this.items).keys()].map(_ => true);
-    },
-    // Reset the panel
-    none() {
-      this.panel = [];
-    },
-    // allert when project has been bookmarked
-    saved() {
-      // eslint-disable-next-line no-alert
-      alert('Project has been bookmarked');
+      this.lClicked = false;
     },
     addToCockpit(index) {
       const payload = this.results[index];
@@ -647,15 +618,11 @@ export default {
       ${this.results[index].url}`;
       this.subject = this.results[index].title;
     },
-    bundesland_val(land) {
-      this.link = `bundesland=${land}`;
-      // eslint-disable-next-line no-console
-      console.log(this.link);
-    },
     appendItems() {
       if (this.results.length < this.total_results.length) {
         const nextData = this.total_results.slice(this.results.length, this.results.length + 10);
         this.results = this.results.concat(nextData);
+        console.log(`length:${this.results.length}`);
       }
     },
     // fetchs data from API
@@ -697,31 +664,23 @@ export default {
     // refreshes the homepage
     refreshHome() {
       this.reset();
-      // eslint-disable-next-line no-console
-      console.log(this.refreshHome);
     },
-
     // watches the searchterm is been trigered by the keyboard event
     searchCalled() {
-      // checks if theres any letter is enterd in search bar.
       if (this.search_term.length <= 1) {
-        // if none, it changes the url to home
-        // this.url = 'http://127.0.0.1:5000/api/?';
-        // and it returns all projects
         this.seachTrigger = false;
+        // eslint-disable-next-line no-unused-expressions
+        this.assignUrl;
         this.fetchData('');
       // eslint-disable-next-line brace-style
       }
-      // if theres a searchterm
       else {
         // eslint-disable-next-line no-console
         console.log(this.search_term);
-        // // changes url to query url
-        // this.url = 'http://127.0.0.1:5000/api/search/?';
-        // // fetches data based on search term.
-        // // search as you type feature enabled
-        // // due to keyboardup.prevent event in the App.vue search textfield event
+        // fetches data based on search term.
+        // search as you type feature enabled due to keyboardup.prevent
         this.seachTrigger = true;
+        // eslint-disable-next-line no-console
         console.log(this.search_term);
         const term = `search_term=${this.search_term}`;
         // eslint-disable-next-line no-console
