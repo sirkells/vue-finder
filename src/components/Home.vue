@@ -4,203 +4,202 @@
 /* eslint-disable no-console */
 /* eslint-disable max-len */
 <template>
-      <v-container fluid grid-list-md>
+  <v-container fluid grid-list-md>
+    <section v-if="errored">
+      <p>{{ erroredMessage }}</p>
+    </section>
+    <section v-else-if="loading">Loading.......</section>
+    <section v-else>
+      <v-navigation-drawer
+        fixed
+        :clipped="$vuetify.breakpoint.mdAndUp"
+        app
+        light
+        v-model="draw"
+        v-show="$route.path==='/login' || $route.path==='/logout' ? false : true"
+      >
+        <v-list dense>
+          <v-flex xs12 sm6 md12>
+            <v-card >
+              <v-toolbar color="blue darken-3" dark>
+                <v-toolbar-title>Filter</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-btn
 
-      <section v-if="errored">
-          <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
-      </section>
-      <section v-else-if="loading">Loading.......</section>
-      <section v-else>
-        <v-layout row justify-start class="mb-3">
-          <p>Showing {{ resultsCount }} results from {{ totalResultsCount }}</p>
-           <v-spacer></v-spacer>
-        <v-btn small flat color="grey" @click="sortBy('score')">
-          <v-icon small left>folder</v-icon>
-          <span class="caption text-lowercase">By project name</span>
-        </v-btn>
-        <v-btn small flat color="grey" @click="sortBy()">
-          <v-icon small left>person</v-icon>
-          <span class="caption text-lowercase">By Person</span>
-        </v-btn>
-      </v-layout>
-        <v-layout row wrap>
-              <v-flex xs12 sm6 md3 >
-                <v-card >
-                  <v-toolbar color="blue darken-3" dark>
+                  color="primary"
 
-                    <v-toolbar-title>Filter</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-spacer></v-spacer>
-                    <v-spacer></v-spacer>
-                    <v-spacer></v-spacer>
-                    <v-spacer></v-spacer>
-                    <v-spacer></v-spacer>
-                    <v-btn
+                  light
+                  @click="reset"
+                >
+                  Reset
+                </v-btn>
 
-                      color="primary"
+                <v-spacer></v-spacer>
 
-                      light
-                      @click="reset"
-                    >
-                      Reset
-                    </v-btn>
-
-                    <v-spacer></v-spacer>
-
-                  </v-toolbar>
+              </v-toolbar>
 
 
-                  <v-list>
-
-
-                    <v-chip v-for="select in selectedFilter" :key="select.title" close @click="">{{ select }}</v-chip>
-                    <v-list-group
-                      v-for="(item, index) in allAggs"
+              <v-list>
+                <v-chip v-for="select in selectedFilter" :key="select.title" close @click="">{{ select }}</v-chip>
+                <v-list-group
+                  v-for="(item, index) in allAggs"
+                  :key="index"
+                >
+                  <v-list-tile slot="activator">
+                    <v-list-tile-content >
+                      <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                  <v-list-tile
+                    v-for="(subItem, index) in item.items"
+                    :key="index"
+                    @click=""
+                  >
+                    <v-list-tile-content >
+                      <v-chip  @click="check(item.title, subItem.key)">{{ subItem.key }} ({{ subItem.count }})</v-chip>
+                    </v-list-tile-content>
+                    <v-list-tile-action>
+                      <v-icon></v-icon>
+                    </v-list-tile-action>
+                  </v-list-tile>
+                </v-list-group>
+              </v-list>
+            </v-card>
+          </v-flex>
+        </v-list>
+      </v-navigation-drawer>
+      <v-layout row justify-start class="mb-3">
+        <p>Showing {{ resultsCount }} results from {{ totalResultsCount }}</p>
+          <v-spacer></v-spacer>
+      <v-btn small flat color="grey" @click="sortBy('score')">
+        <v-icon small left>folder</v-icon>
+        <span class="caption text-lowercase">By project name</span>
+      </v-btn>
+      <v-btn small flat color="grey" @click="sorty()">
+        <v-icon small left>person</v-icon>
+        <span class="caption text-lowercase">By Person</span>
+      </v-btn>
+    </v-layout>
+      <v-layout row wrap>
+            <v-flex  xs12 sm6 md12>
+              <v-layout row wrap>
+                <v-flex >
+                  <v-layout row wrap>
+                    <v-flex
+                      v-for="(posts, index) in resultApi"
                       :key="index"
+                      xs12
                     >
-                      <v-list-tile slot="activator">
-                        <v-list-tile-content >
-                          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                        </v-list-tile-content>
-                      </v-list-tile>
-                      <v-list-tile
-                        v-for="(subItem, index) in item.items"
-                        :key="index"
-                        @click=""
-                      >
-                        <v-list-tile-content >
-                          <v-chip  @click="check(item.title, subItem.key)">{{ subItem.key }} ({{ subItem.count }})</v-chip>
-                        </v-list-tile-content>
-                        <v-list-tile-action>
-                          <v-icon></v-icon>
-                        </v-list-tile-action>
-                      </v-list-tile>
-                    </v-list-group>
-                  </v-list>
-                </v-card>
-              </v-flex>
+                      <v-card>
+                        <v-card-title primary>
+                          <div>
+                            <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
+                            {{posts.description}}
+                          </div>
+                        </v-card-title>
+                        <v-card-actions>
 
-              <v-flex  xs12 sm6 md9>
-                <v-layout row wrap>
-                  <v-flex >
-                    <v-layout row wrap>
-                      <v-flex
-                        v-for="(posts, index) in resultApi"
-                        :key="index"
-                        xs12
-                      >
-                        <v-card>
-                          <v-card-title primary>
-                            <div>
-                              <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
-                              {{posts.description}}
-                            </div>
-                          </v-card-title>
-                          <v-card-actions>
+                        <div class="text-xs-center">
+                          <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
+                          <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
+                          <v-chip v-if="posts.filter_date_post.$date">{{ posts.filter_date_post.$date}}</v-chip>
+                          <v-chip :class="{success: lActive}" @click="lActive = !lActive,lData='bundesland='+posts.region.bundesland, getLocation('bundesland='+posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
+                          <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, gData='group=' + posts.bereich.group, getGroup('group=' + posts.bereich.group)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
+                          <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, gtData='groupType=' + posts.bereich.group_type, getGrouptype('groupType=' + posts.bereich.group_type)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
+                          <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive, gtsData= 'groupStack=' + posts.bereich.group_type_stack, getGroupstack('groupStack=' + posts.bereich.group_type_stack)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                          <v-chip :class="{info: pActive}" @click="pActive = !pActive, pData= 'platform=' + posts.bereich.platform, getPlatform('platform=' + posts.bereich.platform)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
+                          <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive, pnData='platform_name=' + posts.bereich.platform_name, getPlatform_name('platform_name=' + posts.bereich.platform_name)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
+                          <!--encodeURIComponent used to encode c# due to error caused by # -->
+                          <v-chip :class="{purple: skActive}" @click="skActive = !skActive, skData ='skill=' +  encodeURIComponent(posts.bereich.skill),  getSk('skill=' +  encodeURIComponent(posts.bereich.skill))" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
+                        </div>
+                        <v-spacer></v-spacer>
+                        <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                icon
+                                >
+                                  <v-icon @click="myToggleFunction($event)" >favorite</v-icon>
+                                </v-btn>
+                                <v-btn icon >
+                                  <v-icon @click="addToCockpit(index)">bookmark</v-icon>
+                                </v-btn>
+                                <v-btn
+                                icon
+                                @click="dialog = !dialog, shareProject(index)"
 
-                          <div class="text-xs-center">
-                            <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
-                            <v-chip v-if="posts.filter_date_post.$date">{{ posts.filter_date_post.$date}}</v-chip>
-                            <v-chip :class="{success: lActive}" @click="lActive = !lActive,lData='bundesland='+posts.region.bundesland, getLocation('bundesland='+posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
-                            <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, gData='group=' + posts.bereich.group, getGroup('group=' + posts.bereich.group)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
-                            <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, gtData='groupType=' + posts.bereich.group_type, getGrouptype('groupType=' + posts.bereich.group_type)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                            <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive, gtsData= 'groupStack=' + posts.bereich.group_type_stack, getGroupstack('groupStack=' + posts.bereich.group_type_stack)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
-                            <v-chip :class="{info: pActive}" @click="pActive = !pActive, pData= 'platform=' + posts.bereich.platform, getPlatform('platform=' + posts.bereich.platform)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
-                            <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive, pnData='platform_name=' + posts.bereich.platform_name, getPlatform_name('platform_name=' + posts.bereich.platform_name)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
-                            <!--encodeURIComponent used to encode c# due to error caused by # -->
-                            <v-chip :class="{purple: skActive}" @click="skActive = !skActive, skData ='skill=' +  encodeURIComponent(posts.bereich.skill),  getSk('skill=' +  encodeURIComponent(posts.bereich.skill))" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
-                              </div>
+                                >
+                                  <v-icon>share</v-icon>
+                                </v-btn>
+                        </v-card-actions>
+                        </v-card-actions>
+                      </v-card>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+              </v-layout>
+            </v-flex>
+      </v-layout>
+    <v-dialog v-model="dialog" width="800px">
+        <v-card>
+          <v-toolbar
+            card
+            color="blue"
+            dark
+          >
 
-                                <!--<v-chip v-if="posts.skill_summary">{{ posts.skill_summary}}</v-chip>
-                                    <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
-                            <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
-                            <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
-                            <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
-                            <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>-->
-                            <v-spacer></v-spacer>
-                            <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                    icon
-                                    >
-                                      <v-icon @click="myToggleFunction($event)" >favorite</v-icon>
-                                    </v-btn>
-                                    <v-btn icon >
-                                      <v-icon @click="addToCockpit(index)">bookmark</v-icon>
-                                    </v-btn>
-                                    <v-btn
-                                    icon
-                                    @click="dialog = !dialog, shareProject(index)"
+            <v-btn flat  @click="dialog = false">
+              <v-icon>arrow_back</v-icon>
+            </v-btn>
 
-                                    >
-                                      <v-icon>share</v-icon>
-                                    </v-btn>
-                            </v-card-actions>
-                          </v-card-actions>
-                        </v-card>
-                      </v-flex>
-                    </v-layout>
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-        </v-layout>
-      <v-dialog v-model="dialog" width="800px">
-          <v-card>
-            <v-toolbar
-              card
-              color="blue"
-              dark
-            >
+            <v-spacer></v-spacer>
+            <v-btn flat  @click="dialog = false">
+              <v-icon>send</v-icon>
+            </v-btn>
 
-              <v-btn flat  @click="dialog = false">
-                <v-icon>arrow_back</v-icon>
-              </v-btn>
+          </v-toolbar>
+          <v-form>
+            <v-autocomplete
+              v-model="selected"
+              :items="['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher']"
+              chips
+              label="To"
+              full-width
+              hide-details
+              hide-no-data
+              hide-selected
+              multiple
+              single-line
+            ></v-autocomplete>
+            <v-divider></v-divider>
+            <v-text-field
+              v-model="subject"
+              label="Subject"
+              counter
+              maxlength="120"
+              full-width
+              single-line
+              type="text"
 
-              <v-spacer></v-spacer>
-              <v-btn flat  @click="dialog = false">
-                <v-icon>send</v-icon>
-              </v-btn>
-
-            </v-toolbar>
-            <v-form>
-              <v-autocomplete
-                v-model="selected"
-                :items="['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher']"
-                chips
-                label="To"
-                full-width
-                hide-details
-                hide-no-data
-                hide-selected
-                multiple
-                single-line
-              ></v-autocomplete>
-              <v-divider></v-divider>
-              <v-text-field
-                v-model="subject"
-                label="Subject"
-                counter
-                maxlength="120"
-                full-width
-                single-line
-                type="text"
-
-              ></v-text-field>
-              <v-divider></v-divider>
-              <v-textarea
-                v-model="message_body"
-                label="Message"
-                counter
-                maxlength="120"
-                full-width
-                single-line
-                type="text"
-              ></v-textarea>
-            </v-form>
-          </v-card>
-      </v-dialog>
-      </section>
-    </v-container>
+            ></v-text-field>
+            <v-divider></v-divider>
+            <v-textarea
+              v-model="message_body"
+              label="Message"
+              counter
+              maxlength="120"
+              full-width
+              single-line
+              type="text"
+            ></v-textarea>
+          </v-form>
+        </v-card>
+    </v-dialog>
+    </section>
+  </v-container>
 
 </template>
 
@@ -217,7 +216,7 @@ export default {
   name: 'Home',
   // props passed from APP.vue refreshHome to refreshHompage
   // searchTerm to get search term and searchCalled to trigger the watcher when search is entered
-  props: ['refreshHome', 'search_term', 'searchCalled', 'filter'],
+  props: ['refreshHome', 'search_term', 'searchCalled', 'draw'],
   components: {
     'cock-cmp': Cockpit,
   },
@@ -237,7 +236,6 @@ export default {
       color: null,
       myActive: false,
       dialog: null,
-      drawer: null,
       dark: false,
       show: false,
       isActive: false,
@@ -278,6 +276,13 @@ export default {
       cc: [],
       seachTrigger: false,
       totalAmount: '',
+      drawerItems: [
+        { icon: 'bookmark', text: 'Cockpit' },
+        { icon: 'favoriter', text: 'Favorites' },
+        { icon: 'mdi-logout', text: 'Logout' },
+      ],
+      drawer: false,
+      erroredMessage: "We're sorry, we're not able to retrieve this information at the moment, please try back later",
       // lClicked: false,
       // gClicked: false,
       // gtClicked: false,
@@ -326,6 +331,15 @@ export default {
     },
   },
   methods: {
+    pushComp(title) {
+      if (title === 'Cockpit') {
+        this.$router.push('/cockpit');
+      } else if (title === 'Favorites') {
+        this.$router.push('/favorites');
+      } else if (title === 'Logout') {
+        this.$router.push('/logout');
+      }
+    },
     sortBy(a) {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.results.sort(this.byProperty(a));
@@ -542,6 +556,10 @@ export default {
         return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
       };
     },
+    sorty() {
+      this.resultApi.sort((a, b) => (a.filter_date_post.$date) - (b.filter_date_post.$date));
+      // eslint-disable-next-line no-plusplus
+    },
     // to toggle the style class of fav button
     myToggleFunction(event) {
       // error--text is a stlyin class for v-icon
@@ -636,13 +654,16 @@ export default {
     refreshHome() {
       this.reset();
     },
+    // draw() {
+    //   this.drawer = !this.drawer;
+    // },
     // watches the searchterm is been trigered by the keyboard event
     searchCalled() {
       if (this.search_term.length <= 1) {
         this.seachTrigger = false;
         // eslint-disable-next-line no-unused-expressions
         this.url = this.assignUrl;
-        this.fetchData('');
+        this.reset();
       // eslint-disable-next-line brace-style
       }
       else {

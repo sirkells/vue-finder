@@ -1,29 +1,7 @@
 <template>
    <v-app id="inspire" >
     <div v-show="$route.path==='/login' || $route.path==='/logout' ? false : true">
-      <v-navigation-drawer
-        fixed
-        :clipped="$vuetify.breakpoint.mdAndUp"
-        app
-        light
-        v-model="drawer"
-        v-show="$route.path==='/login' || $route.path==='/logout' ? false : true"
-      >
-        <v-list dense>
-          <template v-for="item in items">
-            <v-list-tile @click="" :key="item.text">
-              <v-list-tile-action>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>
-                  {{ item.text }}
-                </v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </template>
-        </v-list>
-      </v-navigation-drawer>
+
       <v-toolbar
         :clipped-left="$vuetify.breakpoint.lgAndUp"
         color="blue darken-3"
@@ -31,8 +9,9 @@
         app
         fixed
       >
+        <v-toolbar-side-icon @click.stop="draw=!draw"></v-toolbar-side-icon>
         <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-          <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+
           <span>
             <router-link to="/">
             <v-btn
@@ -101,7 +80,7 @@
     </div>
     <!--props passed to Home refreshHome to refreshHompage, searchTerm to get search term and searchCalled to trigger the watcher when search is entered -->
     <v-content>
-      <router-view :refreshHome="refreshme" :search_term="search_term"  :searchCalled="searchCalled"></router-view>
+      <router-view :refreshHome="refreshme" :search_term="search_term"  :searchCalled="searchCalled" :draw="draw" ></router-view>
     </v-content>
   </v-app>
 </template>
@@ -119,7 +98,7 @@ export default {
   },
 
   data: () => ({
-    drawer: false,
+    // drawer: true,
     items: [
       { icon: 'bookmark', text: 'Cockpit' },
       { icon: 'favoriter', text: 'Favorites' },
@@ -132,6 +111,7 @@ export default {
     searchCalled: false,
     // categoryData: getCategoryData(),
     facet: '',
+    draw: false,
   }),
   computed: {
     loggedIn() {
@@ -149,6 +129,15 @@ export default {
       // eslint-disable-next-line no-console
       console.log(this.search_term);
       this.searchCalled = !this.searchCalled;
+    },
+    pushComp(title) {
+      if (title === 'Cockpit') {
+        this.$router.push('/cockpit');
+      } else if (title === 'Favorites') {
+        this.$router.push('/favorites');
+      } else if (title === 'Logout') {
+        this.$router.push('/logout');
+      }
     },
   },
   props: {
