@@ -11,6 +11,7 @@
     <section v-else-if="loading">Loading.......</section>
     <section v-else>
       <v-navigation-drawer
+        width="500"
         fixed
         :clipped="$vuetify.breakpoint.mdAndUp"
         app
@@ -25,9 +26,6 @@
                 <v-toolbar-title>Filter</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
                 <v-btn
 
                   color="primary"
@@ -37,14 +35,14 @@
                 >
                   Reset
                 </v-btn>
-
-                <v-spacer></v-spacer>
-
               </v-toolbar>
-
-
               <v-list>
                 <v-chip v-for="select in selectedFilter" :key="select.title" close @click="">{{ select }}</v-chip>
+                <v-chip>Showing {{ resultsCount }} results from {{ totalResultsCount }} records</v-chip>
+                <v-btn flat @click="sorty()">
+                  <v-icon small left>list</v-icon>
+                  <span class="caption text-lowercase">Sort By Date</span>
+                </v-btn>
                 <v-list-group
                   v-for="(item, index) in allAggs"
                   :key="index"
@@ -71,19 +69,8 @@
             </v-card>
           </v-flex>
         </v-list>
+
       </v-navigation-drawer>
-      <v-layout row justify-start class="mb-3">
-        <p>Showing {{ resultsCount }} results from {{ totalResultsCount }}</p>
-          <v-spacer></v-spacer>
-      <v-btn small flat color="grey" @click="sortBy('score')">
-        <v-icon small left>folder</v-icon>
-        <span class="caption text-lowercase">By project name</span>
-      </v-btn>
-      <v-btn small flat color="grey" @click="sorty()">
-        <v-icon small left>person</v-icon>
-        <span class="caption text-lowercase">By Person</span>
-      </v-btn>
-    </v-layout>
       <v-layout row wrap>
             <v-flex  xs12 sm6 md12>
               <v-layout row wrap>
