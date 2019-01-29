@@ -13,7 +13,9 @@
             <v-card>
               <v-card-title primary>
                 <div>
-                  <div class=""><b>{{ posts.title }}</b></div>
+                  <div><a :href="posts.url" target="_blank">
+                    <b>{{ posts.title }}</b>
+                  </a></div>
                   {{posts.description}}
                 </div>
               </v-card-title>
@@ -25,15 +27,20 @@
                     <v-chip v-if="posts.bereich.group_type_stack">
                       {{ posts.bereich.group_type_stack}}
                     </v-chip>
-                    <v-chip v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
-                    <v-chip v-if="posts._id.$oid">{{ posts._id.$oid }}</v-chip>
-                    <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
+                    <!-- Mobile App Platform -->
+                    <v-chip v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
+                    <!-- Mobile App Platform Name -->
+                    <v-chip v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}
+                    </v-chip>
                   </div>
-                <!-- <v-btn flat color="black">{{ posts.region.bundesland}}</v-btn>
-                <v-btn flat color="purple">{{ posts.bereich.group}}</v-btn>
-                <v-btn flat color="orange">{{ posts.bereich.group_type}}</v-btn>
-                <v-btn flat color="green">{{ posts.bereich.group_type_stack}}</v-btn>-->
                 <v-spacer></v-spacer>
+                <v-card-actions>
+                  <v-btn class="error"
+                  @click="removeCockpitData(posts.id)"
+                  >
+                  Remove
+                  </v-btn>
+                </v-card-actions>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -80,6 +87,7 @@ export default {
     },
   },
   methods: {
+    // fetch stored project from api
     fetchData(section) {
       axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
       axios.get(section)
@@ -99,6 +107,25 @@ export default {
           console.log(err);
           this.noCockpitData = true;
         });
+    },
+    // delete project from cockpit
+    removeCockpitData(projectId) {
+      axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
+      const path = `${this.baseUrl}/${projectId}`;
+      // eslint-disable-next-line no-alert
+      if (confirm('Are you sure you want to delete this project from your cockpit?')) {
+        // Delete Project!
+        axios.delete(path)
+          .then(() => {
+            this.fetchData(this.baseUrl);
+          })
+          .catch((error) => {
+            // eslint-disable-next-line no-console
+            console.log(error);
+          });
+      } else {
+        // Do nothing!
+      }
     },
   },
 };
