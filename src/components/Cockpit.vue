@@ -1,5 +1,10 @@
 <template>
     <v-container grid-list-md  fluid container>
+      <section v-if="noCockpitData">
+        <p>{{ noCockpitDataMsg }}</p>
+      </section>
+      <section v-else>
+        <!-- contents -->
         <v-layout row wrap>
           <v-flex
             xs12
@@ -13,12 +18,13 @@
                 </div>
               </v-card-title>
               <v-card-actions>
-
                   <div class="text-xs-center">
                     <v-chip v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
                     <v-chip v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
                     <v-chip v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                    <v-chip v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
+                    <v-chip v-if="posts.bereich.group_type_stack">
+                      {{ posts.bereich.group_type_stack}}
+                    </v-chip>
                     <v-chip v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
                     <v-chip v-if="posts._id.$oid">{{ posts._id.$oid }}</v-chip>
                     <v-chip v-if="posts._id.$oid">{{ index }}</v-chip>
@@ -32,9 +38,9 @@
             </v-card>
           </v-flex>
         </v-layout>
+      </section>
     </v-container>
 </template>
-
 
 <script>
 import Home from '@/components/Home';
@@ -46,41 +52,53 @@ export default {
   components: {
     'home-cmp': Home,
   },
-
   data() {
     return {
-      msg: 'Welcome to the Login Page',
-      section: 'http://127.0.0.1:5000/api/cockpit',
+      baseUrl: 'http://127.0.0.1:5000/api/cockpit',
       results: [],
       total_results: [],
-
-
+      noCockpitData: false,
+      noCockpitDataMsg: 'No item found in your cockpit',
     };
   },
+  beforeCreate() {
+    // eslint-disable-next-line no-console
+    console.log('beforeCreate!');
+  },
   created() {
-    this.fetchData();
+    if (this.loggedIn) {
+      this.fetchData(this.baseUrl);
+      // eslint-disable-next-line no-console
+      console.log(this.results);
+    } else {
+      this.$router.push('/logout');
+    }
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.getters.loggedIn;
+    },
   },
   methods: {
-    fetchData() {
-      const a = this.section;
-      axios.get(a)
+    fetchData(section) {
+      axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
+      axios.get(section)
         .then((resp) => {
           // total results gets all the data from the api
-          this.total_results = resp.data.project_lists;
-          // results takes only 10 data and returns 10 everytime scrllbar ends
-          this.results = resp.data.project_lists.slice(0, 10);
-          // eslint-disable-next-line no-console
-          console.log(resp);
-          // eslint-disable-next-line no-console
-          console.log(a);
+          const cockpit = resp.data.project_lists;
+          if (cockpit.length === 0) {
+            this.noCockpitData = true;
+          } else {
+            this.noCockpitData = false;
+            // results takes only 10 data and returns 10 everytime scrllbar ends
+            this.results = cockpit;
+          }
         })
         .catch((err) => {
           // eslint-disable-next-line no-console
           console.log(err);
-          this.errored = false;
-        })
-        // eslint-disable-next-line no-return-assign
-        .finally(() => this.loading = false);
+          this.noCockpitData = true;
+        });
     },
   },
 };

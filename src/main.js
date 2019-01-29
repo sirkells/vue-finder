@@ -20,6 +20,7 @@ Vue.config.productionTip = false;
 Vue.use(Vuetify);
 Vue.use(VueTreeNavigation);
 /* eslint-disable no-new */
+
 new Vue({
   el: '#app',
   router,

@@ -11,6 +11,7 @@ Vue.use(Vuex);
 const state = {
   count: 0,
   token: localStorage.getItem('token') || null,
+  username: localStorage.getItem('user'),
 };
 
 const getters = {
@@ -25,6 +26,9 @@ const mutations = {
   },
   destroyToken(state) {
     state.token = null;
+  },
+  getUserName(state, user) {
+    state.username = user;
   },
   // increment(state) {
   //   state.count++;
@@ -50,6 +54,7 @@ const actions = {
             // eslint-disable-next-line no-alert
             // eslint-disable-next-line no-console
             resolve(resp);
+            // eslint-disable-next-line no-console
             console.log(resp);
             // eslint-disable-next-line no-alert
           })
@@ -65,15 +70,19 @@ const actions = {
   getToken(context, credentials) {
     const path = 'http://localhost:5000/api/login';
     const payload = { username: credentials.username, password: credentials.password };
+    // state.username = credentials.username;
     return new Promise((resolve, reject) => {
       axios.post(path, payload)
         .then((resp) => {
           const accessToken = resp.data.token;
           localStorage.setItem('token', accessToken);
+          localStorage.setItem('user', credentials.username);
           context.commit('getToken', accessToken);
+          context.commit('getUserName', credentials.username);
           // eslint-disable-next-line no-alert
           // eslint-disable-next-line no-console
           resolve(resp);
+          // eslint-disable-next-line no-console
           console.log(resp);
         // eslint-disable-next-line no-alert
         })

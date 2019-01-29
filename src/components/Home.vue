@@ -1,17 +1,14 @@
-/* eslint-disable max-len */
-/* eslint-disable max-len */
-/* eslint-disable no-console */
-/* eslint-disable no-console */
-/* eslint-disable max-len */
+
 <template>
-  <v-container fluid grid-list-md>
+  <v-container grid-list-md fluid container>
     <section v-if="errored">
       <p>{{ erroredMessage }}</p>
     </section>
     <section v-else-if="loading">Loading.......</section>
     <section v-else>
+      <!-- Navigation Drawer -->
       <v-navigation-drawer
-        width="500"
+        width="300"
         fixed
         :clipped="$vuetify.breakpoint.mdAndUp"
         app
@@ -36,13 +33,17 @@
                   Reset
                 </v-btn>
               </v-toolbar>
+
               <v-list>
-                <v-chip v-for="select in selectedFilter" :key="select.title" close @click="">{{ select }}</v-chip>
-                <v-chip>Showing {{ resultsCount }} results from {{ totalResultsCount }} records</v-chip>
+                 <!-- Results Count -->
+                <v-chip>
+                  Showing {{ resultsCount }} results from {{ totalResultsCount }} records
+                </v-chip>
                 <v-btn flat @click="sorty()">
                   <v-icon small left>list</v-icon>
                   <span class="caption text-lowercase">Sort By Date</span>
                 </v-btn>
+                <!-- Filters -->
                 <v-list-group
                   v-for="(item, index) in allAggs"
                   :key="index"
@@ -55,10 +56,13 @@
                   <v-list-tile
                     v-for="(subItem, index) in item.items"
                     :key="index"
-                    @click=""
                   >
                     <v-list-tile-content >
-                      <v-chip  @click="check(item.title, subItem.key)">{{ subItem.key }} ({{ subItem.count }})</v-chip>
+                      <v-chip
+                        @click="check(item.title, subItem.key)"
+                      >
+                        {{ subItem.key }} ({{ subItem.count }})
+                      </v-chip>
                     </v-list-tile-content>
                     <v-list-tile-action>
                       <v-icon></v-icon>
@@ -69,67 +73,129 @@
             </v-card>
           </v-flex>
         </v-list>
-
+        <!-- Selected Filters array Chips -->
+        <v-chip
+        v-for="select in selectedFilter"
+        :key="select.title"
+        close
+        @input="removeChip(select)">
+          {{ select }}
+        </v-chip>
       </v-navigation-drawer>
+      <!-- Contents -->
       <v-layout row wrap>
-            <v-flex  xs12 sm6 md12>
-              <v-layout row wrap>
-                <v-flex >
-                  <v-layout row wrap>
-                    <v-flex
-                      v-for="(posts, index) in resultApi"
-                      :key="index"
-                      xs12
-                    >
-                      <v-card>
-                        <v-card-title primary>
-                          <div>
-                            <div class=""><a :href="posts.url" target="_blank"><b>{{ posts.title }}</b></a></div>
-                            {{posts.description}}
-                          </div>
-                        </v-card-title>
-                        <v-card-actions>
-
-                        <div class="text-xs-center">
-                          <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
-                          <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
-                          <v-chip v-if="posts.filter_date_post.$date">{{ posts.filter_date_post.$date}}</v-chip>
-                          <v-chip :class="{success: lActive}" @click="lActive = !lActive,lData='bundesland='+posts.region.bundesland, getLocation('bundesland='+posts.region.bundesland)" v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
-                          <v-chip :class="{warning: gActive}"  @click="gActive = !gActive, gData='group=' + posts.bereich.group, getGroup('group=' + posts.bereich.group)" v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
-                          <v-chip :class="{error: gtActive}" @click="gtActive = !gtActive, gtData='groupType=' + posts.bereich.group_type, getGrouptype('groupType=' + posts.bereich.group_type)" v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                          <v-chip :class="{info: gtsActive}" @click="gtsActive = !gtsActive, gtsData= 'groupStack=' + posts.bereich.group_type_stack, getGroupstack('groupStack=' + posts.bereich.group_type_stack)" v-if="posts.bereich.group_type_stack">{{ posts.bereich.group_type_stack}}</v-chip>
-                          <v-chip :class="{info: pActive}" @click="pActive = !pActive, pData= 'platform=' + posts.bereich.platform, getPlatform('platform=' + posts.bereich.platform)" v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
-                          <v-chip :class="{info: pnActive}" @click="pnActive = !pnActive, pnData='platform_name=' + posts.bereich.platform_name, getPlatform_name('platform_name=' + posts.bereich.platform_name)" v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}</v-chip>
-                          <!--encodeURIComponent used to encode c# due to error caused by # -->
-                          <v-chip :class="{purple: skActive}" @click="skActive = !skActive, skData ='skill=' +  encodeURIComponent(posts.bereich.skill),  getSk('skill=' +  encodeURIComponent(posts.bereich.skill))" v-if="posts.bereich.skill">{{ posts.bereich.skill}}</v-chip>
-                        </div>
-                        <v-spacer></v-spacer>
-                        <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                icon
-                                >
-                                  <v-icon @click="myToggleFunction($event)" >favorite</v-icon>
-                                </v-btn>
-                                <v-btn icon >
-                                  <v-icon @click="addToCockpit(index)">bookmark</v-icon>
-                                </v-btn>
-                                <v-btn
-                                icon
-                                @click="dialog = !dialog, shareProject(index)"
-
-                                >
-                                  <v-icon>share</v-icon>
-                                </v-btn>
-                        </v-card-actions>
-                        </v-card-actions>
-                      </v-card>
-                    </v-flex>
-                  </v-layout>
-                </v-flex>
-              </v-layout>
-            </v-flex>
+        <v-flex
+          v-for="(posts, index) in resultApi"
+          :key="index"
+          xs12
+        >
+          <v-card>
+            <v-card-title primary>
+              <div>
+                <div>
+                  <a :href="posts.url" target="_blank">
+                    <b>{{ posts.title }}</b>
+                  </a>
+                </div>
+                {{posts.description}}
+              </div>
+            </v-card-title>
+            <v-card-actions>
+            <div class="text-xs-center">
+              <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
+              <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
+              <v-chip v-if="posts.filter_date_post.$date">{{ posts.filter_date_post.$date}}</v-chip>
+              <!-- location -->
+              <v-chip :class="{success: lActive}"
+              @click="lActive = !lActive,
+              lData='bundesland='+posts.region.bundesland,
+              getLocation('bundesland='+posts.region.bundesland)"
+              v-if="posts.region.bundesland"
+              >
+                {{ posts.region.bundesland}}
+              </v-chip>
+              <!-- group -->
+              <v-chip :class="{warning: gActive}"
+              @click="gActive = !gActive,
+                gData='group=' + posts.bereich.group,
+                getGroup('group=' + posts.bereich.group)"
+                v-if="posts.bereich.group"
+              >
+              {{ posts.bereich.group}}
+              </v-chip>
+              <!-- Group Type -->
+              <v-chip :class="{error: gtActive}"
+                @click="gtActive = !gtActive,
+                gtData='groupType=' + posts.bereich.group_type,
+                getGrouptype('groupType=' + posts.bereich.group_type)"
+                v-if="posts.bereich.group_type"
+              >
+                {{ posts.bereich.group_type}}
+              </v-chip>
+              <!-- Group Stack -->
+              <v-chip :class="{info: gtsActive}"
+                @click="gtsActive = !gtsActive,
+                gtsData= 'groupStack=' + posts.bereich.group_type_stack,
+                getGroupstack('groupStack=' + posts.bereich.group_type_stack)"
+                v-if="posts.bereich.group_type_stack"
+              >
+                {{ posts.bereich.group_type_stack}}
+              </v-chip>
+              <!-- Mobile App Platform -->
+              <v-chip :class="{info: pActive}"
+                @click="pActive = !pActive,
+                pData= 'platform=' + posts.bereich.platform,
+                getPlatform('platform=' + posts.bereich.platform)"
+                v-if="posts.bereich.platform"
+              >
+                {{ posts.bereich.platform}}
+              </v-chip>
+              <!-- Mobile App Platform Name -->
+              <v-chip :class="{info: pnActive}"
+                @click="pnActive = !pnActive,
+                pnData='platform_name=' + posts.bereich.platform_name,
+                getPlatform_name('platform_name=' + posts.bereich.platform_name)"
+                v-if="posts.bereich.platform_name"
+              >
+                {{ posts.bereich.platform_name}}
+              </v-chip>
+              <!-- Skill by Group Stack -->
+              <!--encodeURIComponent used to encode c# due to error caused by # -->
+              <v-chip :class="{purple: skActive}"
+                @click="skActive = !skActive,
+                skData ='skill=' +  encodeURIComponent(posts.bereich.skill),
+                getSk('skill=' +  encodeURIComponent(posts.bereich.skill))"
+                v-if="posts.bereich.skill"
+              >
+                {{ posts.bereich.skill}}
+              </v-chip>
+            </div>
+            <v-spacer></v-spacer>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <!-- Favourite button -->
+              <v-btn
+              icon
+              >
+                <v-icon @click="myToggleFunction($event)" >favorite</v-icon>
+              </v-btn>
+              <!-- Bookmark button -->
+              <v-btn icon >
+                <v-icon @click="addToCockpit(index)">bookmark</v-icon>
+              </v-btn>
+              <!-- Share button -->
+              <v-btn
+              icon
+              @click="dialog = !dialog, shareProject(index)"
+              >
+                <v-icon>share</v-icon>
+              </v-btn>
+            </v-card-actions>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
       </v-layout>
+    <!-- Share dialog form -->
     <v-dialog v-model="dialog" width="800px">
         <v-card>
           <v-toolbar
@@ -137,7 +203,6 @@
             color="blue"
             dark
           >
-
             <v-btn flat  @click="dialog = false">
               <v-icon>arrow_back</v-icon>
             </v-btn>
@@ -187,7 +252,6 @@
     </v-dialog>
     </section>
   </v-container>
-
 </template>
 
 <script>
@@ -196,17 +260,12 @@ import axios from 'axios/dist/axios.min.js';
 // import Filter from "./SideFilter";
 // eslint-disable-next-line import/extensions
 import scrollMonitor from 'scrollmonitor/scrollMonitor.js';
-import Cockpit from '@/components/Cockpit';
-
 
 export default {
   name: 'Home',
   // props passed from APP.vue refreshHome to refreshHompage
   // searchTerm to get search term and searchCalled to trigger the watcher when search is entered
   props: ['refreshHome', 'search_term', 'searchCalled', 'draw'],
-  components: {
-    'cock-cmp': Cockpit,
-  },
   data() {
     return {
       category: false,
@@ -270,7 +329,7 @@ export default {
       ],
       drawer: false,
       erroredMessage: "We're sorry, we're not able to retrieve this information at the moment, please try back later",
-      // lClicked: false,
+      currrentUrl: [],
       // gClicked: false,
       // gtClicked: false,
       // gtsClicked: false,
@@ -292,10 +351,12 @@ export default {
     },
     resultApi() {
       if (this.seachTrigger) {
+        // eslint-disable-next-line no-console
         console.log('yes');
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         return this.results.sort(this.byProperty('score'));
       }
+      // eslint-disable-next-line no-console
       console.log('no');
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return this.results;
@@ -318,13 +379,63 @@ export default {
     },
   },
   methods: {
-    pushComp(title) {
-      if (title === 'Cockpit') {
-        this.$router.push('/cockpit');
-      } else if (title === 'Favorites') {
-        this.$router.push('/favorites');
-      } else if (title === 'Logout') {
-        this.$router.push('/logout');
+    groupChosen(a) {
+      if (a === 'Development' || 'Infrastructure' || 'Data Science') {
+        return true;
+      }
+      return false;
+    },
+    groupTChosen(a) {
+      if (a === 'Web' || 'Mobile' || 'ERP ') {
+        return true;
+      }
+      return false;
+    },
+    groupSChosen(a) {
+      if (a === 'Frontend' || 'Backend' || 'Fullstack') {
+        return true;
+      }
+      return false;
+    },
+    removeChip(selected) {
+      this.selectedFilter = this.selectedFilter.filter(item => item !== selected);
+      if (this.selectedFilter.length > 0) {
+        // eslint-disable-next-line no-console
+        console.log(this.currrentUrl);
+        // const index = this.currrentUrl.length - 1;
+        // eslint-disable-next-line no-mixed-operators
+        if (selected === 'Development' || 'Infrastructure' || 'Data Science' && this.currrentUrl.find(value => /group=/.test(value))) {
+          this.gActive = false;
+          // eslint-disable-next-line no-console
+          console.log('group');
+          let currentIndex;
+          currentIndex = this.currrentUrl.length - 1;
+          this.currrentUrl.splice(currentIndex, 1);
+          // eslint-disable-next-line no-console
+          console.log(this.currrentUrl);
+          currentIndex = this.currrentUrl.length - 1;
+          // eslint-disable-next-line no-console
+          console.log(this.currrentUrl[currentIndex]);
+          this.fetchData(this.currrentUrl[currentIndex]);
+        // eslint-disable-next-line no-mixed-operators
+        } else if (selected === 'Web' || 'Mobile' || 'ERP' && this.currrentUrl.find(value => /groupType=/.test(value))) {
+          this.gtActive = false;
+          // eslint-disable-next-line no-console
+          console.log('groupType');
+          let currentIndex;
+          currentIndex = this.currrentUrl.length - 1;
+          this.currrentUrl.splice(currentIndex, 1);
+          currentIndex = this.currrentUrl.length - 1;
+          // eslint-disable-next-line no-console
+          console.log(this.currrentUrl[currentIndex]);
+          this.fetchData(this.currrentUrl[currentIndex]);
+          this.gtActive = false;
+        }
+      } else {
+        this.currrentUrl = [];
+        // eslint-disable-next-line no-console
+        console.log(this.currrentUrl);
+        this.reset();
       }
     },
     sortBy(a) {
@@ -342,32 +453,38 @@ export default {
         this.gData = link;
         this.getGroup(link);
         this.gActive = !this.gActive;
+        this.selectedFilter.push(b);
       } else if (a === 'Sub-Category') {
         const link = `groupType=${b}`;
         this.gtData = link;
         this.getGrouptype(link);
         this.gtActive = !this.gtActive;
+        this.selectedFilter.push(b);
       } else if (a === 'Stack') {
         const link = `groupStack=${b}`;
         this.gtsData = link;
         this.getGroupstack(link);
         this.gtsActive = !this.gtsActive;
+        this.selectedFilter.push(b);
       } else if (a === 'Skills') {
         const link = `skill_summary=${b}`;
         this.sksmData = link;
         this.getSkSm(link);
         this.sksmActive = true;
+        this.selectedFilter.push(b);
       } else if (a === 'Bundesland') {
         const link = `bundesland=${b}`;
         this.lData = link;
         this.getLocation(link);
         this.lActive = !this.lActive;
+        this.selectedFilter.push(b);
       }
     },
     // location filter
     getLocation(a) {
       this.url = this.assignUrl;
-      if (!this.gActive && !this.gtActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
+      if (!this.gActive && !this.gtActive && !this.gtsActive
+          && !this.skActive && !this.sksmActive) {
         this.fetchData(a);
       } else if (this.gActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.fetchData(`${a}&${this.gData}`);
@@ -377,9 +494,11 @@ export default {
         this.fetchData(`${a}&${this.gtsData}`);
       } else if (this.skActive && !this.gActive && !this.gtActive && !this.gtsActive) {
         this.fetchData(`${a}&${this.skData}`);
-      } else if (this.gActive && this.gtActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
+      } else if (this.gActive && this.gtActive && !this.gtsActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gData}&${this.gtData}`);
-      } else if (this.gActive && this.gtActive && this.gtsActive && !this.skActive && !this.sksmActive) {
+      } else if (this.gActive && this.gtActive && this.gtsActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}`);
       } else if (this.sksmActive && !this.gActive && !this.gtActive && !this.gtsActive) {
         this.fetchData(`${a}&${this.sksmData}`);
@@ -409,23 +528,31 @@ export default {
       this.url = this.assignUrl;
       if (!this.gActive && !this.lActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
         this.fetchData(a);
-      } else if (this.gActive && !this.lActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
+      } else if (this.gActive && !this.lActive && !this.gtsActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gData}`);
-      } else if (this.gtsActive && !this.lActive && !this.gActive && !this.skActive && !this.sksmActive) {
+      } else if (this.gtsActive && !this.lActive && !this.gActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gtsData}`);
-      } else if (this.lActive && !this.gtsActive && !this.gActive && !this.skActive && !this.sksmActive) {
+      } else if (this.lActive && !this.gtsActive && !this.gActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.lData}`);
-      } else if (this.sksmActive && !this.lActive && !this.gtsActive && !this.skActive && !this.gActive) {
+      } else if (this.sksmActive && !this.lActive && !this.gtsActive
+                  && !this.skActive && !this.gActive) {
         this.fetchData(`${a}&${this.sksmData}`);
-      } else if (this.lActive && this.gActive && !this.gtsActive && !this.skActive && !this.sksmActive) {
+      } else if (this.lActive && this.gActive && !this.gtsActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.lData}&${this.gData}`);
-      } else if (this.lActive && this.gtsActive && !this.gActive && !this.skActive && !this.sksmActive) {
+      } else if (this.lActive && this.gtsActive && !this.gActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.lData}&${this.gtsData}`);
-      } else if (this.lActive && this.sksmActive && !this.gtsActive && !this.skActive && !this.gActive) {
+      } else if (this.lActive && this.sksmActive && !this.gtsActive
+                  && !this.skActive && !this.gActive) {
         this.fetchData(`${a}&${this.lData}&${this.sksmData}`);
       } else if (this.gActive && this.lActive && this.gtsActive && !this.skActive) {
         this.fetchData(`${a}&${this.gData}&${this.lData}&${this.gtsData}`);
-      } else if (this.gtsActive && this.lActive && this.gActive && this.sksmActive && !this.skActive) {
+      } else if (this.gtsActive && this.lActive && this.gActive
+                  && this.sksmActive && !this.skActive) {
         this.fetchData(`${a}&${this.gtsData}&${this.lData}&${this.sksmData}&${this.gData}`);
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtsActive) {
         this.fetchData(`${a}&${this.skData}`);
@@ -436,23 +563,32 @@ export default {
       this.url = this.assignUrl;
       if (!this.gActive && !this.lActive && !this.gtActive && !this.skActive && !this.sksmActive) {
         this.fetchData(a);
-      } else if (this.gActive && !this.lActive && !this.gtActive && !this.skActive && !this.sksmActive) {
+      } else if (this.gActive && !this.lActive && !this.gtActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gData}`);
-      } else if (this.gtActive && !this.lActive && !this.gActive && !this.skActive && !this.sksmActive) {
+      } else if (this.gtActive && !this.lActive && !this.gActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.gtData}`);
-      } else if (this.lActive && !this.gtActive && !this.gActive && !this.skActive && !this.sksmActive) {
+      } else if (this.lActive && !this.gtActive && !this.gActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.lData}`);
-      } else if (this.sksmActive && !this.lActive && !this.gtActive && !this.skActive && !this.gActive) {
+      } else if (this.sksmActive && !this.lActive && !this.gtActive
+                  && !this.skActive && !this.gActive) {
         this.fetchData(`${a}&${this.sksmData}`);
-      } else if (this.lActive && this.gActive && !this.gtActive && !this.skActive && !this.sksmActive) {
+      } else if (this.lActive && this.gActive && !this.gtActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.lData}&${this.gData}`);
-      } else if (this.lActive && this.gtActive && !this.gActive && !this.skActive && !this.sksmActive) {
+      } else if (this.lActive && this.gtActive && !this.gActive
+                  && !this.skActive && !this.sksmActive) {
         this.fetchData(`${a}&${this.lData}&${this.gtData}`);
-      } else if (this.lActive && this.sksmActive && !this.gtActive && !this.skActive && !this.gActive) {
+      } else if (this.lActive && this.sksmActive && !this.gtActive
+                  && !this.skActive && !this.gActive) {
         this.fetchData(`${a}&${this.lData}&${this.sksmData}`);
-      } else if (this.gActive && this.lActive && this.gtActive && !this.skActive) {
+      } else if (this.gActive && this.lActive && this.gtActive
+                  && !this.skActive) {
         this.fetchData(`${a}&${this.gData}&${this.lData}&${this.gtData}`);
-      } else if (this.gtActive && this.lActive && this.gActive && this.sksmActive && !this.skActive) {
+      } else if (this.gtActive && this.lActive && this.gActive
+                  && this.sksmActive && !this.skActive) {
         this.fetchData(`${a}&${this.gtData}&${this.lData}&${this.sksmData}&${this.gData}`);
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
         this.fetchData(`${a}&${this.skData}`);
@@ -523,9 +659,11 @@ export default {
       // eslint-disable-next-line max-len
       } else if (this.gActive && this.lActive && !this.gtActive && !this.gtsActive && !this.skActive) {
         this.fetchData(`${a}&${this.gData}&${this.lData}`);
-      } else if (this.gActive && this.gtActive && !this.lActive && !this.gtsActive && !this.skActive) {
+      } else if (this.gActive && this.gtActive && !this.lActive
+                  && !this.gtsActive && !this.skActive) {
         this.fetchData(`${a}&${this.gData}&${this.gtData}`);
-      } else if (this.gActive && this.gtActive && this.gtsActive && !this.skActive && !this.lActive) {
+      } else if (this.gActive && this.gtActive && this.gtsActive
+                  && !this.skActive && !this.lActive) {
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.gtsData}`);
       } else if (this.gActive && this.gtActive && !this.gtsActive && this.lActive) {
         this.fetchData(`${a}&${this.gData}&${this.gtData}&${this.lData}`);
@@ -544,7 +682,9 @@ export default {
       };
     },
     sorty() {
-      this.resultApi.sort((a, b) => (a.filter_date_post.$date) - (b.filter_date_post.$date));
+      this.resultApi.sort((a, b) =>
+        Number(a.filter_date_post.$date) - Number(b.filter_date_post.$date));
+      // ((a, b) => (a.filter_date_post.$date) - (b.filter_date_post.$date));
       // eslint-disable-next-line no-plusplus
     },
     // to toggle the style class of fav button
@@ -560,6 +700,7 @@ export default {
       this.section = '';
       this.selectedFilter = [];
       this.seachTrigger = false;
+      this.currrentUrl = [];
     },
     resetFilters() {
       this.sksmActive = false;
@@ -574,6 +715,9 @@ export default {
     },
     addToCockpit(index) {
       const payload = this.results[index];
+      payload.date_added = Date.now();
+      // eslint-disable-next-line no-console
+      console.log(payload);
       const path = 'http://localhost:5000/api/cockpit';
       axios.post(path, payload)
         .then(() => {
@@ -605,6 +749,7 @@ export default {
     fetchData(section) {
       axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
       const a = `${this.url + section}`;
+      this.currrentUrl.push(section);
       axios.get(a)
         .then((resp) => {
           // total results gets all the data from the api

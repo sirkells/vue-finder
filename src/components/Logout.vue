@@ -7,7 +7,7 @@
 export default {
   created() {
     this.$store.dispatch('destroyToken')
-      .then((resp) => {
+      .then(() => {
         this.$router.push('/login');
       });
   },

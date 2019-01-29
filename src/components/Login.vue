@@ -21,8 +21,20 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field prepend-icon="person" name="login" label="Login" type="text" v-model="username"></v-text-field>
-                  <v-text-field prepend-icon="lock" label="Password" id="password" type="password" v-model="password"></v-text-field>
+                  <v-text-field
+                    prepend-icon="person"
+                    name="login"
+                    label="Login"
+                    type="text"
+                    v-model="username">
+                  </v-text-field>
+                  <v-text-field
+                    prepend-icon="lock"
+                    label="Password"
+                    id="password"
+                    type="password"
+                    v-model="password">
+                  </v-text-field>
                   <p class="error" :message="message">{{ message }}</p>
                 </v-form>
               </v-card-text>
@@ -55,13 +67,16 @@ export default {
   props: {
     source: String,
   },
+  // created() {
+  //   this.$store.commit('getUserName', this.username);
+  // },
   methods: {
     login() {
       this.$store.dispatch('getToken', {
         username: this.username,
         password: this.password,
       })
-        .then((resp) => {
+        .then(() => {
           this.$router.push('/');
         });
     },
