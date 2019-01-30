@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/components/Home';
-import Login from '@/components/Login';
-import Logout from '@/components/Logout';
+import Login from '@/components/Auth/Login';
+import Logout from '@/components/Auth/Logout';
 import Cockpit from '@/components/Cockpit';
 import store from '@/store/store';
 

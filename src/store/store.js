@@ -9,7 +9,9 @@ Vue.use(Vuex);
 
 
 const state = {
-  count: 0,
+  allAggs: [],
+  resultsCount: null,
+  totalResultsCount: null,
   token: localStorage.getItem('token') || null,
   username: localStorage.getItem('user'),
 };
@@ -18,6 +20,16 @@ const getters = {
   loggedIn(state) {
     return state.token !== null;
   },
+  allAggs(state) {
+    return state.allAggs;
+  },
+  resultsCount(state) {
+    return state.resultsCount;
+  },
+  totalResultsCount(state) {
+    return state.totalResultsCount;
+  },
+
   // evenOrOdd: state => (state.count % 2 === 0 ? 'even' : 'odd'),
 };
 const mutations = {
@@ -29,6 +41,15 @@ const mutations = {
   },
   getUserName(state, user) {
     state.username = user;
+  },
+  updateAllAggs(state, data) {
+    state.allAggs = data;
+  },
+  updateResultsCount(state, amount) {
+    state.resultsCount = amount;
+  },
+  updateTotalResultsCount(state, amount) {
+    state.totalResultsCount = amount;
   },
   // increment(state) {
   //   state.count++;

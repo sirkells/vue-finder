@@ -16,71 +16,13 @@
         :value="navDraw"
         v-show="$route.path==='/login' || $route.path==='/logout' ? false : true"
       >
-        <v-list dense>
-          <v-flex xs12 sm6 md12>
-            <v-card >
-              <v-toolbar color="blue darken-3" dark>
-                <v-toolbar-title>Filter</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-btn
-
-                  color="primary"
-
-                  light
-                  @click="reset"
-                >
-                  Reset
-                </v-btn>
-              </v-toolbar>
-
-              <v-list>
-                 <!-- Results Count -->
-                <v-chip>
-                  Showing {{ resultsCount }} results from {{ totalResultsCount }} records
-                </v-chip>
-                <v-btn flat @click="sorty()">
-                  <v-icon small left>list</v-icon>
-                  <span class="caption text-lowercase">Sort By Date</span>
-                </v-btn>
-                <!-- Filters -->
-                <v-list-group
-                  v-for="(item, index) in allAggs"
-                  :key="index"
-                >
-                  <v-list-tile slot="activator">
-                    <v-list-tile-content >
-                      <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
-                  <v-list-tile
-                    v-for="(subItem, index) in item.items"
-                    :key="index"
-                  >
-                    <v-list-tile-content >
-                      <v-chip
-                        @click="check(item.title, subItem.key)"
-                      >
-                        {{ subItem.key }} ({{ subItem.count }})
-                      </v-chip>
-                    </v-list-tile-content>
-                    <v-list-tile-action>
-                      <v-icon></v-icon>
-                    </v-list-tile-action>
-                  </v-list-tile>
-                </v-list-group>
-              </v-list>
-            </v-card>
-          </v-flex>
-        </v-list>
-        <!-- Selected Filters array Chips -->
-        <v-chip
-        v-for="select in selectedFilter"
-        :key="select.title"
-        close
-        @input="removeChip(select)">
-          {{ select }}
-        </v-chip>
+      <!-- Side Filter component -->
+        <side-filter
+          :check="check"
+          :reset="reset"
+          :sorty="sorty"
+        >
+        </side-filter>
       </v-navigation-drawer>
       <!-- Contents -->
       <v-layout row wrap>
@@ -258,15 +200,18 @@
 <script>
 // eslint-disable-next-line import/extensions
 import axios from 'axios/dist/axios.min.js';
-// import Filter from "./SideFilter";
 // eslint-disable-next-line import/extensions
 import scrollMonitor from 'scrollmonitor/scrollMonitor.js';
+import Filter from './SideFilter';
 
 export default {
   name: 'Home',
   // props passed from APP.vue refreshHome to refreshHompage
   // searchTerm to get search term and searchCalled to trigger the watcher when search is entered
   props: ['refreshHome', 'search_term', 'searchCalled', 'draw'],
+  components: {
+    'side-filter': Filter,
+  },
   data() {
     return {
       category: false,
@@ -376,10 +321,17 @@ export default {
       return url;
     },
     resultsCount() {
+      this.$store.commit('updateResultsCount', this.results.length);
       return this.results.length;
     },
     totalResultsCount() {
+      this.$store.commit('updateTotalResultsCount', this.totalAmount);
+      console.log(this.$store.getters.totalResultsCount);
       return this.totalAmount;
+    },
+    getAllFilterData() {
+      this.$store.commit('updateAllAggs', this.allAggs);
+      return this.allAggs;
     },
   },
   methods: {
@@ -447,7 +399,7 @@ export default {
       this.results.sort(this.byProperty(a));
     },
     destroy() {
-      this.$store.state.token = null;
+      this.$store.commit('destroyToken');
     },
     // checks which filter group was clicked
     check(a, b) {
@@ -771,8 +723,9 @@ export default {
           this.total_results = resp.data.project_lists;
           // results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10);
-          this.allAggs = resp.data.AllAggs;
-          this.totalAmount = resp.data.amount;
+          this.$store.commit('updateAllAggs', resp.data.AllAggs);
+          this.$store.commit('updateResultsCount', this.resultApi.length);
+          this.$store.commit('updateTotalResultsCount', resp.data.amount);
           // eslint-disable-next-line no-console
           console.log(this.results);
           // eslint-disable-next-line no-console

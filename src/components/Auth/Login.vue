@@ -52,7 +52,7 @@
 <script>
 // eslint-disable-next-line import/extensions
 import axios from 'axios/dist/axios.min.js';
-import store from '../store/store';
+import store from '../../store/store';
 
 export default {
   name: 'Login',
