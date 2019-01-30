@@ -31,14 +31,15 @@
         </v-toolbar-title>
         <v-text-field
             :append="() => {}"
-            placeholder="Search..."
+            placeholder="Search Projects..."
             single-line
             append-icon="search"
             color="white"
-            clearable
             hide-details
+            clearable
             v-model="search_term"
             @keyup.prevent="search"
+            @click:clear="fetchme()"
           >
         </v-text-field>
         <v-spacer></v-spacer>
@@ -97,7 +98,7 @@ export default {
     section: '',
     name: 'Filter',
     refreshme: false,
-    search_term: '',
+    search_term: null,
     searchCalled: false,
     // categoryData: getCategoryData(),
     facet: '',
@@ -107,10 +108,13 @@ export default {
     loggedIn() {
       return this.$store.getters.loggedIn;
     },
+    resetCalled() {
+      return this.$store.getters.reset;
+    },
   },
   methods: {
     refresh() {
-      this.section = 'home';
+      this.section = '';
     },
     fetchme() {
       this.refreshme = !this.refreshme;
@@ -119,6 +123,12 @@ export default {
       // eslint-disable-next-line no-console
       console.log(this.search_term);
       this.searchCalled = !this.searchCalled;
+    },
+  },
+  watch: {
+    // clears search term when reset
+    resetCalled() {
+      this.search_term = '';
     },
   },
   props: {

@@ -9,25 +9,29 @@ Vue.use(Vuex);
 
 
 const state = {
-  allAggs: [],
+  allFilterData: [],
   resultsCount: null,
   totalResultsCount: null,
   token: localStorage.getItem('token') || null,
   username: localStorage.getItem('user'),
+  reset: false,
 };
 
 const getters = {
   loggedIn(state) {
     return state.token !== null;
   },
-  allAggs(state) {
-    return state.allAggs;
+  allFilterData(state) {
+    return state.allFilterData;
   },
   resultsCount(state) {
     return state.resultsCount;
   },
   totalResultsCount(state) {
     return state.totalResultsCount;
+  },
+  reset(state) {
+    return state.reset;
   },
 
   // evenOrOdd: state => (state.count % 2 === 0 ? 'even' : 'odd'),
@@ -42,14 +46,17 @@ const mutations = {
   getUserName(state, user) {
     state.username = user;
   },
-  updateAllAggs(state, data) {
-    state.allAggs = data;
+  updateFilterData(state, data) {
+    state.allFilterData = data;
   },
   updateResultsCount(state, amount) {
     state.resultsCount = amount;
   },
   updateTotalResultsCount(state, amount) {
     state.totalResultsCount = amount;
+  },
+  resetCalled(state) {
+    state.reset = !state.reset;
   },
   // increment(state) {
   //   state.count++;

@@ -17,7 +17,7 @@
             <v-btn
               color="primary"
               light
-              @click="reset"
+              @click="refreshAll"
             >
               Reset
             </v-btn>
@@ -26,7 +26,7 @@
           <v-list>
             <!-- Results Count -->
             <v-chip>
-              Showing {{ getResultsCount }} results from {{ getTotalResultsCount }} records
+              {{ resultMessage }}
             </v-chip>
             <v-btn
               flat
@@ -67,14 +67,14 @@
       </v-flex>
     </v-list>
     <!-- Selected Filters array Chips -->
-    <!-- <v-chip
-      v-for="select in selectedFilter"
+    <v-chip
+      v-for="select in getSelectedFilters"
       :key="select.title"
       close
       @input="removeChip(select)"
     >
       {{ select }}
-    </v-chip> -->
+    </v-chip>
   </div>
 
 </template>
@@ -82,21 +82,48 @@
 <script>
 export default {
   name: 'SideFilter',
-  props: ['check', 'reset', 'sorty'],
+  props: ['check', 'reset', 'sorty', 'selectedFilter', 'searchTrigger', 'searchTerm', 'removeChip'],
   data() {
     return {
 
     };
   },
   computed: {
+    searched() {
+      return this.searchTrigger;
+    },
+    searchedTerm() {
+      return this.searchTerm;
+    },
+    resultMessage() {
+      let message = '';
+      if (this.searched) {
+        message = `Found ${this.getTotalResultsCount} results for ${this.searchTerm}`;
+        return message;
+      } message = `Showing ${this.getResultsCount} results from ${this.getTotalResultsCount} records`;
+      return message;
+    },
+    getSelectedFilters() {
+      return this.selectedFilter;
+    },
     getAllFilterData() {
-      return this.$store.getters.allAggs;
+      return this.$store.getters.allFilterData;
     },
     getResultsCount() {
       return this.$store.getters.resultsCount;
     },
     getTotalResultsCount() {
       return this.$store.getters.totalResultsCount;
+    },
+    refreshAll() {
+      return this.reset;
+    },
+  },
+  watch: {
+    searchedTerm() {
+      if (this.searchedTerm === null) {
+        this.reset();
+      }
     },
   },
 };

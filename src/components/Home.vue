@@ -21,6 +21,10 @@
           :check="check"
           :reset="reset"
           :sorty="sorty"
+          :selectedFilter="selectedFilter"
+          :searchTerm="search_term"
+          :searchTrigger="seachTrigger"
+          :removeChip="removeChip"
         >
         </side-filter>
       </v-navigation-drawer>
@@ -216,7 +220,7 @@ export default {
     return {
       category: false,
       aggRegion: [],
-      allAggs: [],
+      allFilterData: [],
       tab: null,
       url: 'http://127.0.0.1:5000/api/?',
       bundesland: '',
@@ -320,19 +324,19 @@ export default {
       const url = 'http://127.0.0.1:5000/api/?';
       return url;
     },
-    resultsCount() {
-      this.$store.commit('updateResultsCount', this.results.length);
-      return this.results.length;
-    },
-    totalResultsCount() {
-      this.$store.commit('updateTotalResultsCount', this.totalAmount);
-      console.log(this.$store.getters.totalResultsCount);
-      return this.totalAmount;
-    },
-    getAllFilterData() {
-      this.$store.commit('updateAllAggs', this.allAggs);
-      return this.allAggs;
-    },
+    // resultsCount() {
+    //   this.$store.commit('updateResultsCount', this.results.length);
+    //   return this.results.length;
+    // },
+    // totalResultsCount() {
+    //   this.$store.commit('updateTotalResultsCount', this.totalAmount);
+    //   console.log(this.$store.getters.totalResultsCount);
+    //   return this.totalAmount;
+    // },
+    // getAllFilterData() {
+    //   this.$store.commit('updateFilterData', this.allFilterData);
+    //   return this.allFilterData;
+    // },
   },
   methods: {
     groupChosen(a) {
@@ -668,6 +672,7 @@ export default {
       this.selectedFilter = [];
       this.seachTrigger = false;
       this.currrentUrl = [];
+      this.$store.commit('resetCalled');
     },
     resetFilters() {
       this.sksmActive = false;
@@ -723,7 +728,8 @@ export default {
           this.total_results = resp.data.project_lists;
           // results takes only 10 data and returns 10 everytime scrllbar ends
           this.results = resp.data.project_lists.slice(0, 10);
-          this.$store.commit('updateAllAggs', resp.data.AllAggs);
+          // update store data
+          this.$store.commit('updateFilterData', resp.data.AllAggs);
           this.$store.commit('updateResultsCount', this.resultApi.length);
           this.$store.commit('updateTotalResultsCount', resp.data.amount);
           // eslint-disable-next-line no-console
@@ -756,7 +762,7 @@ export default {
     },
     // watches the searchterm is been trigered by the keyboard event
     searchCalled() {
-      if (this.search_term.length <= 1) {
+      if (this.search_term === null) {
         this.seachTrigger = false;
         // eslint-disable-next-line no-unused-expressions
         this.url = this.assignUrl;
