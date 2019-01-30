@@ -22,7 +22,7 @@
                   {{posts.description}}
                 </div>
               </v-card-title>
-              <v-card-actions>
+              <v-card-actions @dblclick="removeCockpitData(posts.id)">
                   <div class="text-xs-center">
                     <v-chip v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
                     <v-chip v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>

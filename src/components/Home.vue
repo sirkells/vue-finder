@@ -422,15 +422,10 @@ export default {
         this.selectedFilter.push(b);
       } else if (a === 'Stack') {
         const link = `groupStack=${b}`;
-        console.log(1);
         this.gtsData = link;
-        console.log(2);
         this.getGroupstack(link);
-        console.log(link);
         this.gtsActive = !this.gtsActive;
-        console.log(4);
         this.selectedFilter.push(b);
-        console.log(5);
       } else if (a === 'Skills') {
         const link = `skill_summary=${b}`;
         this.sksmData = link;
@@ -685,6 +680,9 @@ export default {
       this.lActive = false;
       this.skActive = false;
     },
+    // dataAlreadyInCockkpit(data) {
+    //   this.cockpit.find
+    // },
     addToCockpit(index) {
       const payload = this.results[index];
       payload.date_added = Date.now();
@@ -692,11 +690,17 @@ export default {
       console.log(payload);
       const path = 'http://localhost:5000/api/cockpit';
       axios.post(path, payload)
-        .then(() => {
+        .then((response) => {
           // eslint-disable-next-line no-alert
-          alert('added succesful');
-          // eslint-disable-next-line no-console
-          console.log(payload);
+          console.log(response);
+          if (response.data.status === 600) {
+            alert('Duplicate record found, Project not added');
+          } else {
+            // eslint-disable-next-line no-alert
+            alert('Project added succesful');
+            // eslint-disable-next-line no-console
+            console.log(payload);
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line
