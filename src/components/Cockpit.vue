@@ -3,6 +3,9 @@
       <section v-if="noCockpitData">
         <p>{{ noCockpitDataMsg }}</p>
       </section>
+      <section v-else-if="!loggedIn">
+        <p>You are currently not logged in</p>
+      </section>
       <section v-else>
         <!-- contents -->
         <v-layout row wrap>

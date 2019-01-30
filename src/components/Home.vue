@@ -13,7 +13,7 @@
         :clipped="$vuetify.breakpoint.mdAndUp"
         app
         light
-        v-model="draw"
+        :value="navDraw"
         v-show="$route.path==='/login' || $route.path==='/logout' ? false : true"
       >
         <v-list dense>
@@ -102,9 +102,10 @@
             </v-card-title>
             <v-card-actions>
             <div class="text-xs-center">
-              <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
+              <!-- <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
               <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
-              <v-chip v-if="posts.filter_date_post.$date">{{ posts.filter_date_post.$date}}</v-chip>
+              <v-chip v-if="posts.filter_date_post.$date">
+                {{ posts.filter_date_post.$date}}</v-chip> -->
               <!-- location -->
               <v-chip :class="{success: lActive}"
               @click="lActive = !lActive,
@@ -346,6 +347,9 @@ export default {
     }
   },
   computed: {
+    navDraw() {
+      return this.draw;
+    },
     loggedIn() {
       return this.$store.getters.loggedIn;
     },
@@ -462,10 +466,15 @@ export default {
         this.selectedFilter.push(b);
       } else if (a === 'Stack') {
         const link = `groupStack=${b}`;
+        console.log(1);
         this.gtsData = link;
+        console.log(2);
         this.getGroupstack(link);
+        console.log(link);
         this.gtsActive = !this.gtsActive;
+        console.log(4);
         this.selectedFilter.push(b);
+        console.log(5);
       } else if (a === 'Skills') {
         const link = `skill_summary=${b}`;
         this.sksmData = link;
@@ -584,12 +593,18 @@ export default {
       } else if (this.lActive && this.sksmActive && !this.gtActive
                   && !this.skActive && !this.gActive) {
         this.fetchData(`${a}&${this.lData}&${this.sksmData}`);
+      } else if (this.gActive && this.gtActive && !this.lActive
+                  && !this.skActive) {
+        this.fetchData(`${a}&${this.gData}&${this.gtData}`);
       } else if (this.gActive && this.lActive && this.gtActive
                   && !this.skActive) {
         this.fetchData(`${a}&${this.gData}&${this.lData}&${this.gtData}`);
       } else if (this.gtActive && this.lActive && this.gActive
                   && this.sksmActive && !this.skActive) {
         this.fetchData(`${a}&${this.gtData}&${this.lData}&${this.sksmData}&${this.gData}`);
+      } else if (this.gtActive && this.lActive && this.gActive
+                  && this.sksmActive && this.skActive) {
+        this.fetchData(`${a}&${this.gtData}&${this.lData}&${this.sksmData}&${this.gData}&${this.skData}`);
       } else if (this.skActive && !this.lActive && !this.gActive && !this.gtActive) {
         this.fetchData(`${a}&${this.skData}`);
       }
@@ -786,9 +801,6 @@ export default {
     refreshHome() {
       this.reset();
     },
-    // draw() {
-    //   this.drawer = !this.drawer;
-    // },
     // watches the searchterm is been trigered by the keyboard event
     searchCalled() {
       if (this.search_term.length <= 1) {
