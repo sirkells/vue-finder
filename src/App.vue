@@ -63,6 +63,11 @@
               <v-icon>mdi-logout</v-icon>
             </v-btn>
           </router-link>
+          <router-link to="/cockpit">
+          <v-btn icon>
+            <v-icon>bookmark</v-icon>
+          </v-btn>
+        </router-link>
         </div>
         <v-btn icon large>
           <v-avatar size="32px">
