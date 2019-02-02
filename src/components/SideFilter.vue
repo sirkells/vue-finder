@@ -28,6 +28,7 @@
             <v-chip>
               {{ resultMessage }}
             </v-chip>
+             <!-- sort by date -->
             <v-btn
               flat
               @click="sorty()"
