@@ -11,7 +11,7 @@
       >
         <v-toolbar-side-icon
         v-show="$route.path==='/cockpit'? false : true"
-        @click.stop="draw=!draw"></v-toolbar-side-icon>
+        @click.stop="toggleDraw()"></v-toolbar-side-icon>
         <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
         <span>
           <router-link to="/">
@@ -79,8 +79,7 @@
       <router-view
       :refreshHome="refreshme"
       :search_term="search_term"
-      :searchCalled="searchCalled"
-      :draw="draw" >
+      :searchCalled="searchCalled" >
       </router-view>
     </v-content>
   </v-app>
@@ -102,7 +101,6 @@ export default {
     searchCalled: false,
     // categoryData: getCategoryData(),
     facet: '',
-    draw: false,
   }),
   computed: {
     loggedIn() {
@@ -123,6 +121,9 @@ export default {
       // eslint-disable-next-line no-console
       console.log(this.search_term);
       this.searchCalled = !this.searchCalled;
+    },
+    toggleDraw() {
+      this.$store.commit('navDrawStatus');
     },
   },
   watch: {
