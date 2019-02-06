@@ -241,7 +241,7 @@ export default {
       seachTrigger: false,
       erroredMessage: "We're sorry, we're not able to retrieve this information at the moment, please try back later",
       currrentUrl: [],
-
+      filterObj: [],
     };
   },
   created() {
@@ -290,14 +290,17 @@ export default {
   },
   methods: {
     // creates url filters to fetch data
-    getFilterQuery(a, b) {
-      const section = a + b;
-      this.fetchData(section);
-      const filterDict = { title: b, filter: section, closed: true };
+    getFilterQuery(path, key) {
+      const section = path + key;
+      const filter = { query: path.slice(1, -1), value: key };
+      this.filterObj.push(filter);
+      console.log(this.filterObj);
+      this.fetchData(section, this.filterObj);
+      const filterDict = { title: key, filter: section, closed: true };
       this.selectedFilter.push(filterDict);
       this.url = this.url + section;
     },
-    // remove selected filter chips
+    // // remove selected filter chips
     removeChip(chip) {
       // create the regex
       const re = new RegExp(chip, 'gi');
@@ -308,6 +311,30 @@ export default {
       this.url = newUrl;
       this.fetchData('');
     },
+    // David
+    // getFilterQuery(path, key) {
+    //   console.log(this.a);
+    //   // const section = path + key;
+    //   const filter = { query: path.slice(1, -1), value: key };
+    //   this.filterObj.push(filter);
+    //   console.log(this.filterObj);
+    //   return new Promise((resolve, reject) => {
+    //     axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
+    //     axios.post(this.url, this.filterObj)
+    //       .then((resp) => {
+    //         // eslint-disable-next-line no-alert
+    //         // eslint-disable-next-line no-console
+    //         resolve(resp);
+    //         // eslint-disable-next-line no-console
+    //         console.log(resp);
+    //         // eslint-disable-next-line no-alert
+    //       })
+    //       .catch((error) => {
+    //         // eslint-disable-next-line
+    //       reject(error)
+    //       });
+    //   });
+    // },
     byProperty(prop) {
       // eslint-disable-next-line func-names
       return function (a, b) {
@@ -333,6 +360,7 @@ export default {
       this.seachTrigger = false;
       this.currrentUrl = [];
       this.$store.commit('resetCalled');
+      this.filterObj = [];
     },
     resetFilters() {
       this.sksmActive = false;
@@ -380,8 +408,9 @@ export default {
       this.$store.dispatch('appendItems');
     },
     // fetchs data from store API
-    fetchData(section) {
+    fetchData(section, filterObj) {
       const urlPath = `${this.url + section}`;
+      this.$store.commit('getParams', filterObj);
       this.$store.dispatch('fetchData', urlPath);
       this.currrentUrl.push(section);
     },
@@ -408,6 +437,25 @@ export default {
         // this.sortBy('score');
       }
     },
+    // for david schenk request
+    // searchCalled() {
+    //   if (this.search_term === null) {
+    //     this.seachTrigger = false;
+    //     this.reset();
+    //   } else {
+    //     this.seachTrigger = true;
+    //     // eslint-disable-next-line no-console
+    //     console.log(this.search_term);
+    //     this.url = this.assignUrl;
+    //     const path = '&search_term=';
+    //     this.getFilterQuery(path, this.search_term);
+    //     const term = `search_term=${this.search_term}`;
+    //     // eslint-disable-next-line no-console
+    //     console.log(term);
+    //     // this.fetchData('');
+    //     // this.sortBy('score');
+    //   }
+    // },
   },
 
   mounted() {

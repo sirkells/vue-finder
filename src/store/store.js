@@ -20,6 +20,7 @@ const state = {
   totalResults: [],
   results: [],
   navDraw: false,
+  params: null,
 };
 
 const getters = {
@@ -47,6 +48,9 @@ const mutations = {
   //   state.totalResults = [];
   //   state.username = null;
   // },
+  getParams(state, data) {
+    state.params = data;
+  },
   getToken(state, accessToken) {
     state.token = accessToken;
   },

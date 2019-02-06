@@ -122,6 +122,15 @@ export default {
       console.log(this.search_term);
       this.searchCalled = !this.searchCalled;
     },
+    // for David @keypress="search(event)"
+    // search(e) {
+    //   const key = e.which || e.keyCode;
+    //   if (key === 13) {
+    //     // eslint-disable-next-line no-console
+    //     console.log(this.search_term);
+    //     this.searchCalled = !this.searchCalled;
+    //   }
+    // },
     toggleDraw() {
       this.$store.commit('navDrawStatus');
     },
