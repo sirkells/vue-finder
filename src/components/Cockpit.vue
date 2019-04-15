@@ -1,55 +1,67 @@
 <template>
-    <v-container grid-list-md  fluid container>
-      <section v-if="noCockpitData">
-        <p>{{ noCockpitDataMsg }}</p>
-      </section>
-      <section v-else-if="!loggedIn">
-        <p>You are currently not logged in</p>
-      </section>
-      <section v-else>
-        <!-- contents -->
-        <v-layout row wrap>
-          <v-flex
-            xs12
-            v-for="(posts, index) in results"
-            :key="index" >
-            <v-card>
-              <v-card-title primary>
-                <div>
-                  <div><a :href="posts.url" target="_blank">
+  <v-container
+    grid-list-md
+    fluid
+    container
+  >
+    <section v-if="noCockpitData">
+      <p>{{ noCockpitDataMsg }}</p>
+    </section>
+    <section v-else-if="!loggedIn">
+      <p>You are currently not logged in</p>
+    </section>
+    <section v-else>
+      <!-- contents -->
+      <v-layout
+        row
+        wrap
+      >
+        <v-flex
+          xs12
+          v-for="(posts, index) in results"
+          :key="index"
+        >
+          <v-card>
+            <v-card-title primary>
+              <div>
+                <div><a
+                    :href="posts.url"
+                    target="_blank"
+                  >
                     <b>{{ posts.title }}</b>
                   </a></div>
-                  {{posts.description}}
-                </div>
-              </v-card-title>
-              <v-card-actions @dblclick="removeCockpitData(posts.id)">
-                  <div class="text-xs-center">
-                    <v-chip v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
-                    <v-chip v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
-                    <v-chip v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
-                    <v-chip v-if="posts.bereich.group_type_stack">
-                      {{ posts.bereich.group_type_stack}}
-                    </v-chip>
-                    <!-- Mobile App Platform -->
-                    <v-chip v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
-                    <!-- Mobile App Platform Name -->
-                    <v-chip v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}
-                    </v-chip>
-                  </div>
-                <v-spacer></v-spacer>
-                <v-card-actions>
-                  <v-btn class="error"
+                {{posts.description.slice(0, 400)}}
+              </div>
+            </v-card-title>
+            <v-card-actions @dblclick="removeCockpitData(posts.id)">
+              <div class="text-xs-center">
+                <v-chip v-if="posts.region.bundesland">{{ posts.region.bundesland}}</v-chip>
+                <v-chip v-if="posts.bereich.group">{{ posts.bereich.group}}</v-chip>
+                <v-chip v-if="posts.bereich.group_type">{{ posts.bereich.group_type}}</v-chip>
+                <v-chip v-if="posts.bereich.group_type_stack">
+                  {{ posts.bereich.group_type_stack}}
+                </v-chip>
+                <!-- Mobile App Platform -->
+                <v-chip v-if="posts.bereich.platform">{{ posts.bereich.platform}}</v-chip>
+                <!-- Mobile App Platform Name -->
+                <v-chip v-if="posts.bereich.platform_name">{{ posts.bereich.platform_name}}
+                </v-chip>
+              </div>
+              <v-spacer></v-spacer>
+              <v-card-actions>
+                <v-btn
+                  class="error"
                   @click="removeCockpitData(posts.id)"
-                  >
+                >
                   Remove
-                  </v-btn>
-                </v-card-actions>
+                </v-btn>
               </v-card-actions>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </section>
-    </v-container>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </section>
+  </v-container>
 </template>
 
 <script>

@@ -8,7 +8,6 @@ import router from '@/router/index';
 
 Vue.use(Vuex);
 
-
 const state = {
   allFilterData: [],
   resultsCount: null,
@@ -88,7 +87,10 @@ const mutations = {
     // state.results.sort();
   },
   addToResults(state) {
-    const nextData = state.totalResults.slice(state.results.length, state.results.length + 20);
+    const nextData = state.totalResults.slice(
+      state.results.length,
+      state.results.length + 20,
+    );
     state.results = state.results.concat(nextData);
   },
   navDrawStatus(state) {
@@ -112,11 +114,14 @@ const actions = {
   },
   // eslint-disable-next-line consistent-return
   destroyToken(context) {
-    axios.defaults.headers.common.Authorization = `Bearer ${context.state.token}`;
+    axios.defaults.headers.common.Authorization = `Bearer ${
+      context.state.token
+    }`;
     const path = 'http://localhost:5000/api/logout';
     if (context.getters.loggedIn) {
       return new Promise((resolve, reject) => {
-        axios.post(path)
+        axios
+          .post(path)
           .then((resp) => {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
@@ -132,17 +137,21 @@ const actions = {
             localStorage.removeItem('token');
             context.commit('destroyToken');
             // eslint-disable-next-line
-            reject(error)
+            reject(error);
           });
       });
     }
   },
   getToken(context, credentials) {
     const path = 'http://localhost:5000/api/login';
-    const payload = { username: credentials.username, password: credentials.password };
+    const payload = {
+      username: credentials.username,
+      password: credentials.password,
+    };
     // state.username = credentials.username;
     return new Promise((resolve, reject) => {
-      axios.post(path, payload)
+      axios
+        .post(path, payload)
         .then((resp) => {
           const accessToken = resp.data.token;
           localStorage.setItem('token', accessToken);
@@ -154,17 +163,20 @@ const actions = {
           resolve(resp);
           // eslint-disable-next-line no-console
           console.log(resp);
-        // eslint-disable-next-line no-alert
+          // eslint-disable-next-line no-alert
         })
         .catch((error) => {
-        // eslint-disable-next-line
-          reject(error)
+          // eslint-disable-next-line
+          reject(error);
         });
     });
   },
   fetchData(context, urlPath) {
-    axios.defaults.headers.common.Authorization = `Bearer ${context.state.token}`;
-    axios.get(urlPath)
+    axios.defaults.headers.common.Authorization = `Bearer ${
+      context.state.token
+    }`;
+    axios
+      .get(urlPath)
       .then((resp) => {
         // total results gets all the data from the api
         context.commit('updateTotalResults', resp.data.project_lists);
@@ -200,7 +212,6 @@ const actions = {
       // eslint-disable-next-line no-return-assign
       .finally(() => context.commit('loadingStatus'));
   },
-
 };
 export default new Vuex.Store({
   state,

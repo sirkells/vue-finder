@@ -1,6 +1,10 @@
 
 <template>
-  <v-container grid-list-md fluid container>
+  <v-container
+    grid-list-md
+    fluid
+    container
+  >
     <section v-if="errored">
       <p>{{ erroredMessage }}</p>
     </section>
@@ -8,17 +12,20 @@
     <section v-else>
       <!-- Navigation Drawer -->
       <!-- Side Filter component -->
-        <side-filter
-          :get="getFilterQuery"
-          :reset="reset"
-          :selectedFilter="selectedFilter"
-          :searchTerm="search_term"
-          :searchTrigger="seachTrigger"
-          :removeChip="removeChip"
-        >
-        </side-filter>
+      <side-filter
+        :get="getFilterQuery"
+        :reset="reset"
+        :selectedFilter="selectedFilter"
+        :searchTerm="search_term"
+        :searchTrigger="seachTrigger"
+        :removeChip="removeChip"
+      >
+      </side-filter>
       <!-- Contents -->
-      <v-layout row wrap>
+      <v-layout
+        row
+        wrap
+      >
         <v-flex
           v-for="(posts, index) in resultApi"
           :key="index"
@@ -28,124 +35,141 @@
             <v-card-title primary>
               <div>
                 <div>
-                  <a :href="posts.url" target="_blank">
+                  <a
+                    :href="posts.url"
+                    target="_blank"
+                  >
                     <b>{{ posts.title }}</b>
                   </a>
                 </div>
-                {{posts.description}}
+                {{posts.description.slice(0, 400)}}
               </div>
             </v-card-title>
             <v-card-actions>
-            <div class="text-xs-center">
-              <!-- <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
+              <div class="text-xs-center">
+                <!-- <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
               <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
               <v-chip v-if="posts.filter_date_post.$date">
                 {{ posts.filter_date_post.$date}}</v-chip> -->
 
-              <!-- location -->
-              <v-chip :class="{success: lActive}"
-              @click="lActive = !lActive,
+                <!-- location -->
+                <v-chip
+                  :class="{success: lActive}"
+                  @click="lActive = !lActive,
               lData='bundesland='+posts.region.bundesland,
               getLocation('bundesland='+posts.region.bundesland)"
-              v-if="posts.region.bundesland"
-              >
-                {{ posts.region.bundesland}}
-              </v-chip>
-              <!-- group -->
-              <v-chip :class="{warning: gActive}"
-              @click="gActive = !gActive,
+                  v-if="posts.region.bundesland"
+                >
+                  {{ posts.region.bundesland}}
+                </v-chip>
+                <!-- group -->
+                <v-chip
+                  :class="{warning: gActive}"
+                  @click="gActive = !gActive,
                 gData='group=' + posts.bereich.group,
                 getGroup('group=' + posts.bereich.group)"
-                v-if="posts.bereich.group"
-              >
-              {{ posts.bereich.group}}
-              </v-chip>
-              <!-- Group Type -->
-              <v-chip :class="{error: gtActive}"
-                @click="gtActive = !gtActive,
+                  v-if="posts.bereich.group"
+                >
+                  {{ posts.bereich.group}}
+                </v-chip>
+                <!-- Group Type -->
+                <v-chip
+                  :class="{error: gtActive}"
+                  @click="gtActive = !gtActive,
                 gtData='groupType=' + posts.bereich.group_type,
                 getGrouptype('groupType=' + posts.bereich.group_type)"
-                v-if="posts.bereich.group_type"
-              >
-                {{ posts.bereich.group_type}}
-              </v-chip>
-              <!-- Group Stack -->
-              <v-chip :class="{info: gtsActive}"
-                @click="gtsActive = !gtsActive,
+                  v-if="posts.bereich.group_type"
+                >
+                  {{ posts.bereich.group_type}}
+                </v-chip>
+                <!-- Group Stack -->
+                <v-chip
+                  :class="{info: gtsActive}"
+                  @click="gtsActive = !gtsActive,
                 gtsData= 'groupStack=' + posts.bereich.group_type_stack,
                 getGroupstack('groupStack=' + posts.bereich.group_type_stack)"
-                v-if="posts.bereich.group_type_stack"
-              >
-                {{ posts.bereich.group_type_stack}}
-              </v-chip>
-              <!-- Mobile App Platform -->
-              <v-chip :class="{info: pActive}"
-                @click="pActive = !pActive,
+                  v-if="posts.bereich.group_type_stack"
+                >
+                  {{ posts.bereich.group_type_stack}}
+                </v-chip>
+                <!-- Mobile App Platform -->
+                <v-chip
+                  :class="{info: pActive}"
+                  @click="pActive = !pActive,
                 pData= 'platform=' + posts.bereich.platform,
                 getPlatform('platform=' + posts.bereich.platform)"
-                v-if="posts.bereich.platform"
-              >
-                {{ posts.bereich.platform}}
-              </v-chip>
-              <!-- Mobile App Platform Name -->
-              <v-chip :class="{info: pnActive}"
-                @click="pnActive = !pnActive,
+                  v-if="posts.bereich.platform"
+                >
+                  {{ posts.bereich.platform}}
+                </v-chip>
+                <!-- Mobile App Platform Name -->
+                <v-chip
+                  :class="{info: pnActive}"
+                  @click="pnActive = !pnActive,
                 pnData='platform_name=' + posts.bereich.platform_name,
                 getPlatform_name('platform_name=' + posts.bereich.platform_name)"
-                v-if="posts.bereich.platform_name"
-              >
-                {{ posts.bereich.platform_name}}
-              </v-chip>
-              <!-- Skill by Group Stack -->
-              <!--encodeURIComponent used to encode c# due to error caused by # -->
-              <v-chip :class="{purple: skActive}"
-                @click="skActive = !skActive,
+                  v-if="posts.bereich.platform_name"
+                >
+                  {{ posts.bereich.platform_name}}
+                </v-chip>
+                <!-- Skill by Group Stack -->
+                <!--encodeURIComponent used to encode c# due to error caused by # -->
+                <v-chip
+                  :class="{purple: skActive}"
+                  @click="skActive = !skActive,
                 skData ='skill=' +  encodeURIComponent(posts.bereich.skill),
                 getSk('skill=' +  encodeURIComponent(posts.bereich.skill))"
-                v-if="posts.bereich.skill"
-              >
-                {{ posts.bereich.skill}}
-              </v-chip>
-            </div>
-            <v-spacer></v-spacer>
-            <v-card-actions>
+                  v-if="posts.bereich.skill"
+                >
+                  {{ posts.bereich.skill}}
+                </v-chip>
+              </div>
               <v-spacer></v-spacer>
-              <!-- Favourite button -->
-              <v-btn
-              icon
-              >
-                <v-icon @click="myToggleFunction($event)" >favorite</v-icon>
-              </v-btn>
-              <!-- Bookmark button -->
-              <v-btn icon >
-                <v-icon @click="addToCockpit(index)">bookmark</v-icon>
-              </v-btn>
-              <!-- Share button -->
-              <v-btn
-              icon
-              @click="dialog = !dialog, shareProject(index)"
-              >
-                <v-icon>share</v-icon>
-              </v-btn>
-            </v-card-actions>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <!-- Favourite button -->
+                <v-btn icon>
+                  <v-icon @click="myToggleFunction($event)">favorite</v-icon>
+                </v-btn>
+                <!-- Bookmark button -->
+                <v-btn icon>
+                  <v-icon @click="addToCockpit(index)">bookmark</v-icon>
+                </v-btn>
+                <!-- Share button -->
+                <v-btn
+                  icon
+                  @click="dialog = !dialog, shareProject(index)"
+                >
+                  <v-icon>share</v-icon>
+                </v-btn>
+              </v-card-actions>
             </v-card-actions>
           </v-card>
         </v-flex>
       </v-layout>
-    <!-- Share dialog form -->
-    <v-dialog v-model="dialog" width="800px">
+      <!-- Share dialog form -->
+      <v-dialog
+        v-model="dialog"
+        width="800px"
+      >
         <v-card>
           <v-toolbar
             card
             color="blue"
             dark
           >
-            <v-btn flat  @click="dialog = false">
+            <v-btn
+              flat
+              @click="dialog = false"
+            >
               <v-icon>arrow_back</v-icon>
             </v-btn>
 
             <v-spacer></v-spacer>
-            <v-btn flat  @click="dialog = false">
+            <v-btn
+              flat
+              @click="dialog = false"
+            >
               <v-icon>send</v-icon>
             </v-btn>
 
@@ -172,7 +196,6 @@
               full-width
               single-line
               type="text"
-
             ></v-text-field>
             <v-divider></v-divider>
             <v-textarea
@@ -186,7 +209,7 @@
             ></v-textarea>
           </v-form>
         </v-card>
-    </v-dialog>
+      </v-dialog>
     </section>
   </v-container>
 </template>
@@ -379,6 +402,7 @@ export default {
       // eslint-disable-next-line no-console
       console.log(payload);
       const path = 'http://localhost:5000/api/cockpit';
+      axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
       axios.post(path, payload)
         .then((response) => {
           if (response.data.status === 600) {
@@ -474,12 +498,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-         .container{
-             max-width: 3000px;
-         }
-         .main {
-      margin-top: 60px; /* Add a top margin to avoid content overlay */
-     }
-
+.container {
+  max-width: 3000px;
+}
+.main {
+  margin-top: 60px; /* Add a top margin to avoid content overlay */
+}
 </style>
