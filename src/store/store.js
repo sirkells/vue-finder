@@ -20,6 +20,7 @@ const state = {
   results: [],
   navDraw: false,
   params: null,
+  searchTerm: '',
 };
 
 const getters = {
@@ -47,6 +48,9 @@ const mutations = {
   //   state.totalResults = [];
   //   state.username = null;
   // },
+  updateSearchTerm(state, searchTerm) {
+    state.searchTerm = searchTerm;
+  },
   getParams(state, data) {
     state.params = data;
   },
@@ -107,6 +111,11 @@ const mutations = {
   // },
 };
 const actions = {
+  getSearchTerm(context, searchTerm) {
+    context.commit('updateSearchTerm', searchTerm);
+    // eslint-disable-next-line no-console
+    console.log('from store:', state.searchTerm);
+  },
   appendItems(context) {
     if (context.state.results.length < context.state.totalResults.length) {
       context.commit('addToResults');

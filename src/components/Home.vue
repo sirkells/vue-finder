@@ -16,7 +16,7 @@
         :get="getFilterQuery"
         :reset="reset"
         :selectedFilter="selectedFilter"
-        :searchTerm="search_term"
+        :searchTerm="searchTerm"
         :searchTrigger="seachTrigger"
         :removeChip="removeChip"
       >
@@ -53,74 +53,32 @@
                 {{ posts.filter_date_post.$date}}</v-chip> -->
 
                 <!-- location -->
-                <v-chip
-                  :class="{success: lActive}"
-                  @click="lActive = !lActive,
-              lData='bundesland='+posts.region.bundesland,
-              getLocation('bundesland='+posts.region.bundesland)"
-                  v-if="posts.region.bundesland"
-                >
+                <v-chip v-if="posts.region.bundesland">
                   {{ posts.region.bundesland}}
                 </v-chip>
                 <!-- group -->
-                <v-chip
-                  :class="{warning: gActive}"
-                  @click="gActive = !gActive,
-                gData='group=' + posts.bereich.group,
-                getGroup('group=' + posts.bereich.group)"
-                  v-if="posts.bereich.group"
-                >
+                <v-chip v-if="posts.bereich.group">
                   {{ posts.bereich.group}}
                 </v-chip>
                 <!-- Group Type -->
-                <v-chip
-                  :class="{error: gtActive}"
-                  @click="gtActive = !gtActive,
-                gtData='groupType=' + posts.bereich.group_type,
-                getGrouptype('groupType=' + posts.bereich.group_type)"
-                  v-if="posts.bereich.group_type"
-                >
+                <v-chip v-if="posts.bereich.group_type">
                   {{ posts.bereich.group_type}}
                 </v-chip>
                 <!-- Group Stack -->
-                <v-chip
-                  :class="{info: gtsActive}"
-                  @click="gtsActive = !gtsActive,
-                gtsData= 'groupStack=' + posts.bereich.group_type_stack,
-                getGroupstack('groupStack=' + posts.bereich.group_type_stack)"
-                  v-if="posts.bereich.group_type_stack"
-                >
+                <v-chip v-if="posts.bereich.group_type_stack">
                   {{ posts.bereich.group_type_stack}}
                 </v-chip>
                 <!-- Mobile App Platform -->
-                <v-chip
-                  :class="{info: pActive}"
-                  @click="pActive = !pActive,
-                pData= 'platform=' + posts.bereich.platform,
-                getPlatform('platform=' + posts.bereich.platform)"
-                  v-if="posts.bereich.platform"
-                >
+                <v-chip v-if="posts.bereich.platform">
                   {{ posts.bereich.platform}}
                 </v-chip>
                 <!-- Mobile App Platform Name -->
-                <v-chip
-                  :class="{info: pnActive}"
-                  @click="pnActive = !pnActive,
-                pnData='platform_name=' + posts.bereich.platform_name,
-                getPlatform_name('platform_name=' + posts.bereich.platform_name)"
-                  v-if="posts.bereich.platform_name"
-                >
+                <v-chip v-if="posts.bereich.platform_name">
                   {{ posts.bereich.platform_name}}
                 </v-chip>
                 <!-- Skill by Group Stack -->
                 <!--encodeURIComponent used to encode c# due to error caused by # -->
-                <v-chip
-                  :class="{purple: skActive}"
-                  @click="skActive = !skActive,
-                skData ='skill=' +  encodeURIComponent(posts.bereich.skill),
-                getSk('skill=' +  encodeURIComponent(posts.bereich.skill))"
-                  v-if="posts.bereich.skill"
-                >
+                <v-chip v-if="posts.bereich.skill">
                   {{ posts.bereich.skill}}
                 </v-chip>
               </div>
@@ -225,7 +183,7 @@ export default {
   name: 'Home',
   // props passed from APP.vue refreshHome to refreshHompage
   // searchTerm to get search term and searchCalled to trigger the watcher when search is entered
-  props: ['refreshHome', 'search_term', 'searchCalled', 'draw'],
+  props: ['refreshHome', 'searchCalled', 'draw'],
   components: {
     'side-filter': Filter,
   },
@@ -241,15 +199,6 @@ export default {
       dialog: null,
       dark: false,
       show: false,
-      isActive: false,
-      lActive: false,
-      gActive: false,
-      gtActive: false,
-      gtsActive: false,
-      skActive: false,
-      pActive: false,
-      pnActive: false,
-      sksmActive: false,
       errored: false,
       loading: true,
       cockpit: [],
@@ -275,6 +224,9 @@ export default {
     }
   },
   computed: {
+    searchTerm() {
+      return this.$store.state.searchTerm;
+    },
     loadingStatus() {
       return this.$store.state.loading;
     },
@@ -288,21 +240,17 @@ export default {
       return this.$store.state.results;
     },
     resultApi() {
-      if (this.seachTrigger) {
-        // eslint-disable-next-line no-console
-        console.log('yes');
+      if (this.searchTerm) {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         return this.resultsFromStore.sort(this.byProperty('score'));
       }
-      // eslint-disable-next-line no-console
-      console.log('no');
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return this.$store.state.results;
     },
     assignUrl() {
-      if (this.seachTrigger) {
+      if (this.searchTerm) {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        const url = `http://127.0.0.1:5000/api/?search_term=${this.search_term}`;
+        const url = `http://127.0.0.1:5000/api/?search_term=${this.searchTerm}`;
         return url;
       }
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -334,30 +282,6 @@ export default {
       this.url = newUrl;
       this.fetchData('');
     },
-    // David
-    // getFilterQuery(path, key) {
-    //   console.log(this.a);
-    //   // const section = path + key;
-    //   const filter = { query: path.slice(1, -1), value: key };
-    //   this.filterObj.push(filter);
-    //   console.log(this.filterObj);
-    //   return new Promise((resolve, reject) => {
-    //     axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
-    //     axios.post(this.url, this.filterObj)
-    //       .then((resp) => {
-    //         // eslint-disable-next-line no-alert
-    //         // eslint-disable-next-line no-console
-    //         resolve(resp);
-    //         // eslint-disable-next-line no-console
-    //         console.log(resp);
-    //         // eslint-disable-next-line no-alert
-    //       })
-    //       .catch((error) => {
-    //         // eslint-disable-next-line
-    //       reject(error)
-    //       });
-    //   });
-    // },
     byProperty(prop) {
       // eslint-disable-next-line func-names
       return function (a, b) {
@@ -376,25 +300,12 @@ export default {
     },
     reset() {
       this.url = 'http://127.0.0.1:5000/api/?';
-      this.resetFilters();
       this.fetchData('');
       this.section = '';
       this.selectedFilter = [];
-      this.seachTrigger = false;
       this.currrentUrl = [];
       this.$store.commit('resetCalled');
       this.filterObj = [];
-    },
-    resetFilters() {
-      this.sksmActive = false;
-      this.pActive = false;
-      this.pnActive = false;
-      this.gtActive = false;
-      this.gtsActive = false;
-      this.gActive = false;
-      this.skActive = false;
-      this.lActive = false;
-      this.skActive = false;
     },
     addToCockpit(index) {
       const payload = this.resultApi[index];
@@ -446,40 +357,13 @@ export default {
     },
     // watches the searchterm is been trigered by the keyboard event
     searchCalled() {
-      if (this.search_term === null) {
-        this.seachTrigger = false;
-        this.reset();
-      } else {
-        this.seachTrigger = true;
-        // eslint-disable-next-line no-console
-        console.log(this.search_term);
+      if (this.searchTerm) {
         this.url = this.assignUrl;
-        const term = `search_term=${this.search_term}`;
-        // eslint-disable-next-line no-console
-        console.log(term);
         this.fetchData('');
-        // this.sortBy('score');
+      } else {
+        this.reset();
       }
     },
-    // for david schenk request
-    // searchCalled() {
-    //   if (this.search_term === null) {
-    //     this.seachTrigger = false;
-    //     this.reset();
-    //   } else {
-    //     this.seachTrigger = true;
-    //     // eslint-disable-next-line no-console
-    //     console.log(this.search_term);
-    //     this.url = this.assignUrl;
-    //     const path = '&search_term=';
-    //     this.getFilterQuery(path, this.search_term);
-    //     const term = `search_term=${this.search_term}`;
-    //     // eslint-disable-next-line no-console
-    //     console.log(term);
-    //     // this.fetchData('');
-    //     // this.sortBy('score');
-    //   }
-    // },
   },
 
   mounted() {
@@ -487,12 +371,9 @@ export default {
     const elem = document.getElementById('product-list-bottom');
     const watcher = scrollMonitor.create(elem);
     watcher.enterViewport(() => {
-      // eslint-disable-next-line no-console
-      console.log('hello');
       vueInstance.appendItems();
     });
   },
-
 };
 </script>
 
