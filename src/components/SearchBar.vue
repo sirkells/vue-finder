@@ -29,7 +29,7 @@ export default {
   methods: {
     searchQuery() {
       this.toggleSearchCall();
-      this.$store.dispatch('getSearchTerm', this.search_term);
+      this.$store.commit('updateSearchTerm', this.search_term);
     },
   },
   watch: {

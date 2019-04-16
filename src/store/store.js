@@ -21,6 +21,7 @@ const state = {
   navDraw: false,
   params: null,
   searchTerm: '',
+  shareDialog: false,
 };
 
 const getters = {
@@ -48,6 +49,9 @@ const mutations = {
   //   state.totalResults = [];
   //   state.username = null;
   // },
+  toggleShareDialog(state, status) {
+    state.shareDialog = status;
+  },
   updateSearchTerm(state, searchTerm) {
     state.searchTerm = searchTerm;
   },
@@ -111,11 +115,6 @@ const mutations = {
   // },
 };
 const actions = {
-  getSearchTerm(context, searchTerm) {
-    context.commit('updateSearchTerm', searchTerm);
-    // eslint-disable-next-line no-console
-    console.log('from store:', state.searchTerm);
-  },
   appendItems(context) {
     if (context.state.results.length < context.state.totalResults.length) {
       context.commit('addToResults');

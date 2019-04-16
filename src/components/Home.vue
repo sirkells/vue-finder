@@ -22,152 +22,21 @@
       >
       </side-filter>
       <!-- Contents -->
-      <v-layout
-        row
-        wrap
+      <project-cards
+        :resultApi="resultApi"
+        :myToggleFunction="myToggleFunction"
+        :addToCockpit='addToCockpit'
+        :shareProject="shareProject"
+        :toggleShareForm="toggleShareForm"
       >
-        <v-flex
-          v-for="(posts, index) in resultApi"
-          :key="index"
-          xs12
-        >
-          <v-card>
-            <v-card-title primary>
-              <div>
-                <div>
-                  <a
-                    :href="posts.url"
-                    target="_blank"
-                  >
-                    <b>{{ posts.title }}</b>
-                  </a>
-                </div>
-                {{posts.description.slice(0, 400)}}
-              </div>
-            </v-card-title>
-            <v-card-actions>
-              <div class="text-xs-center">
-                <!-- <v-chip v-if="posts.date_post">{{ posts.date_post}}</v-chip>
-              <v-chip v-if="posts.score">{{ posts.score}}</v-chip>
-              <v-chip v-if="posts.filter_date_post.$date">
-                {{ posts.filter_date_post.$date}}</v-chip> -->
-
-                <!-- location -->
-                <v-chip v-if="posts.region.bundesland">
-                  {{ posts.region.bundesland}}
-                </v-chip>
-                <!-- group -->
-                <v-chip v-if="posts.bereich.group">
-                  {{ posts.bereich.group}}
-                </v-chip>
-                <!-- Group Type -->
-                <v-chip v-if="posts.bereich.group_type">
-                  {{ posts.bereich.group_type}}
-                </v-chip>
-                <!-- Group Stack -->
-                <v-chip v-if="posts.bereich.group_type_stack">
-                  {{ posts.bereich.group_type_stack}}
-                </v-chip>
-                <!-- Mobile App Platform -->
-                <v-chip v-if="posts.bereich.platform">
-                  {{ posts.bereich.platform}}
-                </v-chip>
-                <!-- Mobile App Platform Name -->
-                <v-chip v-if="posts.bereich.platform_name">
-                  {{ posts.bereich.platform_name}}
-                </v-chip>
-                <!-- Skill by Group Stack -->
-                <!--encodeURIComponent used to encode c# due to error caused by # -->
-                <v-chip v-if="posts.bereich.skill">
-                  {{ posts.bereich.skill}}
-                </v-chip>
-              </div>
-              <v-spacer></v-spacer>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <!-- Favourite button -->
-                <v-btn icon>
-                  <v-icon @click="myToggleFunction($event)">favorite</v-icon>
-                </v-btn>
-                <!-- Bookmark button -->
-                <v-btn icon>
-                  <v-icon @click="addToCockpit(index)">bookmark</v-icon>
-                </v-btn>
-                <!-- Share button -->
-                <v-btn
-                  icon
-                  @click="dialog = !dialog, shareProject(index)"
-                >
-                  <v-icon>share</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-      </v-layout>
+      </project-cards>
       <!-- Share dialog form -->
-      <v-dialog
-        v-model="dialog"
-        width="800px"
-      >
-        <v-card>
-          <v-toolbar
-            card
-            color="blue"
-            dark
-          >
-            <v-btn
-              flat
-              @click="dialog = false"
-            >
-              <v-icon>arrow_back</v-icon>
-            </v-btn>
-
-            <v-spacer></v-spacer>
-            <v-btn
-              flat
-              @click="dialog = false"
-            >
-              <v-icon>send</v-icon>
-            </v-btn>
-
-          </v-toolbar>
-          <v-form>
-            <v-autocomplete
-              v-model="selected"
-              :items="['Kelechi Igbokwe', 'Paul Zimmer', 'Marco Hoher']"
-              chips
-              label="To"
-              full-width
-              hide-details
-              hide-no-data
-              hide-selected
-              multiple
-              single-line
-            ></v-autocomplete>
-            <v-divider></v-divider>
-            <v-text-field
-              v-model="subject"
-              label="Subject"
-              counter
-              maxlength="120"
-              full-width
-              single-line
-              type="text"
-            ></v-text-field>
-            <v-divider></v-divider>
-            <v-textarea
-              v-model="message_body"
-              label="Message"
-              counter
-              maxlength="120"
-              full-width
-              single-line
-              type="text"
-            ></v-textarea>
-          </v-form>
-        </v-card>
-      </v-dialog>
+      <share-project-form
+        v-if="shareDialog"
+        :shareFormStatus="shareFormStatus"
+        :message_body="message_body"
+        :subject="subject"
+      ></share-project-form>
     </section>
   </v-container>
 </template>
@@ -178,6 +47,8 @@ import axios from 'axios/dist/axios.min.js';
 // eslint-disable-next-line import/extensions
 import scrollMonitor from 'scrollmonitor/scrollMonitor.js';
 import Filter from './SideFilter';
+import Project from './ProjectCard';
+import ShareProjectForm from './ShareProjectForm';
 
 export default {
   name: 'Home',
@@ -186,6 +57,8 @@ export default {
   props: ['refreshHome', 'searchCalled', 'draw'],
   components: {
     'side-filter': Filter,
+    'project-cards': Project,
+    'share-project-form': ShareProjectForm,
   },
   data() {
     return {
@@ -196,7 +69,7 @@ export default {
       name: 'Filter',
       color: null,
       myActive: false,
-      dialog: null,
+      shareFormStatus: false,
       dark: false,
       show: false,
       errored: false,
@@ -224,6 +97,9 @@ export default {
     }
   },
   computed: {
+    shareDialog() {
+      return this.$store.state.shareDialog;
+    },
     searchTerm() {
       return this.$store.state.searchTerm;
     },
@@ -260,12 +136,14 @@ export default {
     // eslint-disable-next-line vue/return-in-computed-property
   },
   methods: {
+    toggleShareForm() {
+      this.$store.commit('toggleShareDialog', true);
+    },
     // creates url filters to fetch data
     getFilterQuery(path, key) {
       const section = path + key;
       const filter = { query: path.slice(1, -1), value: key };
       this.filterObj.push(filter);
-      console.log(this.filterObj);
       this.fetchData(section, this.filterObj);
       const filterDict = { title: key, filter: section, closed: true };
       this.selectedFilter.push(filterDict);
@@ -277,8 +155,8 @@ export default {
       const re = new RegExp(chip, 'gi');
       // use regex to create new url string without the deleted filter
       const newUrl = this.url.replace(re, '');
-      console.log(`old:${this.url}`);
-      console.log(`new:${newUrl}`);
+      // console.log(`old:${this.url}`);
+      // console.log(`new:${newUrl}`);
       this.url = newUrl;
       this.fetchData('');
     },
@@ -338,6 +216,7 @@ export default {
       this.message_body = `${this.resultApi[index].title}
       ${this.resultApi[index].url}`;
       this.subject = this.resultApi[index].title;
+      console.log(this.message_body, this.subject);
     },
     appendItems() {
       this.$store.dispatch('appendItems');
