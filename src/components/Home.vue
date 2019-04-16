@@ -70,11 +70,8 @@ export default {
       color: null,
       myActive: false,
       shareFormStatus: false,
-      dark: false,
-      show: false,
       errored: false,
       loading: true,
-      cockpit: [],
       results: [],
       total_results: [],
       selectedFilter: [],
@@ -200,23 +197,17 @@ export default {
           } else {
             // eslint-disable-next-line no-alert
             alert('Project added succesful');
-            // eslint-disable-next-line no-console
-            console.log(payload);
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.log(error);
         });
-      this.cockpit.push(this.resultApi[index]);
-      // eslint-disable-next-line no-console
-      console.log(this.cockpit.length);
     },
     shareProject(index) {
       this.message_body = `${this.resultApi[index].title}
       ${this.resultApi[index].url}`;
       this.subject = this.resultApi[index].title;
-      console.log(this.message_body, this.subject);
     },
     appendItems() {
       this.$store.dispatch('appendItems');
