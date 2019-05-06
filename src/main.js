@@ -2,11 +2,8 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import VueTreeNavigation from 'vue-tree-navigation';
-
 
 // global registration
-
 
 import 'vuetify/dist/vuetify.min.css';
 
@@ -18,7 +15,6 @@ import store from './store/store';
 Vue.config.productionTip = false;
 
 Vue.use(Vuetify);
-Vue.use(VueTreeNavigation);
 /* eslint-disable no-new */
 
 new Vue({

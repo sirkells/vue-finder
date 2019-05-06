@@ -20,6 +20,8 @@ const state = {
   results: [],
   navDraw: false,
   params: null,
+  searchTerm: '',
+  shareDialog: false,
 };
 
 const getters = {
@@ -47,6 +49,12 @@ const mutations = {
   //   state.totalResults = [];
   //   state.username = null;
   // },
+  toggleShareDialog(state, status) {
+    state.shareDialog = status;
+  },
+  updateSearchTerm(state, searchTerm) {
+    state.searchTerm = searchTerm;
+  },
   getParams(state, data) {
     state.params = data;
   },

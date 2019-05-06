@@ -18,7 +18,7 @@
       >
         <v-flex
           xs12
-          v-for="(posts, index) in results"
+          v-for="(posts, index) in resultApi"
           :key="index"
         >
           <v-card>
@@ -100,8 +100,22 @@ export default {
     loggedIn() {
       return this.$store.getters.loggedIn;
     },
+    resultApi() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.results.sort(this.byProperty('date_added'));
+    },
   },
   methods: {
+    byProperty(prop) {
+      // eslint-disable-next-line func-names
+      return function (a, b) {
+        if (typeof a[prop] === 'number') {
+          return (b[prop] - a[prop]);
+        }
+        // eslint-disable-next-line no-nested-ternary
+        return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
+      };
+    },
     // fetch stored project from api
     fetchData(section) {
       axios.defaults.headers.common.Authorization = `Bearer ${this.$store.state.token}`;
